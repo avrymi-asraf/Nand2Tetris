@@ -4,6 +4,7 @@ __pycache__/
 *$py.class
 .pdf
 .zip
+.vscode/
 
 # C extensions
 *.so
