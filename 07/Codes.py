@@ -1,6 +1,8 @@
 
 # push segment index
-push =  """@index
+push =  """
+//push
+@var
 D = A
 @SP
 A = M
@@ -13,7 +15,7 @@ M =M+1"""
 #pop segment index
 
 pop =  """
-
+//push
 @SP
 A = M
 D = M
@@ -32,6 +34,7 @@ M = data
 """
 
 add = """
+//add
 @SP
 A=M
 D=M
@@ -44,6 +47,7 @@ M = D+M
 M =M+1"""
 
 sub = """
+//sub
 @SP
 A=M
 D=M

@@ -7,12 +7,13 @@ Unported [License](https://creativecommons.org/licenses/by-nc-sa/3.0/).
 """
 import typing
 import Codes
+from Command import Command
 
 class CodeWriter:
     """Translates VM commands into Hack assembly code."""
 
     #TODO add all commands
-    translate_command = {
+    aritmetic_commands = {
             "add":Codes.add,
             "sub":Codes.sub,
             
@@ -54,7 +55,7 @@ class CodeWriter:
         # the function "translate_file" in Main.py using python's os library,
         # For example, using code similar to:
         # input_filename, input_extension = os.path.splitext(os.path.basename(input_file.name))
-        pass
+       
 
     def write_arithmetic(self, command: str) -> None:
         """Writes assembly code that is the translation of the given 
@@ -73,7 +74,7 @@ class CodeWriter:
         
         """
 
-        self.output_stream.write(self.translate_command[command])
+        self.output_stream.write(self.aritmetic_commands[command])
         
 
     def write_push_pop(self, command: str, segment: str, index: int) -> None:
@@ -92,12 +93,33 @@ class CodeWriter:
 
         #TODO use segment and index
 
-        #  self.output_stream.write()
+        # C_push
 
-        self.output_stream.write(self.translate_command[command])
-        
-         
-        pass
+        ## C_push constant
+        if command == Command.C_PUSH:
+            if segment == "constant":
+                self.output_stream.write(Codes.push.replace("var",index))
+            elif segment == "local":
+                pass
+            elif segment == "argument":
+                pass
+            elif segment == "this":
+                pass
+            elif segment == "that":
+                pass
+            elif segment == "static":
+                pass
+            elif segment == "pointer":
+                pass
+            elif segment == "temp":
+                pass
+            else:
+                raise ValueError("is {} but not segment faund",Command.C_PUSH)
+        elif command == Command.C_POP:
+            pass
+
+
+
 
     def write_label(self, label: str) -> None:
         """Writes assembly code that affects the label command. 

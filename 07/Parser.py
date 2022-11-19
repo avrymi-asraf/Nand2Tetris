@@ -9,10 +9,11 @@ import typing
 import Command
 from Command import Command
 
+
 class Parser:
     """
     # Parser
-    
+
     Handles the parsing of a single .vm file, and encapsulates access to the
     input code. It reads VM commands, parses them, and provides convenient 
     access to their components. 
@@ -55,43 +56,32 @@ class Parser:
         """
         self.input_lines = input_file.read().splitlines()
 
-        self.input_lines = [line for line in self.input_lines if not line.startswith("/")]
+        self.input_lines = [
+            line for line in self.input_lines if not line.startswith("/")]
 
-        self.input_lines = [line for line in self.input_lines if not len(line) == 0]
+        self.input_lines = [
+            line for line in self.input_lines if not len(line) == 0]
 
         self.num_of_commands = len(self.input_lines)
-        
-        self.num_of_readen_commands = 0
+        self.has_more_commands = len(self.input_lines) > 0
+        self.index_of_readen_commands = 0
 
-        if self.num_of_commands > 0: 
+        if self.has_more_commands:
             self.curr_command = self.input_lines[0]
-            self.num_of_readen_commands = 1
-
         else:
             self.curr_command = None
-            
-        pass
 
-    def has_more_commands(self) -> bool:
-        """Are there more commands in the input?
-        Returns:
-            bool: True if there are more commands, False otherwise.
-        """
-        if (self.num_of_readen_commands < self.num_of_commands):
-            return True
-
-        else:
-            return False
-        
 
     def advance(self) -> None:
         """Reads the next command from the input and makes it the current 
-        command. Should be called only if has_more_commands() is true. Initially
+        command. Should be called only if has_more_commands is true. Initially
         there is no current command.
         """
-        if self.has_more_commands == True:
-            self.curr_command = self.input_lines[self.num_of_readen_commands]
-        self.num_of_readen_commands +=1
+        self.index_of_readen_commands += 1
+        if self.index_of_readen_commands < self.num_of_commands:
+            self.curr_command = self.input_lines[self.index_of_readen_commands]
+        else:
+            self.has_more_commands = False 
 
     def command_type(self) -> str:
         """
@@ -109,18 +99,18 @@ class Parser:
 
         else:
             word1 = splited_command[0]
-            word1 = word1.replace(" ", "") 
+            word1 = word1.replace(" ", "")
 
-            #arithmetic: add, sub, neg, eq, lt, gt, and, or, not
+            # arithmetic: add, sub, neg, eq, lt, gt, and, or, not
             if ((word1 == "add")
-            or (word1 == "sub")
-            or (word1 == "neg")
-            or (word1 == "eq")
-            or (word1 == "lt")
-            or (word1 == "gt")
-            or (word1 == "and")
-            or (word1 == "or")
-            or (word1 == "not")):
+                or (word1 == "sub")
+                or (word1 == "neg")
+                or (word1 == "eq")
+                or (word1 == "lt")
+                or (word1 == "gt")
+                or (word1 == "and")
+                or (word1 == "or")
+                    or (word1 == "not")):
                 return Command.C_ARITHMETIC
 
             elif word1 == "push":
@@ -136,20 +126,19 @@ class Parser:
                 return Command.C_GOTO
 
             elif word1 == "if-goto":
-                return  Command.C_IF
+                return Command.C_IF
 
             elif word1 == "function":
                 return Command.C_FUNCTION
-            
+
             elif word1 == "return":
                 return Command.C_RETURN
 
             elif word1 == "call":
-                return Command.C_CALL 
-            
+                return Command.C_CALL
+
             else:
                 return None
-        
 
     def arg1(self) -> str:
         """
@@ -159,21 +148,20 @@ class Parser:
             Should not be called if the current command is "C_RETURN".
         """
         if self.command_type() != "C_RETURN":
-            
+
             splited_command = self.curr_command.split(" ")
 
             if (len(splited_command) == 0):
-                    return None
+                return None
 
-            if self.command_type() == Command.C_ARITHMETIC: 
-                #add, sub, neg, eq, lt, gt, and, or, not
+            if self.command_type() == Command.C_ARITHMETIC:
+                # add, sub, neg, eq, lt, gt, and, or, not
                 return splited_command[0]
 
-            if ((self.command_type() == Command.C_PUSH) 
-            or (self.command_type() == Command.C_POP) ): 
-                #push, pop 
+            if ((self.command_type() == Command.C_PUSH)
+                    or (self.command_type() == Command.C_POP)):
+                #push, pop
                 return splited_command[1]
-
 
     def arg2(self) -> int:
         """
@@ -182,11 +170,10 @@ class Parser:
             called only if the current command is "C_PUSH", "C_POP", 
             "C_FUNCTION" or "C_CALL".
         """
-        if self.command_type()  in (Command.C_POP,Command.C_PUSH,Command.C_FUNCTION, Command.C_CALL): 
+        if self.command_type() in (Command.C_POP, Command.C_PUSH, Command.C_FUNCTION, Command.C_CALL):
 
             splited_command = self.curr_command.split(" ")
             if (len(splited_command) < 2):
                 return None
-            else :
+            else:
                 return splited_command[2]
-    

@@ -20,12 +20,6 @@ class Command:
     C_RETURN = "C_RETURN" 
     C_CALL = "C_CALL"
  
-    # def __init__(self, line : str) -> None:
-    #     """Gets ready to parse the input file.
-
-    #     Args:
-    #         input_file (typing.TextIO): input file.
-    #     """
-    #     self.line = line
-    #     pass
+    def __init__(self) -> None:
+        pass
 
