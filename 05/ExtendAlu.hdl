@@ -1,0 +1,53 @@
+// This file is part of nand2tetris, as taught in The Hebrew University, and
+// was written by Aviv Yaish. It is an extension to the specifications given
+// [here](https://www.nand2tetris.org) (Shimon Schocken and Noam Nisan, 2017),
+// as allowed by the Creative Common Attribution-NonCommercial-ShareAlike 3.0
+// Unported [License](https://creativecommons.org/licenses/by-nc-sa/3.0/).
+
+
+// The ExtendAlu chip is an extension of the standard ALU which also supports
+// shift operations.
+// The inputs of the extended ALU are instruction[9], x[16], y[16].
+// The "ng" and "zr" output pins behave the same as in the regular ALU.
+// The "out" output is defined as follows:
+// If instruction[8]=1 and instruction[7]=1 the output is identical to the 
+// regular ALU, where:
+// instruction[5]=zx, instruction[4]=nx, ..., instruction[0]=no
+// Else, if instruction[8]=0 and instruction[7]=1, the output is a shift:
+// - If instruction[4] == 0, the input "y" will be shifted, otherwise "x".
+// - If instruction[5] == 0, the shift will be a right-shift, otherwise left.
+// - All other inputs are undefined. 
+//  876543210                                 
+//     01     
+//                  
+// 
+// 
+
+CHIP ExtendAlu {
+     IN x[16], y[16], instruction[9];
+     OUT out[16], zr, ng;
+     
+     
+     PARTS:
+
+     //create shifted x and y
+     ShiftRight(in = x, out = xShiftRight);
+     ShiftRight(in = y, out = yShiftRight);
+     ShiftLeft(in = x, out = xShiftLeftt);
+     ShiftLeft(in = y, out = yShiftLeft);
+
+     //check if send to regular ALU 
+     And(a=instruction[8], b=instruction[7], out=isRegAlu);
+     //select shifted x and y
+     Mux4Way16(a=yShiftRight, b=xShiftRight, c=yShiftLeft, d=xShiftLeftt, sel=instruction[4..5], out=shiftOut);
+
+     ALU(x=x, y=y, zx=instruction[5], nx=instruction[4], zy=instruction[3], ny=instruction[2],
+      f=instruction[1], no=instruction[0], out=AluOut, zr=pin, ng=pin1);
+
+     Mux16(a=shiftOut, b=AluOut, sel=isRegAlu, out=out, out = preOut);
+
+     Or16Way(in = preOut, out = notZero);
+     Not(in=notZero, out=zr); // zr done
+        
+     IsNg(in=preOut, out=ng); // ng don
+}

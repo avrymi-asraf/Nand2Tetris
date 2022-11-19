@@ -1,0 +1,34 @@
+// This file is part of www.nand2tetris.org
+// and the book "The Elements of Computing Systems"
+// by Nisan and Schocken, MIT Press.
+// File name: projects/05/CPU.hdl
+
+/**
+ *  
+ */
+
+CHIP PcSel {
+
+    IN  isNg,isZr,isPz,zr,ng;       
+
+    OUT load,inc;
+
+    PARTS:
+
+    Or(a=zr, b=ng, out=zrOrNg); 
+    Not(in = zrOrNg, out = pz ); //pz represents if is pozitive
+
+    // if (j3 and pz) or (j2 and zr)or (j1 and ng):
+    //    load = 1
+    // else:
+    //    inc = 1
+
+    And(a=pz, b=isPz, out=pzOut);
+    And(a=zr, b=isZr, out=zrOut);
+    And(a=ng, b=isNg, out=ngOut);
+
+    Or(a=pzOut, b=zrOut, out=pzZrOut);
+    Or(a=pzZrOut, b=ngOut, out=loadOut, out=load);
+    Not(in=loadOut, out=inc);
+
+}
