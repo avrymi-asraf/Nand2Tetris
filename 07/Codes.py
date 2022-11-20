@@ -82,8 +82,11 @@ M = M-D
 M =M+1"""
 
     C_neg = """ 
-
-    """
+@SP
+A = M-1
+M = -M
+"""
+   
     C_eq = """
 @SP
 AM = M-1
@@ -114,25 +117,51 @@ M = D
 
 
 (end)
-""" 
-   
+"""  
+  
     C_lt = """
-
-
-    """ 
-    C_gt = """ """
+""" 
+    
+    C_gt = """ 
+"""
     
     C_and = """
-    """
+@SP
+MA = M-1
+D = M
+
+@SP
+A = M-1
+M = D&M
+"""
+    
     C_or= """
+//OR  
+@SP
+MA = M-1
+D = M
+
+@SP
+A = M-1
+M = D|M
     """
+   
     C_not = """
+@SP
+A = M-1
+M = !M
     """
 
     C_shiftleft = """
-     """
+@SP
+A = M-1
+M = M<<
+"""
 
     C_shiftright = """
-     """
+@SP
+A = M-1
+M = M>>
+"""
 
 

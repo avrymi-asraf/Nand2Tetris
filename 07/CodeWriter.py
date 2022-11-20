@@ -22,7 +22,7 @@ class CodeWriter:
             "gt":Codes.C_gt,
             "and":Codes.C_and,
             "or":Codes.C_or,
-            "not":Codes.C_neg,
+            "not":Codes.C_not,
             "<<":Codes.C_shiftleft,
             ">>":Codes.C_shiftright
         }
