@@ -135,32 +135,20 @@ M = -M
     C_eq = """
 @SP
 AM = M-1
-D = M
-
+D = M   //old value
 A = A-1
-D = D-M
-
+D = D-M // the difference
 @eq._counter
-D;JEQ
-
-//if is not equal 
-@0
-D = A
-@SP
+D;JEQ       //if is not equal         
+@SP          //else
 A = M-1
-M = D
-
+M = 0
 @end._counter
 0;JMP
-
-(eq._counter)
-    @1
-    D = -A
+(eq._counter) //set to true  
     @SP
     A = M-1
-    M = D
-
-
+    M = -1
 (end._counter)
 """  
   
@@ -168,52 +156,41 @@ M = D
 @SP 
 AM = M-1
 D = M
-// if first argument < 0
-@tltz._counter       
+@tltz._counter  // if first argument < 0    
 D;JLT
-//else
-@SP     
+@SP             //else first > 0  
 A = M-1
 D = M
-@false._counter      // if second argument < 0  
+@false._counter   // if second argument < 0  
 D;JLT 
-            //else sub them
-@subthem._counter
+@subthem._counter //else sub them
 0;JMP
-
-(tltz._counter)
+(tltz._counter)    // first argument < 0
     @SP
-    A = M-1
-    D = M
-    // if second argument >0
-    @true._counter
-    D;JGT
-    //else sub them       
-    @subthem._counter    
+    A = M-1         
+    D = M           //D hold the second argument
+    @true._counter  // if second argument >= 0
+    D;JGE     
+    @subthem._counter  //else sub them  
     0;JMP
 (subthem._counter)
     @SP
-    A = M
-    D = D-M //D second argument, M first argument
-    @true._counter
-    D;JGE 
-    //else false
-    @false._counter
+    A = M 
+    D = M-D     //second argument - first argument
+    @true._counter  
+    D;JGT
+    @false._counter //else false
     0;JMP   
 (true._counter)
-    @1
-    D = -A
     @SP
     A = M-1
-    M = D    
+    M = -1    
     @end._counter
     0;JMP
 (false._counter)
-    @0
-    D = A
     @SP
     A = M-1
-    M = D
+    M = 0
 (end._counter)
 """ 
     
@@ -221,52 +198,41 @@ D;JLT
 @SP 
 AM = M-1
 D = M
-// if first argument < 0
-@tltz._counter       
+@tltz._counter   // if first argument < 0    
 D;JLT
-//else
-@SP     
+@SP     //else first argument > 0  
 A = M-1
 D = M
 @true._counter      // if second argument < 0  
 D;JLT 
-            //else sub them
-@subthem._counter
+@subthem._counter   //else sub them
 0;JMP
-
 (tltz._counter)
     @SP
-    A = M-1
+    A = M -1
     D = M
-    // if second argument >0
-    @false._counter
-    D;JGT
-    //else sub them       
-    @subthem._counter    
+    @false._counter // if second argument >0
+    D;JGT      
+    @subthem._counter    //else sub them 
     0;JMP
 (subthem._counter)
     @SP
-    A = M
-    D = D-M //D second argument, M first argument
+    A = M -1
+    D = M-D //D second argument, M first argument
     @false._counter
     D;JGE 
-    //else true
-    @true._counter
+    @true._counter //else true
     0;JMP   
 (true._counter)
-    @1
-    D = -A
     @SP
     A = M-1
-    M = D    
+    M = -1   
     @end._counter
     0;JMP
 (false._counter)
-    @0
-    D = A
     @SP
     A = M-1
-    M = D
+    M = 0
 (end._counter) 
 """
     
@@ -311,11 +277,3 @@ M = M>>
 
 
 
-
-    # "SCREEN":"16384",
-    #         "KBD":"24576",
-    #         "SP":"0",
-    #         "LCL":"1",
-    #         "ARG":"2",
-    #         "THIS":"3",
-    #         "THAT":"4"
