@@ -1,7 +1,6 @@
 
 class Codes:
 
-
     push_constant =  """
 //push
 @index
@@ -34,48 +33,49 @@ M = D
 @SP
 M = M+1"""
 
-    push_static = """"
-"""
 
-    pop_argument = """
-    
-//push
+    push_static = """
+//go to static at the symbol "Xxx.i". write it in the top of the stack 
+
+@index
+D = M
+
+// write in SP
+@SP
+A = M
+M = D
+
+// inc SP
+@SP
+M = M+1"""
+
+
+    pop_argument = """ 
+//find segment at index
 @segment
 D = M
+
 @index
 D=D+A
-//
+
 @_temp_index
 M = D
 
-@SP
-A = M
-D = M
-@_temp_index
-A = M
-M = D
-
-@SP
-M =M-1"""
-
-    C_pop =  """
-//pop
+//take data from top of stack
 @SP
 A = M
 D = M
 
-@data
+//write data inside segment at the given index
+@_temp_index
 M = D
 
-@index
-D = A
+//decrement SP
+@SP
+M =M-1
 
-@segment 
-D = D + A
+"""
 
-@D
-M = data
-    """
 
     C_add = """
 //add
