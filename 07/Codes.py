@@ -142,9 +142,109 @@ M = D
 """  
   
     C_lt = """
+@SP 
+MA = M-1
+D = M
+// if first argument < 0
+@tltz       
+D;JLT
+//else
+@SP     
+A = A-1
+D = M
+@false      // if second argument < 0  
+D;JLT 
+            //else sub them
+@subthem
+0;JMP
+
+(tltz)
+    @SP
+    A = A-1
+    D = M
+    // if second argument >0
+    @true
+    D;JGT
+    //else sub them       
+    @subthem    
+    0;JMP
+(subthem)
+    @SP
+    A = M
+    D = D-M //D second argument, M first argument
+    @true
+    D;JGE 
+    //else false
+    @false
+    0;JMP   
+(true)
+    @1
+    D = -A
+    @SP
+    A = M-1
+    M = D    
+    @end
+    0;JMP
+(false)
+    @0
+    D = A
+    @SP
+    A = M-1
+    M = D
+(end)
 """ 
     
-    C_gt = """ 
+    C_gt = """
+@SP 
+MA = M-1
+D = M
+// if first argument < 0
+@tltz       
+D;JLT
+//else
+@SP     
+A = A-1
+D = M
+@true      // if second argument < 0  
+D;JLT 
+            //else sub them
+@subthem
+0;JMP
+
+(tltz)
+    @SP
+    A = A-1
+    D = M
+    // if second argument >0
+    @false
+    D;JGT
+    //else sub them       
+    @subthem    
+    0;JMP
+(subthem)
+    @SP
+    A = M
+    D = D-M //D second argument, M first argument
+    @false
+    D;JGE 
+    //else true
+    @true
+    0;JMP   
+(true)
+    @1
+    D = -A
+    @SP
+    A = M-1
+    M = D    
+    @end
+    0;JMP
+(false)
+    @0
+    D = A
+    @SP
+    A = M-1
+    M = D
+(end) 
 """
     
     C_and = """
