@@ -16,8 +16,14 @@ class CodeWriter:
     aritmetic_commands = {
             "add":Codes.C_add,
             "sub":Codes.C_sub,
+            "neg":Codes.C_neg,
+            "eq":Codes.C_eq,
+            "lt":Codes.C_lt,
+            "gt":Codes.C_gt,
+            "and":Codes.C_and,
+            "or":Codes.C_or,
+            "not":Codes.C_neg,
         }
-
     def __init__(self, output_stream: typing.TextIO) -> None:
         """Initializes the CodeWriter.
 

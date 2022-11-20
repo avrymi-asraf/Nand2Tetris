@@ -3,9 +3,9 @@
 // by Nisan and Schocken, MIT Press.
 // File name: projects/07/StackArithmetic/SimpleAdd/SimpleAdd.tst
 
-load SimpleAdd.asm,
-output-file SimpleAdd.out,
-compare-to SimpleAdd.cmp,
+load SimpleEq.asm,
+output-file SimpleEq.out,
+compare-to SimpleEq.cmp,
 output-list RAM[0]%D2.6.2 RAM[256]%D2.6.2;
 
 set RAM[0] 256,  // initializes the stack pointer 
