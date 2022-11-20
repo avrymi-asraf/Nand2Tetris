@@ -9,23 +9,24 @@ import typing
 from Codes import Codes
 from Command import Command
 
+
 class CodeWriter:
     """Translates VM commands into Hack assembly code."""
 
-    #TODO add all commands
+    # TODO add all commands
     aritmetic_commands = {
-            "add":Codes.C_add,
-            "sub":Codes.C_sub,
-            "neg":Codes.C_neg,
-            "eq":Codes.C_eq,
-            "lt":Codes.C_lt,
-            "gt":Codes.C_gt,
-            "and":Codes.C_and,
-            "or":Codes.C_or,
-            "not":Codes.C_not,
-            "<<":Codes.C_shiftleft,
-            ">>":Codes.C_shiftright
-        }
+        "add": Codes.C_add,
+        "sub": Codes.C_sub,
+        "neg": Codes.C_neg,
+        "eq": Codes.C_eq,
+        "lt": Codes.C_lt,
+        "gt": Codes.C_gt,
+        "and": Codes.C_and,
+        "or": Codes.C_or,
+        "not": Codes.C_not,
+        "<<": Codes.C_shiftleft,
+        ">>": Codes.C_shiftright
+    }
 
     def __init__(self, output_stream: typing.TextIO) -> None:
         """Initializes the CodeWriter.
@@ -37,7 +38,7 @@ class CodeWriter:
         self.output_stream = output_stream
 
         self.file_name = None
-        #TODO add file name
+        # TODO add file name
 
         pass
 
@@ -48,7 +49,7 @@ class CodeWriter:
         Args:
             filename (str): The name of the VM file.
         """
-                
+
         # This function is useful when translating code that handles the
         # static segment. For example, in order to prevent collisions between two
         # .vm files which push/pop to the static segment, one can use the current
@@ -60,11 +61,9 @@ class CodeWriter:
         # For example, using code similar to:
         # input_filename, input_extension = os.path.splitext(os.path.basename(input_file.name))
 
-
         self.file_name = filename
 
         pass
-
 
     def write_arithmetic(self, command: str) -> None:
         """Writes assembly code that is the translation of the given 
@@ -84,7 +83,6 @@ class CodeWriter:
         """
 
         self.output_stream.write(self.aritmetic_commands[command])
-        
 
     def write_push_pop(self, command: str, segment: str, index: int) -> None:
         """Writes assembly code that is the translation of the given 
@@ -100,41 +98,66 @@ class CodeWriter:
         # assembly process, the Hack assembler will allocate these symbolic
         # variables to the RAM, starting at address 16.
 
-
         # Push command:
         # example : push segment index
-        # go to segment at the given index, and write it in the top of the stack 
+        # go to segment at the given index, and write it in the top of the stack
         # (sp++, because we increase the stack)
         if command == Command.C_PUSH:
 
             # push constant
             # example : push constant index
-            # take the index as int, and write it in the top of the stack 
+            # take the index as int, and write it in the top of the stack
             # (sp++, because we increase the stack)
             if segment == "constant":
-                self.output_stream.write(Codes.push_constant.replace("index", index))
+                self.output_stream.write(
+                    Codes.push_constant.replace("index", index))
 
-            # push static TODO change
+            # push static
+            # example : push static i
+            # go to static at the symbol "Xxx.i". write it in the top of the stack
+            # (sp++, because we increase the stack)
             if segment == "static":
-                self.output_stream.write(Codes.push_static.replace("index",index))
+                self.output_stream.write(Codes.push_static.replace(
+                    "index", (self.file_name + "." + str(index))))
 
             # push other segment
             elif segment in Command.BASIC_SEGMENTS:
-                self.output_stream.write(Codes.push_argument.replace("index",index).replace("segment", segment))
+                self.output_stream.write(Codes.push_argument.replace(
+                    "index", index).replace("segment", segment))
 
             else:
-                #illigal segment 
-                raise ValueError("is {} but not segment faund".format(Command.C_PUSH))
+                # illigal segment
+                raise ValueError(
+                    "is {} but not segment faund".format(Command.C_PUSH))
 
         # Pop command:
         # example : pop segment index
-        # take the top of the stack (sp--, because we reduce the stack), and put it inside segment at the given index 
+        # take the top of the stack (sp--, because we reduce the stack),
+        #  and put it inside segment at the given index
         elif command == Command.C_POP:
-                # pop constant
-                if segment == "constant":
-                    self.output_stream.write(Codes.push_constant.replace("index",index))
 
-        
+            # pop constant TODO is this possible?
+            if segment == "constant":
+                self.output_stream.write(
+                    Codes.pop_constant.replace("index", index))
+
+            #pop static TODO is this possible?
+            if segment == "static":
+                self.output_stream.write(Codes.pop_static.replace(
+                    "index", (self.file_name + "." + str(index))))
+
+            # pop other segment
+            # example : pop segment index
+            # take the top of the stack (sp--, because we reduce the stack),
+            # and put it inside segment at the given index
+            elif segment in Command.BASIC_SEGMENTS:
+                self.output_stream.write(Codes.pop_argument.replace(
+                    "index", index).replace("segment", segment))
+
+            else:
+                # illigal segment
+                raise ValueError(
+                    "is {} but not segment faund".format(Command.C_POP))
 
 
 
@@ -152,7 +175,7 @@ class CodeWriter:
         # This is irrelevant for project 7,
         # you will implement this in project 8!
         pass
-    
+
     def write_goto(self, label: str) -> None:
         """Writes assembly code that affects the goto command.
 
@@ -162,7 +185,7 @@ class CodeWriter:
         # This is irrelevant for project 7,
         # you will implement this in project 8!
         pass
-    
+
     def write_if(self, label: str) -> None:
         """Writes assembly code that affects the if-goto command. 
 
@@ -172,7 +195,7 @@ class CodeWriter:
         # This is irrelevant for project 7,
         # you will implement this in project 8!
         pass
-    
+
     def write_function(self, function_name: str, n_vars: int) -> None:
         """Writes assembly code that affects the function command. 
         The handling of each "function Xxx.foo" command within the file Xxx.vm
@@ -192,7 +215,7 @@ class CodeWriter:
         # repeat n_vars times:  // n_vars = number of local variables
         #   push constant 0     // initializes the local variables to 0
         pass
-    
+
     def write_call(self, function_name: str, n_args: int) -> None:
         """Writes assembly code that affects the call command. 
         Let "Xxx.foo" be a function within the file Xxx.vm.
@@ -222,7 +245,7 @@ class CodeWriter:
         # goto function_name    // transfers control to the callee
         # (return_address)      // injects the return address label into the code
         pass
-    
+
     def write_return(self) -> None:
         """Writes assembly code that affects the return command."""
         # This is irrelevant for project 7,
@@ -238,7 +261,6 @@ class CodeWriter:
         # LCL = *(frame-4)              // restores LCL for the caller
         # goto return_address           // go to the return address
         pass
-
 
 
 # push constant 3
