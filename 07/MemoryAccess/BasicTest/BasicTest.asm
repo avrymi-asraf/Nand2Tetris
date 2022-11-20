@@ -12,11 +12,11 @@ M = M+1
 //**pop argument**
 
 //find address
-@local
+@LCL
 D = M
 
 @0
-D = D+A
+D = D + A
 
 @_temp_0
 M = D
@@ -57,11 +57,11 @@ M = M+1
 //**pop argument**
 
 //find address
-@argument
+@ARG
 D = M
 
 @2
-D = D+A
+D = D + A
 
 @_temp_2
 M = D
@@ -82,11 +82,11 @@ M = M-1
 //**pop argument**
 
 //find address
-@argument
+@ARG
 D = M
 
 @1
-D = D+A
+D = D + A
 
 @_temp_1
 M = D
@@ -117,11 +117,11 @@ M = M+1
 //**pop argument**
 
 //find address
-@this
+@THIS
 D = M
 
 @6
-D = D+A
+D = D + A
 
 @_temp_6
 M = D
@@ -162,11 +162,11 @@ M = M+1
 //**pop argument**
 
 //find address
-@that
+@THAT
 D = M
 
 @5
-D = D+A
+D = D + A
 
 @_temp_5
 M = D
@@ -187,11 +187,11 @@ M = M-1
 //**pop argument**
 
 //find address
-@that
+@THAT
 D = M
 
 @2
-D = D+A
+D = D + A
 
 @_temp_2
 M = D
@@ -222,11 +222,11 @@ M = M+1
 //**pop argument**
 
 //find address
-@temp
+@TEMP
 D = M
 
 @6
-D = D+A
+D = D + A
 
 @_temp_6
 M = D
@@ -245,9 +245,9 @@ M = M-1
 
 
 //**push argument**
-//go to local at 0
+//go to LCL at 0
 
-@local
+@LCL
 D = M
 
 @0
@@ -265,9 +265,9 @@ M = D
 @SP
 M = M+1
 //**push argument**
-//go to that at 5
+//go to THAT at 5
 
-@that
+@THAT
 D = M
 
 @5
@@ -296,9 +296,9 @@ M = D+M
 @SP
 M =M+1
 //**push argument**
-//go to argument at 1
+//go to ARG at 1
 
-@argument
+@ARG
 D = M
 
 @1
@@ -327,9 +327,9 @@ M = M-D
 @SP
 M =M+1
 //**push argument**
-//go to this at 6
+//go to THIS at 6
 
-@this
+@THIS
 D = M
 
 @6
@@ -347,9 +347,9 @@ M = D
 @SP
 M = M+1
 //**push argument**
-//go to this at 6
+//go to THIS at 6
 
-@this
+@THIS
 D = M
 
 @6
@@ -389,9 +389,9 @@ M = M-D
 @SP
 M =M+1
 //**push argument**
-//go to temp at 6
+//go to TEMP at 6
 
-@temp
+@TEMP
 D = M
 
 @6
