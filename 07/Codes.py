@@ -128,8 +128,11 @@ M = M-D
 M =M+1"""
 
     C_neg = """ 
-
-    """
+@SP
+A = M-1
+M = -M
+"""
+   
     C_eq = """
 @SP
 AM = M-1
@@ -160,25 +163,151 @@ M = D
 
 
 (end)
-""" 
-   
+"""  
+  
     C_lt = """
+@SP 
+MA = M-1
+D = M
+// if first argument < 0
+@tltz       
+D;JLT
+//else
+@SP     
+A = A-1
+D = M
+@false      // if second argument < 0  
+D;JLT 
+            //else sub them
+@subthem
+0;JMP
 
+(tltz)
+    @SP
+    A = A-1
+    D = M
+    // if second argument >0
+    @true
+    D;JGT
+    //else sub them       
+    @subthem    
+    0;JMP
+(subthem)
+    @SP
+    A = M
+    D = D-M //D second argument, M first argument
+    @true
+    D;JGE 
+    //else false
+    @false
+    0;JMP   
+(true)
+    @1
+    D = -A
+    @SP
+    A = M-1
+    M = D    
+    @end
+    0;JMP
+(false)
+    @0
+    D = A
+    @SP
+    A = M-1
+    M = D
+(end)
+""" 
+    
+    C_gt = """
+@SP 
+MA = M-1
+D = M
+// if first argument < 0
+@tltz       
+D;JLT
+//else
+@SP     
+A = A-1
+D = M
+@true      // if second argument < 0  
+D;JLT 
+            //else sub them
+@subthem
+0;JMP
 
-    """ 
-    C_gt = """ """
+(tltz)
+    @SP
+    A = A-1
+    D = M
+    // if second argument >0
+    @false
+    D;JGT
+    //else sub them       
+    @subthem    
+    0;JMP
+(subthem)
+    @SP
+    A = M
+    D = D-M //D second argument, M first argument
+    @false
+    D;JGE 
+    //else true
+    @true
+    0;JMP   
+(true)
+    @1
+    D = -A
+    @SP
+    A = M-1
+    M = D    
+    @end
+    0;JMP
+(false)
+    @0
+    D = A
+    @SP
+    A = M-1
+    M = D
+(end) 
+"""
     
     C_and = """
-    """
+@SP
+MA = M-1
+D = M
+
+@SP
+A = M-1
+M = D&M
+"""
+    
     C_or= """
+//OR  
+@SP
+MA = M-1
+D = M
+
+@SP
+A = M-1
+M = D|M
     """
+   
     C_not = """
+@SP
+A = M-1
+M = !M
     """
 
     C_shiftleft = """
-     """
+@SP
+A = M-1
+M = M<<
+"""
 
     C_shiftright = """
-     """
+@SP
+A = M-1
+M = M>>
+"""
 
 
