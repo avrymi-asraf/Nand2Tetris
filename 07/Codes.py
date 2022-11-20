@@ -101,8 +101,8 @@ M = D
 0;JMP
 
 (eq)
-    @-1
-    D = A
+    @1
+    D = -A
     @SP
     A = M-1
     M = D

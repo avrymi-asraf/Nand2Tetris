@@ -24,24 +24,23 @@ D = M
 A = A-1
 D = D-M
 
-@eq
+@EQ
 D;JEQ
- 
+//if is not equal 
 @0
 D = A
 @SP
 A = M-1
 M = D
 
-@end
+@END
 0;JMP
 
-(eq)
-@-1
-D = A
-@SP
-A = M-1
-M = D
-
-
-(end)
+(EQ)
+    @1
+    D = -A
+    @SP
+    A = M-1
+    M = D
+(END)
+@1
