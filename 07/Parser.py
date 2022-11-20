@@ -98,19 +98,10 @@ class Parser:
             return None
 
         else:
-            word1 = splited_command[0]
-            word1 = word1.replace(" ", "")
+            word1 = splited_command[0].replace(" ", "")
 
             # arithmetic: add, sub, neg, eq, lt, gt, and, or, not
-            if ((word1 == "add")
-                or (word1 == "sub")
-                or (word1 == "neg")
-                or (word1 == "eq")
-                or (word1 == "lt")
-                or (word1 == "gt")
-                or (word1 == "and")
-                or (word1 == "or")
-                    or (word1 == "not")):
+            if word1 in Command.ARITHMETIC_ACTIONS:
                 return Command.C_ARITHMETIC
 
             elif word1 == "push":

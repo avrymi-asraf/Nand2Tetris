@@ -1,80 +1,80 @@
 
 class Codes:
     push_constant =  """
-    //push
-    @index
-    D = A
-    @SP
-    A = M
-    M = D
+//push
+@index
+D = A
+@SP
+A = M
+M = D
 
-    @SP
-    M =M+1"""
+@SP
+M =M+1"""
 
     push_argument = """
-    //push
-    @segment
-    D = M
-    @index
-    D=D+A
-    //
-    @_index
-    M = D
+//push
+@segment
+D = M
+@index
+D=D+A
+//
+@_index
+M = D
 
-    @SP
-    A = M
-    D = M
-    @_temp_index
-    A = M
-    M = D
+@SP
+A = M
+D = M
+@_temp_index
+A = M
+M = D
 
-    @SP
-    M =M-1"""
+@SP
+M =M-1"""
 
     C_pop =  """
-    //pop
-    @SP
-    A = M
-    D = M
+//pop
+@SP
+A = M
+D = M
 
-    @data
-    M = D
+@data
+M = D
 
-    @index
-    D = A
+@index
+D = A
 
-    @segment 
-    D = D + A
+@segment 
+D = D + A
 
-    @D
-    M = data
+@D
+M = data
     """
 
     C_add = """
-    //add
-    @SP
-    AM=M-1
-    D=M
+//add
+@SP
+AM=M-1
+D=M
 
-    @SP 
-    AM = M-1
-    M = D+M
+@SP 
+AM = M-1
+M = D+M
 
-    @SP
-    M =M+1"""
+@SP
+M =M+1"""
 
     C_sub = """
-    //add
-    @SP
-    AM=M-1
-    D=M
+//add
+@SP
+AM=M-1
+D=M
 
-    @SP 
-    AM = M-1
-    M = M-D
+@SP 
+AM = M-1
+M = M-D
 
-    @SP
-    M =M+1"""
+@SP
+M =M+1"""
 
     C_neg = """ 
 

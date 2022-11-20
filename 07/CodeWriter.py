@@ -92,7 +92,7 @@ class CodeWriter:
         if command == Command.C_PUSH:
             if segment == "constant":
                 self.output_stream.write(Codes.push_constant.replace("index",index))
-            elif segment in Command.all_segments:
+            elif segment in Command.SEGMENTS:
                 self.output_stream.write(Codes.push_argument.replace("index",index).replace("segment",segment))
             else:
                 raise ValueError("is {} but not segment faund".format(Command.C_PUSH))
