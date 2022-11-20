@@ -59,7 +59,9 @@ M = M+1"""
 
 //take data from top of stack
 @SP
-A = M - 1 
+A = M 
+
+A = A-1
 D = M
 
 //write data inside segment at the given index
