@@ -47,10 +47,8 @@ class CodeWriter:
         self.output_stream = output_stream
 
         self.file_name = None
-        # TODO add file name
-
-        pass
-
+        self.counter_label  = 1 
+        
     def set_file_name(self, filename: str) -> None:
         """Informs the code writer that the translation of a new VM file is 
         started.
@@ -90,8 +88,11 @@ class CodeWriter:
       - neg, not, shiftleft, shiftright
         
         """
-
-        self.output_stream.write(self.aritmetic_commands[command])
+        code = self.aritmetic_commands[command]
+        if command in ("lt", "gt", "eq"):
+            code = code.replace("_counter",str(self.counter_label))
+            self.counter_label += 1
+        self.output_stream.write(code)
 
     def write_push_pop(self, command: str, segment: str, index: int) -> None:
         """Writes assembly code that is the translation of the given 
@@ -278,6 +279,3 @@ class CodeWriter:
         # goto return_address           // go to the return address
         pass
 
-
-# push constant 3
-# push constant 3
