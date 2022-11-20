@@ -29,7 +29,11 @@ class CodeWriter:
     }
 
     segments = {
-        "local": Codes.C_add,
+        "local": "LCL",
+        "argument": "ARG",
+        "this": "THIS",
+        "that": "THAT",
+        "temp": "TEMP"
     }
 
 
@@ -129,7 +133,7 @@ class CodeWriter:
             # push other segment
             elif segment in Command.BASIC_SEGMENTS:
                 self.output_stream.write(Codes.push_argument.replace(
-                    "index", index).replace("segment", segment))
+                    "index", index).replace("segment", self.segments[segment]))
 
             else:
                 # illigal segment
@@ -148,7 +152,7 @@ class CodeWriter:
             # and put it inside segment at the given index
             if segment in Command.BASIC_SEGMENTS:
                 self.output_stream.write(Codes.pop_argument.replace(
-                    "index", index).replace("segment", segment))
+                    "index", index).replace("segment", self.segments[segment]))
 
             #pop static
             # example : pop static i
