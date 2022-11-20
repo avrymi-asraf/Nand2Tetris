@@ -36,7 +36,6 @@ M = D
 @SP
 M = M+1"""
 
-
     push_static = """
 //**push static**
 //go to static at the symbol "Xxx.i". write it in the top of the stack 
@@ -53,9 +52,35 @@ M = D
 @SP
 M = M+1"""
 
-
     pop_argument = """ 
 //**pop argument**
+
+//find address
+@segment
+D = M
+
+@index
+D = D+A
+
+@_temp_index
+M = D
+
+//take data from top of stack
+@SP
+A = M - 1 
+D = M
+
+@_temp_index
+M = D
+
+//decrement SP
+@SP
+M = M-1
+
+"""
+
+    pop_static = """ 
+//**pop static**
 
 //take data from top of stack
 @SP
@@ -69,35 +94,6 @@ M = D
 //decrement SP
 @SP
 M = M-1
-
-"""
-
-
-    pop_static = """ 
-//**pop static**
-
-//find address :  segment at index
-@segment
-D = M
-
-@index
-D=D+A
-
-@_temp_index
-M = D
-
-//take data from top of stack
-@SP
-A = M - 1 
-D = M
-
-//write data inside segment at the given index
-@_temp_index
-M = D
-
-//decrement SP
-@SP
-M =M-1
 
 """
 
