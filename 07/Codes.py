@@ -3,7 +3,7 @@ class Codes:
     #TODO delete lines
 
     push_constant =  """
-//push
+//**push constant**
 @index
 D = A
 
@@ -15,6 +15,7 @@ M = D
 M = M+1"""
 
     push_argument =  """
+//**push argument**
 //go to segment at index
 
 @segment
@@ -37,6 +38,7 @@ M = M+1"""
 
 
     push_static = """
+//**push static**
 //go to static at the symbol "Xxx.i". write it in the top of the stack 
 
 @index
@@ -53,10 +55,11 @@ M = M+1"""
 
 
     pop_argument = """ 
+//**pop argument**
 
 //take data from top of stack
 @SP
-A = M
+A = M - 1 
 D = M
 
 //write data inside segment at the given index
@@ -71,6 +74,7 @@ M = M-1
 
 
     pop_static = """ 
+//**pop static**
 
 //find address :  segment at index
 @segment
@@ -84,7 +88,7 @@ M = D
 
 //take data from top of stack
 @SP
-A = M
+A = M - 1 
 D = M
 
 //write data inside segment at the given index
@@ -96,7 +100,6 @@ M = D
 M =M-1
 
 """
-
 
     C_add = """
 //add

@@ -26,13 +26,17 @@ def translate_file(
 
     parser = Parser(input_file)
     code_writer = CodeWriter(output_file)
+    
+    input_filename, input_extension = os.path.splitext(os.path.basename(input_file.name))
+
+    code_writer.set_file_name(input_filename)
 
     while parser.has_more_commands:
         if parser.command_type() == Command.C_ARITHMETIC:
             code_writer.write_arithmetic(parser.arg1())
         
         elif parser.command_type() in ( Command.C_PUSH, Command.C_POP ):
-            code_writer.write_push_pop(parser.command_type(),parser.arg1(),parser.arg2())
+            code_writer.write_push_pop(parser.command_type() ,parser.arg1(), parser.arg2())
         
         elif parser.command_type() == Command.C_LABEL:
             pass

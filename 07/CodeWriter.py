@@ -116,7 +116,7 @@ class CodeWriter:
             # example : push static i
             # go to static at the symbol "Xxx.i". write it in the top of the stack
             # (sp++, because we increase the stack)
-            if segment == "static":
+            elif segment == "static":
                 self.output_stream.write(Codes.push_static.replace(
                     "index", (self.file_name + "." + str(index))))
 
@@ -128,7 +128,7 @@ class CodeWriter:
             else:
                 # illigal segment
                 raise ValueError(
-                    "is {} but not segment faund".format(Command.C_PUSH))
+                    "is {} but not segment faund, the given segment is {} .".format(Command.C_PUSH, segment))
 
         # Pop command:
         # example : pop segment index
