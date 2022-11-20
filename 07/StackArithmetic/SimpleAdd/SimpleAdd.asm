@@ -19,7 +19,7 @@ M = D
 M =M+1
 //add
 @SP
-A=M
+AM=M-1
 D=M
 
 @SP 

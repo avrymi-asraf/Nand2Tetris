@@ -1,64 +1,96 @@
 
-# push segment index
-push =  """
-//push
-@var
-D = A
-@SP
-A = M
-M = D
+class Codes:
+    push_constant =  """
+    //push
+    @index
+    D = A
+    @SP
+    A = M
+    M = D
 
-@SP
-M =M+1"""
+    @SP
+    M =M+1"""
 
+    push_argument = """
+    //push
+    @segment
+    D = M
+    @index
+    D=D+A
+    //
+    @_index
+    M = D
 
-#pop segment index
+    @SP
+    A = M
+    D = M
+    @_temp_index
+    A = M
+    M = D
 
-pop =  """
-//push
-@SP
-A = M
-D = M
+    @SP
+    M =M-1"""
 
-@data
-M = D
+    C_pop =  """
+    //pop
+    @SP
+    A = M
+    D = M
 
-@index
-D = A
+    @data
+    M = D
 
-@segment 
-D = D + A
+    @index
+    D = A
 
-@D
-M = data
-"""
+    @segment 
+    D = D + A
 
-add = """
-//add
-@SP
-A=M
-D=M
+    @D
+    M = data
+    """
 
-@SP 
-AM = M-1
-M = D+M
+    C_add = """
+    //add
+    @SP
+    AM=M-1
+    D=M
 
-@SP
-M =M+1"""
+    @SP 
+    AM = M-1
+    M = D+M
 
-sub = """
-//sub
-@SP
-A=M
-D=M
+    @SP
+    M =M+1"""
 
-@SP 
-AM = M-1
-M = M-D
+    C_sub = """
+    //add
+    @SP
+    AM=M-1
+    D=M
 
-@SP
-M =M+1"""
+    @SP 
+    AM = M-1
+    M = M-D
 
+    @SP
+    M =M+1"""
+
+    C_neg = """ 
+
+    """
+    C_eq = """
+    """ 
+    C_lt = """
+    """ 
+    C_gt = """ """
+    
+    C_and = """
+    """
+    C_or= """
+    """
+    C_not = """
+    """
 
 
 

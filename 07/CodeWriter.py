@@ -6,7 +6,7 @@ as allowed by the Creative Common Attribution-NonCommercial-ShareAlike 3.0
 Unported [License](https://creativecommons.org/licenses/by-nc-sa/3.0/).
 """
 import typing
-import Codes
+from Codes import Codes
 from Command import Command
 
 class CodeWriter:
@@ -14,11 +14,8 @@ class CodeWriter:
 
     #TODO add all commands
     aritmetic_commands = {
-            "add":Codes.add,
-            "sub":Codes.sub,
-            
-            "C_PUSH":Codes.push,
-            "C_POP":Codes.pop
+            "add":Codes.C_add,
+            "sub":Codes.C_sub,
         }
 
     def __init__(self, output_stream: typing.TextIO) -> None:
@@ -91,30 +88,14 @@ class CodeWriter:
         # assembly process, the Hack assembler will allocate these symbolic
         # variables to the RAM, starting at address 16.
 
-        #TODO use segment and index
-
-        # C_push
-
         ## C_push constant
         if command == Command.C_PUSH:
             if segment == "constant":
-                self.output_stream.write(Codes.push.replace("var",index))
-            elif segment == "local":
-                pass
-            elif segment == "argument":
-                pass
-            elif segment == "this":
-                pass
-            elif segment == "that":
-                pass
-            elif segment == "static":
-                pass
-            elif segment == "pointer":
-                pass
-            elif segment == "temp":
-                pass
+                self.output_stream.write(Codes.push_constant.replace("index",index))
+            elif segment in Command.all_segments:
+                self.output_stream.write(Codes.push_argument.replace("index",index).replace("segment",segment))
             else:
-                raise ValueError("is {} but not segment faund",Command.C_PUSH)
+                raise ValueError("is {} but not segment faund".format(Command.C_PUSH))
         elif command == Command.C_POP:
             pass
 

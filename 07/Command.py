@@ -19,7 +19,8 @@ class Command:
     C_FUNCTION = "C_FUNCTION"
     C_RETURN = "C_RETURN" 
     C_CALL = "C_CALL"
- 
+    all_segments = ["argument","this","that","static","pointer","temp","local"]
+    
     def __init__(self) -> None:
         pass
 
