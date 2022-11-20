@@ -71,6 +71,7 @@ A = M - 1
 D = M
 
 @_temp_index
+A = M
 M = D
 
 //decrement SP

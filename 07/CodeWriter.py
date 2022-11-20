@@ -33,7 +33,8 @@ class CodeWriter:
         "argument": "ARG",
         "this": "THIS",
         "that": "THAT",
-        "temp": "TEMP"
+        "temp": "TEMP",
+        "pointer": "3",
     }
 
 
@@ -112,6 +113,7 @@ class CodeWriter:
         # example : push segment index
         # go to segment at the given index, and write it in the top of the stack
         # (sp++, because we increase the stack)
+
         if command == Command.C_PUSH:
 
             # push constant

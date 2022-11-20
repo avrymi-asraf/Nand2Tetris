@@ -27,6 +27,7 @@ A = M - 1
 D = M
 
 @_temp_0
+A = M
 M = D
 
 //decrement SP
@@ -72,6 +73,7 @@ A = M - 1
 D = M
 
 @_temp_2
+A = M
 M = D
 
 //decrement SP
@@ -97,6 +99,7 @@ A = M - 1
 D = M
 
 @_temp_1
+A = M
 M = D
 
 //decrement SP
@@ -132,6 +135,7 @@ A = M - 1
 D = M
 
 @_temp_6
+A = M
 M = D
 
 //decrement SP
@@ -177,6 +181,7 @@ A = M - 1
 D = M
 
 @_temp_5
+A = M
 M = D
 
 //decrement SP
@@ -202,6 +207,7 @@ A = M - 1
 D = M
 
 @_temp_2
+A = M
 M = D
 
 //decrement SP
@@ -237,6 +243,7 @@ A = M - 1
 D = M
 
 @_temp_6
+A = M
 M = D
 
 //decrement SP

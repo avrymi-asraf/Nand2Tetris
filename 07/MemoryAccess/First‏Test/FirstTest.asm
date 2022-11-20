@@ -1,6 +1,6 @@
 
 //**push constant**
-@3030
+@10
 D = A
 
 @SP
@@ -12,7 +12,7 @@ M = M+1
 //**pop argument**
 
 //find address
-@3
+@LCL
 D = M
 
 @0
@@ -27,7 +27,6 @@ A = M - 1
 D = M
 
 @_temp_0
-A = M
 M = D
 
 //decrement SP
@@ -36,7 +35,17 @@ M = M-1
 
 
 //**push constant**
-@3040
+@21
+D = A
+
+@SP
+A = M
+M = D
+
+@SP
+M = M+1
+//**push constant**
+@22
 D = A
 
 @SP
@@ -48,43 +57,7 @@ M = M+1
 //**pop argument**
 
 //find address
-@3
-D = M
-
-@1
-D = D + A
-
-@_temp_1
-M = D
-
-//take data from top of stack
-@SP
-A = M - 1 
-D = M
-
-@_temp_1
-A = M
-M = D
-
-//decrement SP
-@SP
-M = M-1
-
-
-//**push constant**
-@32
-D = A
-
-@SP
-A = M
-M = D
-
-@SP
-M = M+1 
-//**pop argument**
-
-//find address
-@THIS
+@ARG
 D = M
 
 @2
@@ -99,7 +72,31 @@ A = M - 1
 D = M
 
 @_temp_2
-A = M
+M = D
+
+//decrement SP
+@SP
+M = M-1
+
+ 
+//**pop argument**
+
+//find address
+@ARG
+D = M
+
+@1
+D = D + A
+
+@_temp_1
+M = D
+
+//take data from top of stack
+@SP
+A = M - 1 
+D = M
+
+@_temp_1
 M = D
 
 //decrement SP
@@ -108,7 +105,7 @@ M = M-1
 
 
 //**push constant**
-@46
+@36
 D = A
 
 @SP
@@ -120,7 +117,7 @@ M = M+1
 //**pop argument**
 
 //find address
-@THAT
+@THIS
 D = M
 
 @6
@@ -135,7 +132,111 @@ A = M - 1
 D = M
 
 @_temp_6
+M = D
+
+//decrement SP
+@SP
+M = M-1
+
+
+//**push constant**
+@42
+D = A
+
+@SP
 A = M
+M = D
+
+@SP
+M = M+1
+//**push constant**
+@45
+D = A
+
+@SP
+A = M
+M = D
+
+@SP
+M = M+1 
+//**pop argument**
+
+//find address
+@THAT
+D = M
+
+@5
+D = D + A
+
+@_temp_5
+M = D
+
+//take data from top of stack
+@SP
+A = M - 1 
+D = M
+
+@_temp_5
+M = D
+
+//decrement SP
+@SP
+M = M-1
+
+ 
+//**pop argument**
+
+//find address
+@THAT
+D = M
+
+@2
+D = D + A
+
+@_temp_2
+M = D
+
+//take data from top of stack
+@SP
+A = M - 1 
+D = M
+
+@_temp_2
+M = D
+
+//decrement SP
+@SP
+M = M-1
+
+
+//**push constant**
+@510
+D = A
+
+@SP
+A = M
+M = D
+
+@SP
+M = M+1 
+//**pop argument**
+
+//find address
+@TEMP
+D = M
+
+@6
+D = D + A
+
+@_temp_6
+M = D
+
+//take data from top of stack
+@SP
+A = M - 1 
+D = M
+
+@_temp_6
 M = D
 
 //decrement SP
@@ -144,9 +245,9 @@ M = M-1
 
 
 //**push argument**
-//go to 3 at 0
+//go to LCL at 0
 
-@3
+@LCL
 D = M
 
 @0
@@ -164,12 +265,12 @@ M = D
 @SP
 M = M+1
 //**push argument**
-//go to 3 at 1
+//go to THAT at 5
 
-@3
+@THAT
 D = M
 
-@1
+@5
 D = D+A
 
 A = D
@@ -195,12 +296,12 @@ M = D+M
 @SP
 M =M+1
 //**push argument**
-//go to THIS at 2
+//go to ARG at 1
 
-@THIS
+@ARG
 D = M
 
-@2
+@1
 D = D+A
 
 A = D
@@ -226,9 +327,71 @@ M = M-D
 @SP
 M =M+1
 //**push argument**
-//go to THAT at 6
+//go to THIS at 6
 
-@THAT
+@THIS
+D = M
+
+@6
+D = D+A
+
+A = D
+D = M
+
+// write in SP
+@SP
+A = M
+M = D
+
+// inc SP
+@SP
+M = M+1
+//**push argument**
+//go to THIS at 6
+
+@THIS
+D = M
+
+@6
+D = D+A
+
+A = D
+D = M
+
+// write in SP
+@SP
+A = M
+M = D
+
+// inc SP
+@SP
+M = M+1
+//add
+@SP
+AM=M-1
+D=M
+
+@SP 
+AM = M-1
+M = D+M
+
+@SP
+M =M+1
+//add
+@SP
+AM=M-1
+D=M
+
+@SP 
+AM = M-1
+M = M-D
+
+@SP
+M =M+1
+//**push argument**
+//go to TEMP at 6
+
+@TEMP
 D = M
 
 @6
