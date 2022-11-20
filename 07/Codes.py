@@ -1,5 +1,7 @@
 
 class Codes:
+
+
     push_constant =  """
 //push
 @index
@@ -11,14 +13,17 @@ M = D
 @SP
 M =M+1"""
 
-    push_argument = """
+    C_push_static = """"
+    """
+
+    pop_argument = """
 //push
 @segment
 D = M
 @index
 D=D+A
 //
-@_index
+@_temp_index
 M = D
 
 @SP
@@ -114,8 +119,6 @@ M = D
     C_lt = """
 
 
-
-
     """ 
     C_gt = """ """
     
@@ -126,5 +129,10 @@ M = D
     C_not = """
     """
 
+    C_shiftleft = """
+     """
+
+    C_shiftright = """
+     """
 
 

@@ -6,7 +6,6 @@ as allowed by the Creative Common Attribution-NonCommercial-ShareAlike 3.0
 Unported [License](https://creativecommons.org/licenses/by-nc-sa/3.0/).
 """
 import typing
-from enum import Enum #delete?
 
 class Command:
 
@@ -19,7 +18,7 @@ class Command:
     C_FUNCTION = "C_FUNCTION"
     C_RETURN = "C_RETURN" 
     C_CALL = "C_CALL"
-    SEGMENTS = ["argument","this","that","static","pointer","temp","local"]
+    BASIC_SEGMENTS = ["argument","this","that","pointer","temp","local"]
     ARITHMETIC_ACTIONS = ["add", "sub", "neg", "eq", "lt", "gt", "and", "or", "not"]
     
     def __init__(self) -> None:

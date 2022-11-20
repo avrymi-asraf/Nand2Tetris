@@ -5,7 +5,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Python: 07 ex",
+            "name": "Python: 07 ex add",
             "type": "python",
             "request": "launch",
             "program": "${workspaceFolder}/07/Main.py",
@@ -13,6 +13,16 @@
             "justMyCode": true,
             "cwd": "${workspaceFolder}/07",
             "args": ["./StackArithmetic/SimpleAdd/SimpleAdd.vm"]
+        }
+        {
+            "name": "Python: 07 ex eq",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/07/Main.py",
+            "console": "integratedTerminal",
+            "justMyCode": true,
+            "cwd": "${workspaceFolder}/07",
+            "args": ["./StackArithmetic/AritmeticActions/SimpleEq.vm"]
         }
     ]
 }
