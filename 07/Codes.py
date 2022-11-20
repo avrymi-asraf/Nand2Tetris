@@ -11,14 +11,14 @@ M = D
 @SP
 M =M+1"""
 
-    push_argument = """
+    pop_argument = """
 //push
 @segment
 D = M
 @index
 D=D+A
 //
-@_index
+@_temp_index
 M = D
 
 @SP
@@ -114,8 +114,6 @@ M = D
     C_lt = """
 
 
-
-
     """ 
     C_gt = """ """
     
@@ -126,5 +124,8 @@ M = D
     C_not = """
     """
 
+    C_shiftleft = """
+     """
 
-
+    C_shiftright = """
+     """

@@ -23,7 +23,10 @@ class CodeWriter:
             "and":Codes.C_and,
             "or":Codes.C_or,
             "not":Codes.C_neg,
+            "<<":Codes.C_shiftleft,
+            ">>":Codes.C_shiftright
         }
+
     def __init__(self, output_stream: typing.TextIO) -> None:
         """Initializes the CodeWriter.
 
@@ -94,17 +97,38 @@ class CodeWriter:
         # assembly process, the Hack assembler will allocate these symbolic
         # variables to the RAM, starting at address 16.
 
-        ## C_push constant
+
+        # Push command:
+        # example : push segment index
+        # go to segment at the given index, and put it in the top of the stack 
+        # (sp++, because we increase the stack)
+
         if command == Command.C_PUSH:
+            # push constant
             if segment == "constant":
                 self.output_stream.write(Codes.push_constant.replace("index",index))
-            elif segment in Command.SEGMENTS:
-                self.output_stream.write(Codes.push_argument.replace("index",index).replace("segment",segment))
-            else:
-                raise ValueError("is {} but not segment faund".format(Command.C_PUSH))
-        elif command == Command.C_POP:
-            pass
 
+            # push static
+            if segment == "static":
+                self.output_stream.write(Codes.push_static.replace("index",index))
+
+            # push other segment
+            elif segment in Command.SEGMENTS:
+                self.output_stream.write(Codes.push_argument.replace("index",index).replace("segment", segment))
+
+            else:
+                #illigal segment 
+                raise ValueError("is {} but not segment faund".format(Command.C_PUSH))
+
+        # Pop command:
+        # example : pop segment index
+        # take the top of the stack (sp--, because we reduce the stack), and put it inside segment at the given index 
+        elif command == Command.C_POP:
+                # pop constant
+                if segment == "constant":
+                    self.output_stream.write(Codes.push_constant.replace("index",index))
+
+        
 
 
 
