@@ -116,7 +116,7 @@ class CodeWriter:
 
             # push static TODO change
             if segment == "static":
-                self.output_stream.write(Codes.push_static.replace("index",index))
+                self.output_stream.write(Codes.push_static.replace((self.file_name + "index") ,index))
 
             # push other segment
             elif segment in Command.BASIC_SEGMENTS:

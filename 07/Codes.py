@@ -11,12 +11,34 @@ A = M
 M = D
 
 @SP
-M =M+1"""
+M = M+1"""
 
-    C_push_static = """"
-    """
+    push_argument =  """
+//go to segment at index
+
+@segment
+D = M
+
+@index
+D=D+A
+
+@D
+D = M
+
+// write in SP
+@SP
+A = M
+M = D
+
+// inc SP
+@SP
+M = M+1"""
+
+    push_static = """"
+"""
 
     pop_argument = """
+    
 //push
 @segment
 D = M
