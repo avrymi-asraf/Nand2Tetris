@@ -139,7 +139,7 @@ D = M
 A = A-1
 D = D-M
 
-@eq
+@eq._counter
 D;JEQ
 
 //if is not equal 
@@ -149,10 +149,10 @@ D = A
 A = M-1
 M = D
 
-@end
+@end._counter
 0;JMP
 
-(eq)
+(eq._counter)
     @1
     D = -A
     @SP
@@ -160,118 +160,118 @@ M = D
     M = D
 
 
-(end)
+(end._counter)
 """  
   
     C_lt = """
 @SP 
-MA = M-1
+AM = M-1
 D = M
 // if first argument < 0
-@tltz       
+@tltz._counter       
 D;JLT
 //else
 @SP     
-A = A-1
+A = M-1
 D = M
-@false      // if second argument < 0  
+@false._counter      // if second argument < 0  
 D;JLT 
             //else sub them
-@subthem
+@subthem._counter
 0;JMP
 
-(tltz)
+(tltz._counter)
     @SP
-    A = A-1
+    A = M-1
     D = M
     // if second argument >0
-    @true
+    @true._counter
     D;JGT
     //else sub them       
-    @subthem    
+    @subthem._counter    
     0;JMP
-(subthem)
+(subthem._counter)
     @SP
     A = M
     D = D-M //D second argument, M first argument
-    @true
+    @true._counter
     D;JGE 
     //else false
-    @false
+    @false._counter
     0;JMP   
-(true)
+(true._counter)
     @1
     D = -A
     @SP
     A = M-1
     M = D    
-    @end
+    @end._counter
     0;JMP
-(false)
+(false._counter)
     @0
     D = A
     @SP
     A = M-1
     M = D
-(end)
+(end._counter)
 """ 
     
     C_gt = """
 @SP 
-MA = M-1
+AM = M-1
 D = M
 // if first argument < 0
-@tltz       
+@tltz._counter       
 D;JLT
 //else
 @SP     
-A = A-1
+A = M-1
 D = M
-@true      // if second argument < 0  
+@true._counter      // if second argument < 0  
 D;JLT 
             //else sub them
-@subthem
+@subthem._counter
 0;JMP
 
-(tltz)
+(tltz._counter)
     @SP
-    A = A-1
+    A = M-1
     D = M
     // if second argument >0
-    @false
+    @false._counter
     D;JGT
     //else sub them       
-    @subthem    
+    @subthem._counter    
     0;JMP
-(subthem)
+(subthem._counter)
     @SP
     A = M
     D = D-M //D second argument, M first argument
-    @false
+    @false._counter
     D;JGE 
     //else true
-    @true
+    @true._counter
     0;JMP   
-(true)
+(true._counter)
     @1
     D = -A
     @SP
     A = M-1
     M = D    
-    @end
+    @end._counter
     0;JMP
-(false)
+(false._counter)
     @0
     D = A
     @SP
     A = M-1
     M = D
-(end) 
+(end._counter) 
 """
     
     C_and = """
 @SP
-MA = M-1
+AM = M-1
 D = M
 
 @SP
@@ -282,7 +282,7 @@ M = D&M
     C_or= """
 //OR  
 @SP
-MA = M-1
+AM = M-1
 D = M
 
 @SP
@@ -309,3 +309,12 @@ M = M>>
 """
 
 
+
+
+    # "SCREEN":"16384",
+    #         "KBD":"24576",
+    #         "SP":"0",
+    #         "LCL":"1",
+    #         "ARG":"2",
+    #         "THIS":"3",
+    #         "THAT":"4"
