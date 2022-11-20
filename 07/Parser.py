@@ -71,7 +71,6 @@ class Parser:
         else:
             self.curr_command = None
 
-
     def advance(self) -> None:
         """Reads the next command from the input and makes it the current 
         command. Should be called only if has_more_commands is true. Initially
