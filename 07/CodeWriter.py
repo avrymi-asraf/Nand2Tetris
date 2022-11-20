@@ -48,9 +48,7 @@ class CodeWriter:
         Args:
             filename (str): The name of the VM file.
         """
-        self.file_name = filename
-
-        # Your code goes here!
+                
         # This function is useful when translating code that handles the
         # static segment. For example, in order to prevent collisions between two
         # .vm files which push/pop to the static segment, one can use the current
@@ -61,7 +59,12 @@ class CodeWriter:
         # the function "translate_file" in Main.py using python's os library,
         # For example, using code similar to:
         # input_filename, input_extension = os.path.splitext(os.path.basename(input_file.name))
-       
+
+
+        self.file_name = filename
+
+        pass
+
 
     def write_arithmetic(self, command: str) -> None:
         """Writes assembly code that is the translation of the given 
@@ -100,20 +103,23 @@ class CodeWriter:
 
         # Push command:
         # example : push segment index
-        # go to segment at the given index, and put it in the top of the stack 
+        # go to segment at the given index, and write it in the top of the stack 
         # (sp++, because we increase the stack)
-
         if command == Command.C_PUSH:
-            # push constant
-            if segment == "constant":
-                self.output_stream.write(Codes.push_constant.replace("index",index))
 
-            # push static
+            # push constant
+            # example : push constant index
+            # take the index as int, and write it in the top of the stack 
+            # (sp++, because we increase the stack)
+            if segment == "constant":
+                self.output_stream.write(Codes.push_constant.replace("index", index))
+
+            # push static TODO change
             if segment == "static":
                 self.output_stream.write(Codes.push_static.replace("index",index))
 
             # push other segment
-            elif segment in Command.SEGMENTS:
+            elif segment in Command.BASIC_SEGMENTS:
                 self.output_stream.write(Codes.push_argument.replace("index",index).replace("segment", segment))
 
             else:
