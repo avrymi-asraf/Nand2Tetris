@@ -28,6 +28,11 @@ class CodeWriter:
         ">>": Codes.C_shiftright
     }
 
+    segments = {
+        "local": Codes.C_add,
+    }
+
+
     def __init__(self, output_stream: typing.TextIO) -> None:
         """Initializes the CodeWriter.
 
@@ -137,31 +142,37 @@ class CodeWriter:
         #  and put it inside segment at the given index
         elif command == Command.C_POP:
 
-            # pop constant TODO is this possible?
-            if segment == "constant":
-                self.output_stream.write(
-                    Codes.pop_constant.replace("index", index))
+            # pop other segment
+            # example : pop segment index
+            # take the top of the stack (sp--, because we reduce the stack),
+            # and put it inside segment at the given index
+            if segment in Command.BASIC_SEGMENTS:
+                self.output_stream.write(Codes.pop_argument.replace(
+                    "index", index).replace("segment", segment))
 
             #pop static
             # example : pop static i
             # take the top of the stack (sp--, because we reduce the stack),
             # and put it inside the new static data named (self.file_name + "." + str(index))
-            if segment == "static":
+            elif segment == "static":
                 self.output_stream.write(Codes.pop_static.replace(
                     "index", (self.file_name + "." + str(index))))
 
-            # pop other segment
-            # example : pop segment index
-            # take the top of the stack (sp--, because we reduce the stack),
-            # and put it inside segment at the given index
-            elif segment in Command.BASIC_SEGMENTS:
-                self.output_stream.write(Codes.pop_argument.replace(
-                    "index", index).replace("segment", segment))
+            # # pop constant TODO is this possible?
+            # elif segment == "constant":
+            #     pass #illigal TODO
+            #     # self.output_stream.write(
+                #     Codes.pop_constant.replace("index", index))
 
             else:
                 # illigal segment
                 raise ValueError(
                     "is {} but not segment faund".format(Command.C_POP))
+
+        # illigal segment
+        else:
+            raise ValueError("illigal command arrived as push_pop command")
+
 
     def write_label(self, label: str) -> None:
         """Writes assembly code that affects the label command. 

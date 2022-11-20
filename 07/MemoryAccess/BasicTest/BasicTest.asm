@@ -11,13 +11,22 @@ M = D
 M = M+1 
 //**pop argument**
 
+//find address
+@local
+D = M
+
+@0
+D = D+A
+
+@_temp_0
+M = D
+
 //take data from top of stack
 @SP
 A = M - 1 
 D = M
 
-//write data inside local at the given 0
-@0
+@_temp_0
 M = D
 
 //decrement SP
@@ -47,13 +56,22 @@ M = D
 M = M+1 
 //**pop argument**
 
+//find address
+@argument
+D = M
+
+@2
+D = D+A
+
+@_temp_2
+M = D
+
 //take data from top of stack
 @SP
 A = M - 1 
 D = M
 
-//write data inside argument at the given 2
-@2
+@_temp_2
 M = D
 
 //decrement SP
@@ -63,13 +81,22 @@ M = M-1
  
 //**pop argument**
 
+//find address
+@argument
+D = M
+
+@1
+D = D+A
+
+@_temp_1
+M = D
+
 //take data from top of stack
 @SP
 A = M - 1 
 D = M
 
-//write data inside argument at the given 1
-@1
+@_temp_1
 M = D
 
 //decrement SP
@@ -89,13 +116,22 @@ M = D
 M = M+1 
 //**pop argument**
 
+//find address
+@this
+D = M
+
+@6
+D = D+A
+
+@_temp_6
+M = D
+
 //take data from top of stack
 @SP
 A = M - 1 
 D = M
 
-//write data inside this at the given 6
-@6
+@_temp_6
 M = D
 
 //decrement SP
@@ -125,13 +161,22 @@ M = D
 M = M+1 
 //**pop argument**
 
+//find address
+@that
+D = M
+
+@5
+D = D+A
+
+@_temp_5
+M = D
+
 //take data from top of stack
 @SP
 A = M - 1 
 D = M
 
-//write data inside that at the given 5
-@5
+@_temp_5
 M = D
 
 //decrement SP
@@ -141,13 +186,22 @@ M = M-1
  
 //**pop argument**
 
+//find address
+@that
+D = M
+
+@2
+D = D+A
+
+@_temp_2
+M = D
+
 //take data from top of stack
 @SP
 A = M - 1 
 D = M
 
-//write data inside that at the given 2
-@2
+@_temp_2
 M = D
 
 //decrement SP
@@ -167,13 +221,22 @@ M = D
 M = M+1 
 //**pop argument**
 
+//find address
+@temp
+D = M
+
+@6
+D = D+A
+
+@_temp_6
+M = D
+
 //take data from top of stack
 @SP
 A = M - 1 
 D = M
 
-//write data inside temp at the given 6
-@6
+@_temp_6
 M = D
 
 //decrement SP

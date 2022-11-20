@@ -60,7 +60,7 @@ M = M+1"""
 D = M
 
 @index
-D = D+A
+D = D + A
 
 @_temp_index
 M = D
