@@ -1,10 +1,12 @@
 
 class Codes:
+    #TODO delete lines
 
     push_constant =  """
 //push
 @index
 D = A
+
 @SP
 A = M
 M = D
@@ -19,9 +21,9 @@ M = M+1"""
 D = M
 
 @index
-D=D+A
+D = D+A
 
-@D
+A = D
 D = M
 
 // write in SP
@@ -51,7 +53,26 @@ M = M+1"""
 
 
     pop_argument = """ 
-//find segment at index
+
+//take data from top of stack
+@SP
+A = M
+D = M
+
+//write data inside segment at the given index
+@index
+M = D
+
+//decrement SP
+@SP
+M = M-1
+
+"""
+
+
+    pop_static = """ 
+
+//find address :  segment at index
 @segment
 D = M
 
