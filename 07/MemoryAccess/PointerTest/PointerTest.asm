@@ -122,7 +122,7 @@ A=M
 M = D
 
 @SP
-M=M+1"
+M=M+1
     
      //**push this that**
 "@THAT
@@ -133,7 +133,7 @@ A=M
 M = D
 
 @SP
-M=M+1"
+M=M+1
     
 //**add**
 @SP
