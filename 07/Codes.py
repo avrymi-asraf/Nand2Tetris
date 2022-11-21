@@ -276,6 +276,7 @@ M = M>>
 """
 
     push_this_that ="""
+     //**push this that**
 
 "@index
 D = M
@@ -289,6 +290,7 @@ M=M+1"
     """
 
     pop_this_that ="""
+    //**pop this that**
 
 @SP
 A = M-1      
