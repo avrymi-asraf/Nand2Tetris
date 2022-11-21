@@ -66,6 +66,7 @@ class Parser:
         self.num_readen_commands = 0
 
         self.advance()
+        pass
 
     def advance(self) -> None:
         """Reads the next command from the input and makes it the current 
@@ -74,7 +75,6 @@ class Parser:
         """
         if self.has_more_commands() : 
             self.curr_command = self.input_lines[self.num_readen_commands]
-
         self.num_readen_commands += 1
 
     def has_more_commands(self) -> bool:
