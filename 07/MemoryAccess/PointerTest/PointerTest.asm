@@ -91,6 +91,30 @@ M = D
 M = M-1
 
 
+     //**push this that**
+
+"@THIS
+D = M
+
+@SP         
+A=M
+M = D
+
+@SP
+M=M+1"
+    
+     //**push this that**
+
+"@THAT
+D = M
+
+@SP         
+A=M
+M = D
+
+@SP
+M=M+1"
+    
 //add
 @SP
 AM=M-1

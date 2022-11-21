@@ -135,11 +135,11 @@ class CodeWriter:
             # go to this and write it in the top of the stack
             # (sp++, because we increase the stack)
             elif segment == Command.SEG_POINTER:
-                if index == 0:
+                if index == str(0):
                     self.output_stream.write(
                         Codes.push_this_that.replace("index", "THIS"))
 
-                elif index == 1:
+                elif index == str(1):
                     self.output_stream.write(
                         Codes.push_this_that.replace("index", "THAT"))
 
