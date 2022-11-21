@@ -144,7 +144,15 @@ class CodeWriter:
 
             # push other segment
             elif segment in Command.BASIC_SEGMENTS:
-                self.output_stream.write(Codes.push_argument.replace(
+                self.output_stream.write(Codes.push_segment.replace(
+                    "index", index).replace("segment", self.segments[segment]))
+            
+            elif segment  == Command.C_POINTER:
+                self.output_stream.write(Codes.push_segment.replace(
+                    "index", index).replace("segment", self.segments[segment]))
+            
+            elif segment in Command.C_TEMP:
+                self.output_stream.write(Codes.push_segment.replace(
                     "index", index).replace("segment", self.segments[segment]))
 
             else:
@@ -163,7 +171,7 @@ class CodeWriter:
             # take the top of the stack (sp--, because we reduce the stack),
             # and put it inside segment at the given index
             if segment in Command.BASIC_SEGMENTS:
-                self.output_stream.write(Codes.pop_argument.replace(
+                self.output_stream.write(Codes.pop_segment.replace(
                     "index", index).replace("segment", self.segments[segment]))
 
             #pop static

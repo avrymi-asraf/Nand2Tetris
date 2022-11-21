@@ -14,7 +14,7 @@ M = D
 @SP
 M = M+1"""
 
-    push_argument =  """
+    push_segment =  """
 //**push argument**
 //go to segment at index
 
@@ -52,7 +52,7 @@ M = D
 @SP
 M = M+1"""
 
-    pop_argument = """ 
+    pop_segment = """ 
 //**pop argument**
 
 //find address
@@ -302,3 +302,35 @@ M = D
 @SP
 M = M-1
 """
+
+AM=M-1      
+D=M     //data from stack
+@R13
+A=M     //
+M=D
+    """
+    pop_temp = """ 
+@R5  
+D=M
+@index 
+D=D+A    
+@R13      
+M=D         
+@SP
+AM=M-1      
+D=M     
+A=M     
+M=D
+    """
+    push_temp ="""
+@R5  
+D=M
+@index
+A=D+A    
+D=M      
+@SP         
+A=M
+M=D
+@SP
+M=M+1
+    """
