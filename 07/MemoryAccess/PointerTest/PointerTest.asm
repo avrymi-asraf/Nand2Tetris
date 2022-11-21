@@ -8,33 +8,7 @@ A = M
 M = D
 
 @SP
-M = M+1 
-//**pop argument**
-
-//find address
-@3
-D = M
-
-@0
-D = D + A
-
-@_temp_0
-M = D
-
-//take data from top of stack
-@SP
-A = M - 1 
-D = M
-
-@_temp_0
-A = M
-M = D
-
-//decrement SP
-@SP
-M = M-1
-
-
+M = M+1
 //**push constant**
 @3040
 D = A
@@ -44,33 +18,7 @@ A = M
 M = D
 
 @SP
-M = M+1 
-//**pop argument**
-
-//find address
-@3
-D = M
-
-@1
-D = D + A
-
-@_temp_1
-M = D
-
-//take data from top of stack
-@SP
-A = M - 1 
-D = M
-
-@_temp_1
-A = M
-M = D
-
-//decrement SP
-@SP
-M = M-1
-
-
+M = M+1
 //**push constant**
 @32
 D = A
@@ -143,46 +91,6 @@ M = D
 M = M-1
 
 
-//**push argument**
-//go to 3 at 0
-
-@3
-D = M
-
-@0
-D = D+A
-
-A = D
-D = M
-
-// write in SP
-@SP
-A = M
-M = D
-
-// inc SP
-@SP
-M = M+1
-//**push argument**
-//go to 3 at 1
-
-@3
-D = M
-
-@1
-D = D+A
-
-A = D
-D = M
-
-// write in SP
-@SP
-A = M
-M = D
-
-// inc SP
-@SP
-M = M+1
 //add
 @SP
 AM=M-1
