@@ -143,7 +143,7 @@ A = M-1
 D = M
 @false.4   // if second argument < 0  
 D;JLT 
-@subthem.4 //else sub them
+@sub.4 //else sub them
 0;JMP
 (tltz.4)    // first argument < 0
     @SP
@@ -151,9 +151,9 @@ D;JLT
     D = M           //D hold the second argument
     @true.4  // if second argument >= 0
     D;JGE     
-    @subthem.4  //else sub them  
+    @sub.4  //else sub them  
     0;JMP
-(subthem.4)
+(sub.4)
     @SP
     A = M 
     D = M-D     //second argument - first argument
@@ -203,7 +203,7 @@ A = M-1
 D = M
 @false.5   // if second argument < 0  
 D;JLT 
-@subthem.5 //else sub them
+@sub.5 //else sub them
 0;JMP
 (tltz.5)    // first argument < 0
     @SP
@@ -211,9 +211,9 @@ D;JLT
     D = M           //D hold the second argument
     @true.5  // if second argument >= 0
     D;JGE     
-    @subthem.5  //else sub them  
+    @sub.5  //else sub them  
     0;JMP
-(subthem.5)
+(sub.5)
     @SP
     A = M 
     D = M-D     //second argument - first argument
@@ -263,7 +263,7 @@ A = M-1
 D = M
 @false.6   // if second argument < 0  
 D;JLT 
-@subthem.6 //else sub them
+@sub.6 //else sub them
 0;JMP
 (tltz.6)    // first argument < 0
     @SP
@@ -271,9 +271,9 @@ D;JLT
     D = M           //D hold the second argument
     @true.6  // if second argument >= 0
     D;JGE     
-    @subthem.6  //else sub them  
+    @sub.6  //else sub them  
     0;JMP
-(subthem.6)
+(sub.6)
     @SP
     A = M 
     D = M-D     //second argument - first argument
@@ -321,25 +321,25 @@ D;JLT
 @SP     //else first argument > 0  
 A = M-1
 D = M
-@true.7      // if second argument < 0  
+@false.7      // if second argument < 0  
 D;JLT 
-@subthem.7   //else sub them
+@sub.7   //else sub them
 0;JMP
 (tltz.7)
     @SP
     A = M -1
     D = M
-    @false.7 // if second argument >0
+    @true.7 // if second argument >0
     D;JGT      
-    @subthem.7    //else sub them 
+    @sub.7    //else sub them 
     0;JMP
-(subthem.7)
+(sub.7)
     @SP
-    A = M -1
-    D = M-D //D second argument, M first argument
-    @false.7
-    D;JGE 
-    @true.7 //else true
+    A = M 
+    D = D-M //D second argument, M first argument
+    @true.7
+    D;JGT 
+    @false.7 //else true
     0;JMP   
 (true.7)
     @SP
@@ -381,25 +381,25 @@ D;JLT
 @SP     //else first argument > 0  
 A = M-1
 D = M
-@true.8      // if second argument < 0  
+@false.8      // if second argument < 0  
 D;JLT 
-@subthem.8   //else sub them
+@sub.8   //else sub them
 0;JMP
 (tltz.8)
     @SP
     A = M -1
     D = M
-    @false.8 // if second argument >0
+    @true.8 // if second argument >0
     D;JGT      
-    @subthem.8    //else sub them 
+    @sub.8    //else sub them 
     0;JMP
-(subthem.8)
+(sub.8)
     @SP
-    A = M -1
-    D = M-D //D second argument, M first argument
-    @false.8
-    D;JGE 
-    @true.8 //else true
+    A = M 
+    D = D-M //D second argument, M first argument
+    @true.8
+    D;JGT 
+    @false.8 //else true
     0;JMP   
 (true.8)
     @SP
@@ -441,25 +441,25 @@ D;JLT
 @SP     //else first argument > 0  
 A = M-1
 D = M
-@true.9      // if second argument < 0  
+@false.9      // if second argument < 0  
 D;JLT 
-@subthem.9   //else sub them
+@sub.9   //else sub them
 0;JMP
 (tltz.9)
     @SP
     A = M -1
     D = M
-    @false.9 // if second argument >0
+    @true.9 // if second argument >0
     D;JGT      
-    @subthem.9    //else sub them 
+    @sub.9    //else sub them 
     0;JMP
-(subthem.9)
+(sub.9)
     @SP
-    A = M -1
-    D = M-D //D second argument, M first argument
-    @false.9
-    D;JGE 
-    @true.9 //else true
+    A = M 
+    D = D-M //D second argument, M first argument
+    @true.9
+    D;JGT 
+    @false.9 //else true
     0;JMP   
 (true.9)
     @SP

@@ -56,14 +56,12 @@ class Parser:
         """
         self.input_lines = input_file.read().splitlines()
 
+        # self.input_lines = [
+        #     line for line in self.input_lines if not line.startswith("/")]
+
         self.input_lines = [
-            line for line in self.input_lines if not line.startswith("/")]
+            line.split("//")[0].split("\t")[0] for line in self.input_lines]
 
-        # self.input_lines = [
-        #     line.split("\\")[0] for line in self.input_lines]
-
-        # self.input_lines = [
-        #     line.split("/")[0] for line in self.input_lines]
 
         self.input_lines = [
             line for line in self.input_lines if not len(line) == 0]
@@ -136,7 +134,7 @@ class Parser:
             return Command.C_CALL
 
         else:
-            raise Exception("Unknown command : {} is undefined ", word1)  
+            raise Exception("Unknown command : {} is undefined ".format(word1))  
                 
 
     def arg1(self) -> str:

@@ -161,7 +161,7 @@ A = M-1
 D = M
 @false._counter   // if second argument < 0  
 D;JLT 
-@subthem._counter //else sub them
+@sub._counter //else sub them
 0;JMP
 (tltz._counter)    // first argument < 0
     @SP
@@ -169,9 +169,9 @@ D;JLT
     D = M           //D hold the second argument
     @true._counter  // if second argument >= 0
     D;JGE     
-    @subthem._counter  //else sub them  
+    @sub._counter  //else sub them  
     0;JMP
-(subthem._counter)
+(sub._counter)
     @SP
     A = M 
     D = M-D     //second argument - first argument
@@ -201,25 +201,25 @@ D;JLT
 @SP     //else first argument > 0  
 A = M-1
 D = M
-@true._counter      // if second argument < 0  
+@false._counter      // if second argument < 0  
 D;JLT 
-@subthem._counter   //else sub them
+@sub._counter   //else sub them
 0;JMP
 (tltz._counter)
     @SP
     A = M -1
     D = M
-    @false._counter // if second argument >0
+    @true._counter // if second argument >0
     D;JGT      
-    @subthem._counter    //else sub them 
+    @sub._counter    //else sub them 
     0;JMP
-(subthem._counter)
+(sub._counter)
     @SP
-    A = M -1
-    D = M-D //D second argument, M first argument
-    @false._counter
-    D;JGE 
-    @true._counter //else true
+    A = M 
+    D = D-M //D second argument, M first argument
+    @true._counter
+    D;JGT 
+    @false._counter //else true
     0;JMP   
 (true._counter)
     @SP

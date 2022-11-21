@@ -114,7 +114,7 @@ M = M-1
 
 
      //**push this that**
-"@THIS
+@THIS
 D = M
 
 @SP         
@@ -125,7 +125,7 @@ M = D
 M=M+1
     
      //**push this that**
-"@THAT
+@THAT
 D = M
 
 @SP         
