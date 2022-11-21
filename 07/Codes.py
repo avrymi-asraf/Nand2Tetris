@@ -275,7 +275,7 @@ M = M>>
 
     push_this_that ="""
      //**push this that**
-@index
+"@index
 D = M
 
 @SP         

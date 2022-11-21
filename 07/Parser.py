@@ -59,30 +59,38 @@ class Parser:
         self.input_lines = [
             line for line in self.input_lines if not line.startswith("/")]
 
+        # self.input_lines = [
+        #     line.split("\\")[0] for line in self.input_lines]
+
+        # self.input_lines = [
+        #     line.split("/")[0] for line in self.input_lines]
+
         self.input_lines = [
             line for line in self.input_lines if not len(line) == 0]
 
-        self.num_of_commands = len(self.input_lines)
-        self.num_readen_commands = 0
 
-        self.advance()
-        pass
+        self.num_of_commands = len(self.input_lines)
+        self.has_more_commands = len(self.input_lines) > 0
+        self.index_of_readen_commands = 0
+
+        if self.has_more_commands:
+            self.curr_command = self.input_lines[0]
+        else:
+            self.curr_command = None
 
     def advance(self) -> None:
         """Reads the next command from the input and makes it the current 
         command. Should be called only if has_more_commands is true. Initially
         there is no current command.
         """
-        if self.has_more_commands() : 
-            self.curr_command = self.input_lines[self.num_readen_commands]
-        self.num_readen_commands += 1
+        self.index_of_readen_commands += 1
+        if self.index_of_readen_commands < self.num_of_commands:
+            self.curr_command = self.input_lines[self.index_of_readen_commands]
+        else:
+            self.has_more_commands = False
 
-    def has_more_commands(self) -> bool:
-        """Reads the next command from the input and makes it the current 
-        command. Should be called only if has_more_commands is true. Initially
-        there is no current command.
-        """
-        return (self.num_readen_commands < self.num_of_commands)
+        if len(self.curr_command) == 0:
+            self.advance() 
 
     def command_type(self) -> str:
         """
@@ -97,41 +105,40 @@ class Parser:
         if self.curr_command == None:
             raise Exception("current command is None")
 
-        temp_command = (self.curr_command.split(" "))[0]
-        temp_command = temp_command.removesuffix("/")
-        temp_command = temp_command.removesuffix("\\")
+        word1 = (self.curr_command.split(" "))[0]
 
         # arithmetic: add, sub, neg, eq, lt, gt, and, or, not
-        if temp_command in Command.ARITHMETIC_ACTIONS:
+        if word1 in Command.ARITHMETIC_ACTIONS:
             return Command.C_ARITHMETIC
 
-        elif temp_command == "push":
+        elif word1 == "push":
             return Command.C_PUSH
 
-        elif temp_command == "pop":
+        elif word1 == "pop":
             return Command.C_POP
 
-        elif temp_command == "label":
+        elif word1 == "label":
             return Command.C_LABEL
 
-        elif temp_command == "goto":
+        elif word1 == "goto":
             return Command.C_GOTO
 
-        elif temp_command == "if-goto":
+        elif word1 == "if-goto":
             return Command.C_IF
 
-        elif temp_command == "function":
+        elif word1 == "function":
             return Command.C_FUNCTION
 
-        elif temp_command == "return":
+        elif word1 == "return":
             return Command.C_RETURN
 
-        elif temp_command == "call":
+        elif word1 == "call":
             return Command.C_CALL
 
         else:
-            raise Exception("Unknown command : {}", temp_command)  
+            raise Exception("Unknown command : {} is undefined ", word1)  
                 
+
     def arg1(self) -> str:
         """
         Returns:

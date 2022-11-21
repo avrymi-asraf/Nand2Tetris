@@ -226,6 +226,7 @@ M = D
 @SP
 M = M+1 
     //**pop temp**
+
 @SP
 A = M-1      
 D = M
@@ -277,7 +278,7 @@ M = D
 // inc SP
 @SP
 M = M+1
-//**add**
+//add
 @SP
 AM=M-1
 D=M
@@ -359,7 +360,7 @@ M = D
 // inc SP
 @SP
 M = M+1
-//**add**
+//add
 @SP
 AM=M-1
 D=M
@@ -394,7 +395,7 @@ M = D
 M = M+1 
 
     
-//**add**
+//add
 @SP
 AM=M-1
 D=M
