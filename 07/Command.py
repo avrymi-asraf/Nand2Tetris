@@ -18,8 +18,12 @@ class Command:
     C_FUNCTION = "C_FUNCTION"
     C_RETURN = "C_RETURN" 
     C_CALL = "C_CALL"
-    BASIC_SEGMENTS = ["argument","this","that","pointer","temp","local"]
+
+    C_POINTER = "pointer"
+    C_TEMP =" temp"
+    BASIC_SEGMENTS = ["argument","this","that","local"]
     ARITHMETIC_ACTIONS = ["add", "sub", "neg", "eq", "lt", "gt", "and", "or", "not"]
+    
     
     def __init__(self) -> None:
         pass

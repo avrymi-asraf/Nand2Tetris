@@ -179,7 +179,6 @@ class CodeWriter:
         else:
             raise ValueError("illigal command arrived as push_pop command")
 
-
     def write_label(self, label: str) -> None:
         """Writes assembly code that affects the label command. 
         Let "Xxx.foo" be a function within the file Xxx.vm. The handling of
