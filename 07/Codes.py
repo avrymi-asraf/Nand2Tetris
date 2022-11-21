@@ -276,12 +276,16 @@ M = M>>
 """
 
 
-    push_pointer ="""
-"@address  {"temp":"R5","pointer":THIS\THAT}
+    push_this ="""
+    
+"@address 
 D=M
+
 @index
 A=D+A    //A is new index
 D=M      //D is data
+
+
 @SP         
 A=M
 M=D

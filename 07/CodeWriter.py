@@ -33,8 +33,7 @@ class CodeWriter:
         "argument": "ARG",
         "this": "THIS",
         "that": "THAT",
-        "temp": "TEMP",
-        "pointer": "3",
+        "temp": "TEMP"
     }
 
 
@@ -132,6 +131,16 @@ class CodeWriter:
                 self.output_stream.write(Codes.push_static.replace(
                     "index", (self.file_name + "." + str(index))))
 
+            # push static
+            # example : push static i
+            # go to static at the symbol "Xxx.i". write it in the top of the stack
+            # (sp++, because we increase the stack)
+            elif segment == "pointer":
+                if index == 0:
+                    self.output_stream.write(Codes.push_this)
+                elif index == 1:
+                    self.output_stream.write(Codes.push_that)
+
             # push other segment
             elif segment in Command.BASIC_SEGMENTS:
                 self.output_stream.write(Codes.push_argument.replace(
@@ -163,6 +172,16 @@ class CodeWriter:
             elif segment == "static":
                 self.output_stream.write(Codes.pop_static.replace(
                     "index", (self.file_name + "." + str(index))))
+
+            # pop pointer
+            # example : pop static i
+            # take the top of the stack (sp--, because we reduce the stack),
+            # and put it inside the new static data named (self.file_name + "." + str(index))
+            elif segment == "pointer":
+                if index == 0:
+                    self.output_stream.write(Codes.pop_this)
+                elif index == 1:
+                    self.output_stream.write(Codes.pop_that)
 
             # # pop constant TODO is this possible?
             # elif segment == "constant":
