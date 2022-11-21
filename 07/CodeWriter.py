@@ -131,15 +131,16 @@ class CodeWriter:
                 self.output_stream.write(Codes.push_static.replace(
                     "index", (self.file_name + "." + str(index))))
 
-            # push static
-            # example : push static i
-            # go to static at the symbol "Xxx.i". write it in the top of the stack
+            # push pointer
+            # example : push pointer 0
+            # go to this and write it in the top of the stack
             # (sp++, because we increase the stack)
             elif segment == "pointer":
                 if index == 0:
-                    self.output_stream.write(Codes.push_this)
+                    self.output_stream.write(Codes.push_this_that.replace("index", "THIS"))
+
                 elif index == 1:
-                    self.output_stream.write(Codes.push_that)
+                    self.output_stream.write(Codes.push_this_that.replace("index", "THAT"))
 
             # push other segment
             elif segment in Command.BASIC_SEGMENTS:
@@ -173,15 +174,17 @@ class CodeWriter:
                 self.output_stream.write(Codes.pop_static.replace(
                     "index", (self.file_name + "." + str(index))))
 
+            #TODO COMMENT
             # pop pointer
             # example : pop static i
             # take the top of the stack (sp--, because we reduce the stack),
             # and put it inside the new static data named (self.file_name + "." + str(index))
             elif segment == "pointer":
                 if index == 0:
-                    self.output_stream.write(Codes.pop_this)
+                    self.output_stream.write(Codes.pop_this_that.replace("index", "THIS"))
+
                 elif index == 1:
-                    self.output_stream.write(Codes.pop_that)
+                    self.output_stream.write(Codes.pop_this_that.replace("index", "THAT"))
 
             # # pop constant TODO is this possible?
             # elif segment == "constant":

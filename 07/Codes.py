@@ -275,50 +275,28 @@ A = M-1
 M = M>>
 """
 
+    push_this_that ="""
 
-    push_this ="""
-    
-"@address 
-D=M
-
-@index
-A=D+A    //A is new index
-D=M      //D is data
-
+"@index
+D = M
 
 @SP         
 A=M
-M=D
+M = D
+
 @SP
 M=M+1"
     """
 
-    pop_pointer ="""
-@address  {"temp":"R5","pointer":THIS\THAT}
-D=M
-@index {"temp":+5,"pointer":{0:"THIS",1:"TAHT"}}
-D=D+A    //D is new index
-@R13      //temp index?
-M=D         
+    pop_this_that ="""
+
 @SP
-AM=M-1      
-D=M     //data from stack
-@R13
-A=M     //
-M=D
-    """
+A = M-1      
+D = M
 
+@index
+M = D
 
-"if segment is pointer 1 \ 0"
-"""
-@address //this or that
-D=A      //D hold this of that
-@R13        //temp ?
-M=D         
-@SP         //
-AM=M-1      
-D=M         //D hold data from stack
-@R13        
-A=M
-M=D
+@SP
+M = M-1
 """
