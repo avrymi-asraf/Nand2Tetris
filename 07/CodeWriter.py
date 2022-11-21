@@ -134,7 +134,7 @@ class CodeWriter:
             # example : push pointer 0
             # go to this and write it in the top of the stack
             # (sp++, because we increase the stack)
-            elif segment == Command.C_POINTER:
+            elif segment == Command.SEG_POINTER:
                 if index == 0:
                     self.output_stream.write(
                         Codes.push_this_that.replace("index", "THIS"))
@@ -167,10 +167,8 @@ class CodeWriter:
             # example : pop segment index
             # take the top of the stack (sp--, because we reduce the stack),
             # and put it inside segment at the given index
-            if segment in Command.BASIC_SEGMENTS:
-                self.output_stream.write(Codes.pop_segment.replace(
-                    "index", index).replace("segment", self.segments[segment]))
-            elif segment == Command.C_TEMP:
+
+            if segment == Command.C_TEMP:
                 self.output_stream.write(Codes.pop_temp.replace("index", index))
             # pop static
             # example : pop static i
@@ -185,7 +183,7 @@ class CodeWriter:
             # example : pop static i
             # take the top of the stack (sp--, because we reduce the stack),
             # and put it inside the new static data named (self.file_name + "." + str(index))
-            elif segment == "pointer":
+            elif segment == Command.SEG_POINTER:
                 if index == 0:
                     self.output_stream.write(
                         Codes.pop_this_that.replace("index", "THIS"))
@@ -194,11 +192,10 @@ class CodeWriter:
                     self.output_stream.write(
                         Codes.pop_this_that.replace("index", "THAT"))
 
-            # # pop constant TODO is this possible?
-            # elif segment == "constant":
-            #     pass #illigal TODO
-            #     # self.output_stream.write(
-                #     Codes.pop_constant.replace("index", index))
+
+            elif segment in Command.BASIC_SEGMENTS:
+                self.output_stream.write(Codes.pop_segment.replace(
+                    "index", index).replace("segment", self.segments[segment]))
 
             else:
                 # illigal segment
