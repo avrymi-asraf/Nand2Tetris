@@ -59,8 +59,15 @@ class Parser:
         self.input_lines = [
             line for line in self.input_lines if not line.startswith("/")]
 
+        # self.input_lines = [
+        #     line.split("\\")[0] for line in self.input_lines]
+
+        # self.input_lines = [
+        #     line.split("/")[0] for line in self.input_lines]
+
         self.input_lines = [
             line for line in self.input_lines if not len(line) == 0]
+
 
         self.num_of_commands = len(self.input_lines)
         self.has_more_commands = len(self.input_lines) > 0
@@ -80,7 +87,10 @@ class Parser:
         if self.index_of_readen_commands < self.num_of_commands:
             self.curr_command = self.input_lines[self.index_of_readen_commands]
         else:
-            self.has_more_commands = False 
+            self.has_more_commands = False
+
+        if len(self.curr_command) == 0:
+            self.advance() 
 
     def command_type(self) -> str:
         """
@@ -92,43 +102,42 @@ class Parser:
             "C_RETURN", "C_CALL".
         """
 
-        splited_command = self.curr_command.split(" ")
-        if (len(splited_command) == 0):
-            return None
+        if self.curr_command == None:
+            raise Exception("current command is None")
+
+        word1 = (self.curr_command.split(" "))[0]
+
+        # arithmetic: add, sub, neg, eq, lt, gt, and, or, not
+        if word1 in Command.ARITHMETIC_ACTIONS:
+            return Command.C_ARITHMETIC
+
+        elif word1 == "push":
+            return Command.C_PUSH
+
+        elif word1 == "pop":
+            return Command.C_POP
+
+        elif word1 == "label":
+            return Command.C_LABEL
+
+        elif word1 == "goto":
+            return Command.C_GOTO
+
+        elif word1 == "if-goto":
+            return Command.C_IF
+
+        elif word1 == "function":
+            return Command.C_FUNCTION
+
+        elif word1 == "return":
+            return Command.C_RETURN
+
+        elif word1 == "call":
+            return Command.C_CALL
 
         else:
-            word1 = splited_command[0].replace(" ", "")
-
-            # arithmetic: add, sub, neg, eq, lt, gt, and, or, not
-            if word1 in Command.ARITHMETIC_ACTIONS:
-                return Command.C_ARITHMETIC
-
-            elif word1 == "push":
-                return Command.C_PUSH
-
-            elif word1 == "pop":
-                return Command.C_POP
-
-            elif word1 == "label":
-                return Command.C_LABEL
-
-            elif word1 == "goto":
-                return Command.C_GOTO
-
-            elif word1 == "if-goto":
-                return Command.C_IF
-
-            elif word1 == "function":
-                return Command.C_FUNCTION
-
-            elif word1 == "return":
-                return Command.C_RETURN
-
-            elif word1 == "call":
-                return Command.C_CALL
-
-            else:
-                return None
+            raise Exception("Unknown command : {} is undefined ", word1)  
+                
 
     def arg1(self) -> str:
         """

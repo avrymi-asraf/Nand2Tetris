@@ -10,7 +10,6 @@ M = D
 @SP
 M = M+1
     //**pop this that**
-
 @SP
 A = M-1      
 D = M
@@ -32,7 +31,6 @@ M = D
 @SP
 M = M+1
     //**pop this that**
-
 @SP
 A = M-1      
 D = M
@@ -116,7 +114,6 @@ M = M-1
 
 
      //**push this that**
-
 "@THIS
 D = M
 
@@ -128,7 +125,6 @@ M = D
 M=M+1"
     
      //**push this that**
-
 "@THAT
 D = M
 
@@ -139,7 +135,7 @@ M = D
 @SP
 M=M+1"
     
-//add
+//**add**
 @SP
 AM=M-1
 D=M
@@ -201,7 +197,7 @@ M = D
 // inc SP
 @SP
 M = M+1
-//add
+//**add**
 @SP
 AM=M-1
 D=M

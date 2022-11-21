@@ -32,6 +32,7 @@ def translate_file(
     code_writer.set_file_name(input_filename)
 
     while parser.has_more_commands:
+        
         if parser.command_type() == Command.C_ARITHMETIC:
             code_writer.write_arithmetic(parser.arg1())
         
@@ -55,9 +56,11 @@ def translate_file(
         
         elif parser.command_type() == Command.C_CALL:
             pass
+
+
         else:
-            print(parser.command_type())
-            raise Exception("Unknown command")    
+            raise Exception("Unknown command {} ", parser.command_type())    
+
         parser.advance()
 
 
