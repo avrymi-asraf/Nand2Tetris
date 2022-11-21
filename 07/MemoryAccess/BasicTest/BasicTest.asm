@@ -225,32 +225,19 @@ M = D
 
 @SP
 M = M+1 
-//**pop argument**
+    //**pop temp**
 
-//find address
-@TEMP
+@SP
+A = M-1      
 D = M
 
-@6
-D = D + A
-
-@_temp_6
+@R11
 M = D
 
-//take data from top of stack
 @SP
-A = M - 1 
-D = M
+M = M-1      
 
-@_temp_6
-A = M
-M = D
-
-//decrement SP
-@SP
-M = M-1
-
-
+    
 //**push argument**
 //go to LCL at 0
 
@@ -395,26 +382,19 @@ M = M-D
 
 @SP
 M =M+1
-//**push argument**
-//go to TEMP at 6
+    //**push temp**
 
-@TEMP
+@R11
 D = M
 
-@6
-D = D+A
-
-A = D
-D = M
-
-// write in SP
 @SP
-A = M
+A = M     
 M = D
 
-// inc SP
 @SP
-M = M+1
+M = M+1 
+
+    
 //add
 @SP
 AM=M-1

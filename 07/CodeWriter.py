@@ -13,7 +13,6 @@ from Command import Command
 class CodeWriter:
     """Translates VM commands into Hack assembly code."""
 
-    # TODO add all commands
     aritmetic_commands = {
         "add": Codes.C_add,
         "sub": Codes.C_sub,
@@ -118,7 +117,7 @@ class CodeWriter:
             # example : push constant index
             # take the index as int, and write it in the top of the stack
             # (sp++, because we increase the stack)
-            if segment == "constant":
+            if segment == Command.SEG_CONSTANT:
                 self.output_stream.write(
                     Codes.push_constant.replace("index", index))
 
@@ -126,7 +125,7 @@ class CodeWriter:
             # example : push static i
             # go to static at the symbol "Xxx.i". write it in the top of the stack
             # (sp++, because we increase the stack)
-            elif segment == "static":
+            elif segment == Command.SEG_STATIC:
                 self.output_stream.write(Codes.push_static.replace(
                     "index", (self.file_name + "." + str(index))))
 
@@ -148,9 +147,8 @@ class CodeWriter:
                 self.output_stream.write(Codes.push_segment.replace(
                     "index", index).replace("segment", self.segments[segment]))
 
-            elif segment == Command.C_TEMP:
-                self.output_stream.write(
-                    Codes.push_temp.replace("index", index))
+            elif segment == Command.SEG_TEMP:
+                self.output_stream.write( Codes.push_temp.replace("new_index", str(int(5 + int(index)))) )
 
             else:
                 # illigal segment
@@ -163,14 +161,15 @@ class CodeWriter:
         #  and put it inside segment at the given index
         elif command == Command.C_POP:
             # print(segment)
-
+            
             # pop other segment
             # example : pop segment index
             # take the top of the stack (sp--, because we reduce the stack),
             # and put it inside segment at the given index
 
-            if segment == Command.C_TEMP:
-                self.output_stream.write(Codes.pop_temp.replace("index", index))
+            if segment == Command.SEG_TEMP:
+                self.output_stream.write(Codes.pop_temp.replace("new_index", str(int(5 + int(index)))))
+
             # pop static
             # example : pop static i
             # take the top of the stack (sp--, because we reduce the stack),

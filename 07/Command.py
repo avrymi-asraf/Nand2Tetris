@@ -21,7 +21,8 @@ class Command:
 
     SEG_POINTER = "pointer"
     SEG_STATIC = "static"
-    C_TEMP =" temp"
+    SEG_TEMP = "temp"
+    SEG_CONSTANT = "constant"
     BASIC_SEGMENTS = ["argument","this","that","local"]
     ARITHMETIC_ACTIONS = ["add", "sub", "neg", "eq", "lt", "gt", "and", "or", "not"]
     

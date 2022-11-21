@@ -305,28 +305,31 @@ M = M-1
 
 
     pop_temp = """ 
-@R5  
-D=M
-@index 
-D=D+A    
-@R13      
-M=D         
+    //**pop temp**
+
 @SP
-AM=M-1      
-D=M     
-A=M     
-M=D
+A = M-1      
+D = M
+
+@Rnew_index
+M = D
+
+@SP
+M = M-1      
+
     """
     
     push_temp ="""
-@R5  
-D=M
-@index
-A=D+A    
-D=M      
-@SP         
-A=M
-M=D
+    //**push temp**
+
+@Rnew_index
+D = M
+
 @SP
-M=M+1
+A = M     
+M = D
+
+@SP
+M = M+1 
+
     """
