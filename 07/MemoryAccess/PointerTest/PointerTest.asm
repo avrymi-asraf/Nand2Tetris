@@ -9,6 +9,18 @@ M = D
 
 @SP
 M = M+1
+    //**pop this that**
+
+@SP
+A = M-1      
+D = M
+
+@THIS
+M = D
+
+@SP
+M = M-1
+
 //**push constant**
 @3040
 D = A
@@ -19,6 +31,18 @@ M = D
 
 @SP
 M = M+1
+    //**pop this that**
+
+@SP
+A = M-1      
+D = M
+
+@THAT
+M = D
+
+@SP
+M = M-1
+
 //**push constant**
 @32
 D = A
@@ -91,6 +115,30 @@ M = D
 M = M-1
 
 
+     //**push this that**
+
+"@THIS
+D = M
+
+@SP         
+A=M
+M = D
+
+@SP
+M=M+1"
+    
+     //**push this that**
+
+"@THAT
+D = M
+
+@SP         
+A=M
+M = D
+
+@SP
+M=M+1"
+    
 //add
 @SP
 AM=M-1

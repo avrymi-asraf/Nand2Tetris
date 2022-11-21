@@ -135,11 +135,11 @@ class CodeWriter:
             # go to this and write it in the top of the stack
             # (sp++, because we increase the stack)
             elif segment == Command.SEG_POINTER:
-                if index == 0:
+                if int(index) == 0:
                     self.output_stream.write(
                         Codes.push_this_that.replace("index", "THIS"))
 
-                elif index == 1:
+                elif int(index) == 1:
                     self.output_stream.write(
                         Codes.push_this_that.replace("index", "THAT"))
 
@@ -162,6 +162,7 @@ class CodeWriter:
         # take the top of the stack (sp--, because we reduce the stack),
         #  and put it inside segment at the given index
         elif command == Command.C_POP:
+            # print(segment)
 
             # pop other segment
             # example : pop segment index
@@ -184,11 +185,13 @@ class CodeWriter:
             # take the top of the stack (sp--, because we reduce the stack),
             # and put it inside the new static data named (self.file_name + "." + str(index))
             elif segment == Command.SEG_POINTER:
-                if index == 0:
+                
+                if int(index) == 0:
                     self.output_stream.write(
                         Codes.pop_this_that.replace("index", "THIS"))
+                    # print("got to pointer this")
 
-                elif index == 1:
+                elif int(index) == 1:
                     self.output_stream.write(
                         Codes.pop_this_that.replace("index", "THAT"))
 
