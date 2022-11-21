@@ -36,7 +36,6 @@ class CodeWriter:
         "temp": "TEMP"
     }
 
-
     def __init__(self, output_stream: typing.TextIO) -> None:
         """Initializes the CodeWriter.
 
@@ -47,8 +46,8 @@ class CodeWriter:
         self.output_stream = output_stream
 
         self.file_name = None
-        self.counter_label  = 1 
-        
+        self.counter_label = 1
+
     def set_file_name(self, filename: str) -> None:
         """Informs the code writer that the translation of a new VM file is 
         started.
@@ -90,7 +89,7 @@ class CodeWriter:
         """
         code = self.aritmetic_commands[command]
         if command in ("lt", "gt", "eq"):
-            code = code.replace("_counter",str(self.counter_label))
+            code = code.replace("_counter", str(self.counter_label))
             self.counter_label += 1
         self.output_stream.write(code)
 
@@ -135,25 +134,23 @@ class CodeWriter:
             # example : push pointer 0
             # go to this and write it in the top of the stack
             # (sp++, because we increase the stack)
-            elif segment == "pointer":
+            elif segment == Command.C_POINTER:
                 if index == 0:
-                    self.output_stream.write(Codes.push_this_that.replace("index", "THIS"))
+                    self.output_stream.write(
+                        Codes.push_this_that.replace("index", "THIS"))
 
                 elif index == 1:
-                    self.output_stream.write(Codes.push_this_that.replace("index", "THAT"))
+                    self.output_stream.write(
+                        Codes.push_this_that.replace("index", "THAT"))
 
             # push other segment
             elif segment in Command.BASIC_SEGMENTS:
                 self.output_stream.write(Codes.push_segment.replace(
                     "index", index).replace("segment", self.segments[segment]))
-            
-            elif segment  == Command.C_POINTER:
-                self.output_stream.write(Codes.push_segment.replace(
-                    "index", index).replace("segment", self.segments[segment]))
-            
-            elif segment in Command.C_TEMP:
-                self.output_stream.write(Codes.push_segment.replace(
-                    "index", index).replace("segment", self.segments[segment]))
+
+            elif segment == Command.C_TEMP:
+                self.output_stream.write(
+                    Codes.push_temp.replace("index", index))
 
             else:
                 # illigal segment
@@ -173,8 +170,9 @@ class CodeWriter:
             if segment in Command.BASIC_SEGMENTS:
                 self.output_stream.write(Codes.pop_segment.replace(
                     "index", index).replace("segment", self.segments[segment]))
-
-            #pop static
+            elif segment == Command.C_TEMP:
+                self.output_stream.write(Codes.pop_temp.replace("index", index))
+            # pop static
             # example : pop static i
             # take the top of the stack (sp--, because we reduce the stack),
             # and put it inside the new static data named (self.file_name + "." + str(index))
@@ -182,17 +180,19 @@ class CodeWriter:
                 self.output_stream.write(Codes.pop_static.replace(
                     "index", (self.file_name + "." + str(index))))
 
-            #TODO COMMENT
+            # TODO COMMENT
             # pop pointer
             # example : pop static i
             # take the top of the stack (sp--, because we reduce the stack),
             # and put it inside the new static data named (self.file_name + "." + str(index))
             elif segment == "pointer":
                 if index == 0:
-                    self.output_stream.write(Codes.pop_this_that.replace("index", "THIS"))
+                    self.output_stream.write(
+                        Codes.pop_this_that.replace("index", "THIS"))
 
                 elif index == 1:
-                    self.output_stream.write(Codes.pop_this_that.replace("index", "THAT"))
+                    self.output_stream.write(
+                        Codes.pop_this_that.replace("index", "THAT"))
 
             # # pop constant TODO is this possible?
             # elif segment == "constant":
@@ -309,4 +309,3 @@ class CodeWriter:
         # LCL = *(frame-4)              // restores LCL for the caller
         # goto return_address           // go to the return address
         pass
-
