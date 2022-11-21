@@ -19,7 +19,8 @@ class Command:
     C_RETURN = "C_RETURN" 
     C_CALL = "C_CALL"
 
-    C_POINTER = "pointer"
+    SEG_POINTER = "pointer"
+    SEG_STATIC = "static"
     C_TEMP =" temp"
     BASIC_SEGMENTS = ["argument","this","that","local"]
     ARITHMETIC_ACTIONS = ["add", "sub", "neg", "eq", "lt", "gt", "and", "or", "not"]

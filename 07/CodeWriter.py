@@ -176,7 +176,7 @@ class CodeWriter:
             # example : pop static i
             # take the top of the stack (sp--, because we reduce the stack),
             # and put it inside the new static data named (self.file_name + "." + str(index))
-            elif segment == "static":
+            elif segment == Command.SEG_STATIC:
                 self.output_stream.write(Codes.pop_static.replace(
                     "index", (self.file_name + "." + str(index))))
 
