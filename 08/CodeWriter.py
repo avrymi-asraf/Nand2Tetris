@@ -70,6 +70,9 @@ class CodeWriter:
 
         pass
 
+    def write_initialization(self) -> None:
+      """ write the initialization commands"""  
+
     def write_arithmetic(self, command: str) -> None:
         """Writes assembly code that is the translation of the given 
         arithmetic command. For the commands eq, lt, gt, you should correctly
@@ -219,9 +222,8 @@ class CodeWriter:
         Args:
             label (str): the label to write.
         """
-        # This is irrelevant for project 7,
-        # you will implement this in project 8!
-        pass
+        
+        self.output_stream.write( "({})".format(label) )
 
     def write_goto(self, label: str) -> None:
         """Writes assembly code that affects the goto command.

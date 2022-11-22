@@ -56,9 +56,6 @@ class Parser:
         """
         self.input_lines = input_file.read().splitlines()
 
-        # self.input_lines = [
-        #     line for line in self.input_lines if not line.startswith("/")]
-
         self.input_lines = [
             line.split("//")[0].split("\t")[0] for line in self.input_lines]
 
@@ -68,7 +65,7 @@ class Parser:
 
 
         self.num_of_commands = len(self.input_lines)
-        self.has_more_commands = len(self.input_lines) > 0
+        self.has_more_commands = (self.num_of_commands > 0)
         self.index_of_readen_commands = 0
 
         if self.has_more_commands:
@@ -76,14 +73,21 @@ class Parser:
         else:
             self.curr_command = None
 
+        self.curr_function = "main"
+
     def advance(self) -> None:
         """Reads the next command from the input and makes it the current 
         command. Should be called only if has_more_commands is true. Initially
         there is no current command.
         """
+        
         self.index_of_readen_commands += 1
         if self.index_of_readen_commands < self.num_of_commands:
             self.curr_command = self.input_lines[self.index_of_readen_commands]
+
+            if self.command_type() == "function":
+                self.curr_function = self.arg1()
+
         else:
             self.has_more_commands = False
 
@@ -144,21 +148,22 @@ class Parser:
             "C_ARITHMETIC", the command itself (add, sub, etc.) is returned. 
             Should not be called if the current command is "C_RETURN".
         """
-        if self.command_type() != "C_RETURN":
+        if self.command_type() == "C_RETURN":
+            raise ValueError("return command asked for arg 1")
 
-            splited_command = self.curr_command.split(" ")
+        if self.command_type() == "":
+            raise ValueError("empty command")
 
-            if (len(splited_command) == 0):
-                return None
+        splited_command = self.curr_command.split(" ")
 
-            if self.command_type() == Command.C_ARITHMETIC:
-                # add, sub, neg, eq, lt, gt, and, or, not
-                return splited_command[0]
+        if self.command_type() == Command.C_ARITHMETIC:
+            # add, sub, neg, eq, lt, gt, and, or, not
+            return splited_command[0]
 
-            if ((self.command_type() == Command.C_PUSH)
-                    or (self.command_type() == Command.C_POP)):
-                #push, pop
-                return splited_command[1]
+        if ((self.command_type() == Command.C_PUSH)
+                or (self.command_type() == Command.C_POP)):
+            #push, pop
+            return splited_command[1]
 
     def arg2(self) -> int:
         """
@@ -174,3 +179,12 @@ class Parser:
                 return None
             else:
                 return splited_command[2]
+
+    def function(self) -> str:
+        """
+        Returns:
+            int: the second argument of the current command. Should be
+            called only if the current command is "C_PUSH", "C_POP", 
+            "C_FUNCTION" or "C_CALL".
+        """
+        return self.curr_function if self.curr_function else "main"
