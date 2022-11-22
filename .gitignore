@@ -6,6 +6,7 @@ __pycache__/
 *.zip
 .vscode/
 *.asm
+*.out
 
 # C extensions
 *.so

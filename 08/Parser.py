@@ -160,7 +160,7 @@ class Parser:
             # or label
             return splited_command[0]
 
-        if self.command_type() in (Command.C_PUSH, Command.C_POP, Command.C_LABEL, Command.C_IF) :
+        if self.command_type() in (Command.C_PUSH, Command.C_POP, Command.C_LABEL, Command.C_IF, Command.C_GOTO) :
             #push, pop
             return splited_command[1]
 

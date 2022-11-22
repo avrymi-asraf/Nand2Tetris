@@ -330,14 +330,14 @@ M = M+1
 
     """
 
-    C_goto = """"
-@label
+    C_goto = """
+@_label
 0;JMP
 """
 
     C_if = """
 @SP
-A = M-1
+AM = M-1
 D = M
 
 @_label
