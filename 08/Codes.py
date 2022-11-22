@@ -276,7 +276,7 @@ M = M>>
 """
 
     push_this_that ="""
-     //**push this that**
+//**push this that**
 @index
 D = M
 
@@ -289,7 +289,7 @@ M=M+1
     """
 
     pop_this_that ="""
-    //**pop this that**
+//**pop this that**
 @SP
 A = M-1      
 D = M
@@ -303,7 +303,7 @@ M = M-1
 
 
     pop_temp = """ 
-    //**pop temp**
+//**pop temp**
 @SP
 A = M-1      
 D = M
@@ -318,7 +318,6 @@ M = M-1
     
     push_temp ="""
     //**push temp**
-
 @Rnew_index
 D = M
 
