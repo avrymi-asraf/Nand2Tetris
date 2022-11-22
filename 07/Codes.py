@@ -151,86 +151,88 @@ M = 0
 """  
   
     C_lt = """
-@SP 
+@SP
 AM = M-1
 D = M
-@tltz._counter  // if first argument < 0    
-D;JLT
-@SP             //else first > 0  
+@Yltz._counter
+D;JLT            
+@SP       
 A = M-1
 D = M
-@false._counter   // if second argument < 0  
-D;JLT 
-@sub._counter //else sub them
+@true._counter 
+D;JLT          
+(sub._counter)  
+@SP
+A = M
+D = D-M
+@false._counter
+D;JGE
+@true._counter
 0;JMP
-(tltz._counter)    // first argument < 0
-    @SP
-    A = M-1         
-    D = M           //D hold the second argument
-    @true._counter  // if second argument >= 0
-    D;JGE     
-    @sub._counter  //else sub them  
-    0;JMP
-(sub._counter)
-    @SP
-    A = M 
-    D = M-D     //second argument - first argument
-    @true._counter  
-    D;JGT
-    @false._counter //else false
-    0;JMP   
+(Yltz._counter)
+@SP
+A = M-1
+D = M
+@false._counter
+D;JGE
+@sub._counter
+0;JMP
+
 (true._counter)
-    @SP
-    A = M-1
-    M = -1    
-    @end._counter
-    0;JMP
+@SP
+A = M-1
+M = -1
+@end._counter
+0;JMP
+
 (false._counter)
-    @SP
-    A = M-1
-    M = 0
-(end._counter)
+@SP
+A = M-1
+M = 0
+
+(end._counter) 
 """ 
     
     C_gt = """
-@SP 
+@SP
 AM = M-1
 D = M
-@tltz._counter   // if first argument < 0    
-D;JLT
-@SP     //else first argument > 0  
+@Yltz._counter
+D;JLT            
+@SP       
 A = M-1
 D = M
-@false._counter      // if second argument < 0  
-D;JLT 
-@sub._counter   //else sub them
+@false._counter 
+D;JLT          
+(sub._counter)  
+@SP
+A = M
+D = D-M
+@true._counter
+D;JGT
+@false._counter
 0;JMP
-(tltz._counter)
-    @SP
-    A = M -1
-    D = M
-    @true._counter // if second argument >0
-    D;JGT      
-    @sub._counter    //else sub them 
-    0;JMP
-(sub._counter)
-    @SP
-    A = M 
-    D = D-M //D second argument, M first argument
-    @true._counter
-    D;JGT 
-    @false._counter //else true
-    0;JMP   
+(Yltz._counter)
+@SP
+A = M-1
+D = M
+@true._counter
+D;JGE
+@sub._counter
+0;JMP
+
 (true._counter)
-    @SP
-    A = M-1
-    M = -1   
-    @end._counter
-    0;JMP
+@SP
+A = M-1
+M = -1
+@end._counter
+0;JMP
+
 (false._counter)
-    @SP
-    A = M-1
-    M = 0
+@SP
+A = M-1
+M = 0
+
 (end._counter) 
 """
     

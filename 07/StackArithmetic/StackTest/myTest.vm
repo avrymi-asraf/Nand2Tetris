@@ -7,4 +7,4 @@
 // on the stack. 
 push constant 32767
 push constant 32766
-gt                   // RAM[262]!
+lt                   // RAM[262]!

@@ -37,3 +37,93 @@ elif segment == "pointer":
     "THIS":"3",
     "THAT":"4"
 ```
+
+
+
+```
+@SP
+AM = M-1
+D = M
+@Yltz._counter
+D;JLT            
+@SP       
+A = M-1
+D = M
+@false._counter 
+D;JLT          
+(sub._counter)  
+@SP
+A = M
+D = D-M
+@true._counter
+D;JGT
+@false._counter
+0;JMP
+(Yltz._counter)
+@SP
+A = M-1
+D = M
+@true._counter
+D;JGE
+@sub._counter
+0;JMP
+
+(true._counter)
+@SP
+A = M-1
+M = -1
+@end._counter
+0;JMP
+
+(false._counter)
+@SP
+A = M-1
+M = -1
+
+(end._counter) 
+```
+
+
+
+```
+@SP
+AM = M-1
+D = M
+@Yltz._counter
+D;JLT            
+@SP       
+A = M-1
+D = M
+@true._counter 
+D;JGT          
+(sub._counter)  
+@SP
+A = M
+D = D-M
+@false._counter
+D;JGE
+@true._counter
+0;JMP
+(Yltz._counter)
+@SP
+A = M-1
+D = M
+@false._counter
+D;JGE
+@sub._counter
+0;JMP
+
+(true._counter)
+@SP
+A = M-1
+M = -1
+@end._counter
+0;JMP
+
+(false._counter)
+@SP
+A = M-1
+M = 0
+
+(end._counter) 
+```

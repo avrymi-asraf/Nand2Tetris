@@ -1,6 +1,6 @@
 
 //**push constant**
-@0
+@17
 D = A
 
 @SP
@@ -10,28 +10,7 @@ M = D
 @SP
 M = M+1
 //**push constant**
-@32767
-D = A
-
-@SP
-A = M
-M = D
-
-@SP
-M = M+1
-//add
-@SP
-AM=M-1
-D=M
-
-@SP 
-AM = M-1
-M = M-D
-
-@SP
-M =M+1
-//**push constant**
-@2
+@17
 D = A
 
 @SP
@@ -42,47 +21,24 @@ M = D
 M = M+1
 @SP
 AM = M-1
-D = M
-@Yltz.1
-D;JLT            
-@SP       
-A = M-1
-D = M
-@true.1 
-D;JLT          
-(sub.1)  
-@SP
-A = M
-D = D-M
-@false.1
-D;JGE
-@true.1
-0;JMP
-(Yltz.1)
-@SP
-A = M-1
-D = M
-@false.1
-D;JGE
-@sub.1
-0;JMP
-
-(true.1)
-@SP
-A = M-1
-M = -1
-@end.1
-0;JMP
-
-(false.1)
-@SP
+D = M   //old value
+A = A-1
+D = D-M // the difference
+@eq.1
+D;JEQ       //if is not equal         
+@SP          //else
 A = M-1
 M = 0
-
-(end.1) 
+@end.1
+0;JMP
+(eq.1) //set to true  
+    @SP
+    A = M-1
+    M = -1
+(end.1)
 
 //**push constant**
-@2
+@892
 D = A
 
 @SP
@@ -92,7 +48,7 @@ M = D
 @SP
 M = M+1
 //**push constant**
-@0
+@891
 D = A
 
 @SP
@@ -101,27 +57,6 @@ M = D
 
 @SP
 M = M+1
-//**push constant**
-@32767
-D = A
-
-@SP
-A = M
-M = D
-
-@SP
-M = M+1
-//add
-@SP
-AM=M-1
-D=M
-
-@SP 
-AM = M-1
-M = M-D
-
-@SP
-M =M+1
 @SP
 AM = M-1
 D = M
@@ -164,16 +99,6 @@ M = 0
 (end.2) 
 
 //**push constant**
-@0
-D = A
-
-@SP
-A = M
-M = D
-
-@SP
-M = M+1
-//**push constant**
 @32767
 D = A
 
@@ -183,19 +108,8 @@ M = D
 
 @SP
 M = M+1
-//add
-@SP
-AM=M-1
-D=M
-
-@SP 
-AM = M-1
-M = M-D
-
-@SP
-M =M+1
 //**push constant**
-@2
+@32766
 D = A
 
 @SP
@@ -246,7 +160,7 @@ M = 0
 (end.3) 
 
 //**push constant**
-@2
+@56
 D = A
 
 @SP
@@ -256,7 +170,7 @@ M = D
 @SP
 M = M+1
 //**push constant**
-@0
+@31
 D = A
 
 @SP
@@ -266,7 +180,28 @@ M = D
 @SP
 M = M+1
 //**push constant**
-@32767
+@53
+D = A
+
+@SP
+A = M
+M = D
+
+@SP
+M = M+1
+//**add**
+@SP
+AM=M-1
+D=M
+
+@SP 
+AM = M-1
+M = D+M
+
+@SP
+M =M+1
+//**push constant**
+@112
 D = A
 
 @SP
@@ -285,44 +220,35 @@ AM = M-1
 M = M-D
 
 @SP
-M =M+1
+M =M+1 
+@SP
+A = M-1
+M = -M
+
 @SP
 AM = M-1
 D = M
-@Yltz.4
-D;JLT            
-@SP       
+
+@SP
 A = M-1
-D = M
-@false.4 
-D;JLT          
-(sub.4)  
+M = D&M
+
+//**push constant**
+@82
+D = A
+
 @SP
 A = M
-D = D-M
-@true.4
-D;JGT
-@false.4
-0;JMP
-(Yltz.4)
+M = D
+
 @SP
-A = M-1
+M = M+1
+//OR  
+@SP
+AM = M-1
 D = M
-@true.4
-D;JGE
-@sub.4
-0;JMP
 
-(true.4)
 @SP
 A = M-1
-M = -1
-@end.4
-0;JMP
-
-(false.4)
-@SP
-A = M-1
-M = 0
-
-(end.4) 
+M = D|M
+    

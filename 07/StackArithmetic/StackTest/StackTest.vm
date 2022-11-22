@@ -19,16 +19,16 @@ push constant 891
 lt                  // RAM[259]!
 push constant 891
 push constant 892
-lt                  //RAM[260]!
+lt                  //RAM[260]
 push constant 891
 push constant 891
-lt                  //RAM[261]
+lt                  //RAM[261]!
 push constant 32767
 push constant 32766
-gt                   // RAM[262]!
+gt                   // RAM[262]
 push constant 32766
 push constant 32767
-gt                   //RAM[262]?
+gt                   //RAM[262]
 push constant 32766
 push constant 32766
 gt                  //RAM[263]

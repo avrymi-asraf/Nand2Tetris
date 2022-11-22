@@ -1,6 +1,6 @@
 
 //**push constant**
-@0
+@32767
 D = A
 
 @SP
@@ -8,9 +8,13 @@ A = M
 M = D
 
 @SP
-M = M+1
+M = M+1 
+@SP
+A = M-1
+M = -M
+
 //**push constant**
-@32767
+@1
 D = A
 
 @SP
@@ -31,7 +35,7 @@ M = M-D
 @SP
 M =M+1
 //**push constant**
-@2
+@32767
 D = A
 
 @SP
@@ -82,17 +86,7 @@ M = 0
 (end.1) 
 
 //**push constant**
-@2
-D = A
-
-@SP
-A = M
-M = D
-
-@SP
-M = M+1
-//**push constant**
-@0
+@32767
 D = A
 
 @SP
@@ -103,6 +97,20 @@ M = D
 M = M+1
 //**push constant**
 @32767
+D = A
+
+@SP
+A = M
+M = D
+
+@SP
+M = M+1 
+@SP
+A = M-1
+M = -M
+
+//**push constant**
+@1
 D = A
 
 @SP
@@ -130,21 +138,21 @@ D;JLT
 @SP       
 A = M-1
 D = M
-@true.2 
+@false.2 
 D;JLT          
 (sub.2)  
 @SP
 A = M
 D = D-M
-@false.2
-D;JGE
 @true.2
+D;JGT
+@false.2
 0;JMP
 (Yltz.2)
 @SP
 A = M-1
 D = M
-@false.2
+@true.2
 D;JGE
 @sub.2
 0;JMP
@@ -164,7 +172,7 @@ M = 0
 (end.2) 
 
 //**push constant**
-@0
+@20000
 D = A
 
 @SP
@@ -172,9 +180,13 @@ A = M
 M = D
 
 @SP
-M = M+1
+M = M+1 
+@SP
+A = M-1
+M = -M
+
 //**push constant**
-@32767
+@1
 D = A
 
 @SP
@@ -195,7 +207,7 @@ M = M-D
 @SP
 M =M+1
 //**push constant**
-@2
+@30000
 D = A
 
 @SP
@@ -246,7 +258,7 @@ M = 0
 (end.3) 
 
 //**push constant**
-@2
+@20000
 D = A
 
 @SP
@@ -256,7 +268,7 @@ M = D
 @SP
 M = M+1
 //**push constant**
-@0
+@30000
 D = A
 
 @SP
@@ -264,9 +276,13 @@ A = M
 M = D
 
 @SP
-M = M+1
+M = M+1 
+@SP
+A = M-1
+M = -M
+
 //**push constant**
-@32767
+@1
 D = A
 
 @SP
