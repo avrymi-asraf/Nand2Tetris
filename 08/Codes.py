@@ -331,4 +331,17 @@ M = M+1
 
     """
 
-    C_labal = """" """
+    C_goto = """"
+@label
+0;JMP
+"""
+
+    C_if = """"
+@SP
+A = M-1
+D = M
+
+@_label
+D;JLT
+D;JGT
+"""

@@ -155,12 +155,12 @@ class Parser:
 
         splited_command = self.curr_command.split(" ")
 
-        if self.command_type() in (Command.C_ARITHMETIC, Command.C_LABEL):
+        if self.command_type() in (Command.C_ARITHMETIC):
             # add, sub, neg, eq, lt, gt, and, or, not
             # or label
             return splited_command[0]
 
-        if self.command_type() in (Command.C_PUSH, Command.C_POP) :
+        if self.command_type() in (Command.C_PUSH, Command.C_POP, Command.C_LABEL, Command.C_IF) :
             #push, pop
             return splited_command[1]
 

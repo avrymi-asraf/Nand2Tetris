@@ -222,7 +222,6 @@ class CodeWriter:
         Args:
             label (str): the label to write.
         """
-        
         self.output_stream.write( "({})".format(label) )
 
     def write_goto(self, label: str) -> None:
@@ -231,9 +230,10 @@ class CodeWriter:
         Args:
             label (str): the label to go to.
         """
-        # This is irrelevant for project 7,
-        # you will implement this in project 8!
-        pass
+        
+        # @label
+        # 0;JMP
+        self.output_stream.write(Codes.C_goto.replace("_label", label))
 
     def write_if(self, label: str) -> None:
         """Writes assembly code that affects the if-goto command. 
@@ -241,9 +241,7 @@ class CodeWriter:
         Args:
             label (str): the label to go to.
         """
-        # This is irrelevant for project 7,
-        # you will implement this in project 8!
-        pass
+        self.output_stream.write(Codes.C_if.replace("_label", label))
 
     def write_function(self, function_name: str, n_vars: int) -> None:
         """Writes assembly code that affects the function command. 
@@ -257,8 +255,6 @@ class CodeWriter:
             function_name (str): the name of the function.
             n_vars (int): the number of local variables of the function.
         """
-        # This is irrelevant for project 7,
-        # you will implement this in project 8!
         # The pseudo-code of "function function_name n_vars" is:
         # (function_name)       // injects a function entry label into the code
         # repeat n_vars times:  // n_vars = number of local variables
