@@ -140,7 +140,6 @@ class Parser:
         else:
             raise Exception("Unknown command : {} is undefined ".format(word1))  
                 
-
     def arg1(self) -> str:
         """
         Returns:
@@ -156,12 +155,12 @@ class Parser:
 
         splited_command = self.curr_command.split(" ")
 
-        if self.command_type() == Command.C_ARITHMETIC:
+        if self.command_type() in (Command.C_ARITHMETIC, Command.C_LABEL):
             # add, sub, neg, eq, lt, gt, and, or, not
+            # or label
             return splited_command[0]
 
-        if ((self.command_type() == Command.C_PUSH)
-                or (self.command_type() == Command.C_POP)):
+        if self.command_type() in (Command.C_PUSH, Command.C_POP) :
             #push, pop
             return splited_command[1]
 
@@ -187,4 +186,4 @@ class Parser:
             called only if the current command is "C_PUSH", "C_POP", 
             "C_FUNCTION" or "C_CALL".
         """
-        return self.curr_function if self.curr_function else "main"
+        return self.curr_function 
