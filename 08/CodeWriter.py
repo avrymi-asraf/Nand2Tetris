@@ -259,7 +259,14 @@ class CodeWriter:
         # (function_name)       // injects a function entry label into the code
         # repeat n_vars times:  // n_vars = number of local variables
         #   push constant 0     // initializes the local variables to 0
-        pass
+
+        self.write_label(function_name) # (function_name)       // injects a function entry label into the code
+        
+        # repeat n_vars times:  // n_vars = number of local variables
+        #   push constant 0     // initializes the local variables to 0
+        for i in range(int(n_vars)): 
+            self.write_push_pop(Command.C_PUSH, Command.SEG_CONSTANT, str(0))
+    
 
     def write_call(self, function_name: str, n_args: int) -> None:
         """Writes assembly code that affects the call command. 
@@ -277,18 +284,32 @@ class CodeWriter:
             function_name (str): the name of the function to call.
             n_args (int): the number of arguments of the function.
         """
-        # This is irrelevant for project 7,
-        # you will implement this in project 8!
         # The pseudo-code of "call function_name n_args" is:
         # push return_address   // generates a label and pushes it to the stack
+
+        i = 0 #TODO change i to the index of the called function from the curr function 
+        return_address = "function_name$ret." + str(i)
+
+        self.output_stream.write("@" + return_address)
+        self.output_stream.write(Codes.push_static.replace("index", return_address))
+
+ 
         # push LCL              // saves LCL of the caller
+        self.output_stream.write(Codes.push_static.replace("index", "LCL"))
         # push ARG              // saves ARG of the caller
+        self.output_stream.write(Codes.push_static.replace("index", "ARG"))
         # push THIS             // saves THIS of the caller
+        self.output_stream.write(Codes.push_static.replace("index", "THIS"))
         # push THAT             // saves THAT of the caller
+        self.output_stream.write(Codes.push_static.replace("index", "THAT"))
+
         # ARG = SP-5-n_args     // repositions ARG
         # LCL = SP              // repositions LCL
         # goto function_name    // transfers control to the callee
+        self.write_goto(function_name)
         # (return_address)      // injects the return address label into the code
+
+        """   """
         pass
 
     def write_return(self) -> None:

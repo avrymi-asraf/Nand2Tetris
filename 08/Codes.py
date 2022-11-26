@@ -258,18 +258,21 @@ M = D|M
     """
    
     C_not = """
+//**not**
 @SP
 A = M-1
 M = !M
     """
 
     C_shiftleft = """
+//**C_shiftleft**
 @SP
 A = M-1
 M = M<<
 """
 
     C_shiftright = """
+//**C_shiftright**
 @SP
 A = M-1
 M = M>>
@@ -317,7 +320,7 @@ M = M-1
     """
     
     push_temp ="""
-    //**push temp**
+//**push temp**
 @Rnew_index
 D = M
 
@@ -331,11 +334,13 @@ M = M+1
     """
 
     C_goto = """
+//**goto**
 @_label
 0;JMP
 """
 
     C_if = """
+//**if**
 @SP
 AM = M-1
 D = M
