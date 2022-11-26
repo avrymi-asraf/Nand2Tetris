@@ -256,12 +256,10 @@ class CodeWriter:
             n_vars (int): the number of local variables of the function.
         """
         # The pseudo-code of "function function_name n_vars" is:
-        # (function_name)       // injects a function entry label into the code
-        # repeat n_vars times:  // n_vars = number of local variables
-        #   push constant 0     // initializes the local variables to 0
-
-        self.write_label(function_name) # (function_name)       // injects a function entry label into the code
         
+        # (function_name)       // injects a function entry label into the code
+        self.write_label(function_name) 
+
         # repeat n_vars times:  // n_vars = number of local variables
         #   push constant 0     // initializes the local variables to 0
         for i in range(int(n_vars)): 
@@ -285,15 +283,14 @@ class CodeWriter:
             n_args (int): the number of arguments of the function.
         """
         # The pseudo-code of "call function_name n_args" is:
-        # push return_address   // generates a label and pushes it to the stack
 
+        # push return_address   // generates a label and pushes it to the stack
         i = 0 #TODO change i to the index of the called function from the curr function 
         return_address = "function_name$ret." + str(i)
 
         self.output_stream.write("@" + return_address)
         self.output_stream.write(Codes.push_static.replace("index", return_address))
 
- 
         # push LCL              // saves LCL of the caller
         self.output_stream.write(Codes.push_static.replace("index", "LCL"))
         # push ARG              // saves ARG of the caller
@@ -304,22 +301,37 @@ class CodeWriter:
         self.output_stream.write(Codes.push_static.replace("index", "THAT"))
 
         # ARG = SP-5-n_args     // repositions ARG
+        self.output_stream.write(Codes.C_reposition.replace("_old_ind", str(0)).replace("_new_ind", str(int(-n_args-5)))
+        .replace("_new", "SP").replace("_old", "ARG"))
+
         # LCL = SP              // repositions LCL
+        self.output_stream.write(Codes.C_reposition.replace("_old_ind", str(0)).replace("_new_ind", str(0))
+        .replace("_new", "SP").replace("_old", "LCL"))
+
         # goto function_name    // transfers control to the callee
         self.write_goto(function_name)
-        # (return_address)      // injects the return address label into the code
 
-        """   """
-        pass
+        # (return_address)      // injects the return address label into the code
+        self.output_stream.write("@" + return_address)
+
 
     def write_return(self) -> None:
         """Writes assembly code that affects the return command."""
-        # This is irrelevant for project 7,
-        # you will implement this in project 8!
         # The pseudo-code of "return" is:
+    
         # frame = LCL                   // frame is a temporary variable
+        self.output_stream.write("@frame")
+        #frame_data = LCL_data
+        self.output_stream.write(Codes.C_reposition.replace("_old_ind", str(0)).replace("_new_ind", str(0))
+        .replace("_new", "LCL").replace("_old", "frame"))
+
         # return_address = *(frame-5)   // puts the return address in a temp var
+        self.output_stream.write("@return_address")
+        self.output_stream.write(Codes.C_reposition.replace("_old_ind", str(0)).replace("_new_ind", str(-5))
+            .replace("_new", "frame").replace("_old", "return_address"))
+
         # *ARG = pop()                  // repositions the return value for the caller
+
         # SP = ARG + 1                  // repositions SP for the caller
         # THAT = *(frame-1)             // restores THAT for the caller
         # THIS = *(frame-2)             // restores THIS for the caller
@@ -327,3 +339,5 @@ class CodeWriter:
         # LCL = *(frame-4)              // restores LCL for the caller
         # goto return_address           // go to the return address
         pass
+
+

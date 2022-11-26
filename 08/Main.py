@@ -34,6 +34,8 @@ def translate_file(
 
     code_writer.set_file_name(input_filename)
 
+    function_call_counter  = 0
+
     if bootstrap : 
         #  code_writer.init
         pass
@@ -59,9 +61,11 @@ def translate_file(
             code_writer.write_function(parser.arg1(), parser.arg2())
         
         elif parser.command_type() == Command.C_RETURN:
+            # function_call_counter = 0
             pass
         
         elif parser.command_type() == Command.C_CALL:
+            # function_call_counter+= 1
             pass
 
 

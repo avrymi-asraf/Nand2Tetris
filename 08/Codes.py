@@ -112,7 +112,7 @@ M = D+M
 M =M+1"""
 
     C_sub = """
-//add
+//**sub**
 @SP
 AM=M-1
 D=M
@@ -348,4 +348,38 @@ D = M
 @_label
 D;JLT
 D;JGT
+"""
+
+C_reposition = """ 
+
+LCL = SP
+
+@SP
+D = A
+
+@LCL
+A = D
+
+//**reposition**
+//old+ind_old = new+ind_new
+
+@_new
+D = A
+
+@_ind_new
+D = D+A
+
+@new_address
+M = D
+
+@_old
+D = A
+
+@_ind_old
+D = D+A
+
+@new_address
+A = M
+M = D
+    
 """
