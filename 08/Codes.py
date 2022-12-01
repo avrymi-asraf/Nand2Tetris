@@ -14,27 +14,7 @@ M = D
 @SP
 M = M+1"""
 
-    push_segment =  """
-//**push argument**
-//go to segment at index
 
-@segment
-D = M
-
-@index
-D = D+A
-
-A = D
-D = M
-
-// write in SP
-@SP
-A = M
-M = D
-
-// inc SP
-@SP
-M = M+1"""
 
     push_static = """
 //**push static**
@@ -51,6 +31,37 @@ M = D
 // inc SP
 @SP
 M = M+1"""
+
+    push_segment =  """
+//**push segment**
+
+
+@_segment
+D = M
+
+// write in SP
+@SP
+A = M
+M = D
+
+// inc SP
+@SP
+M = M + 1
+"""
+
+    push_new_label = """  
+@_label
+D = A
+
+// write in SP
+@SP
+A = M
+M = D
+
+// inc SP
+@SP
+M = M+1
+"""
 
     pop_segment = """ 
 //**pop argument**
@@ -351,35 +362,12 @@ D;JGT
 """
 
 C_reposition = """ 
+@_source
+D = M
 
-LCL = SP
+@_source_ind
+D = D + A
 
-@SP
-D = A
-
-@LCL
-A = D
-
-//**reposition**
-//old+ind_old = new+ind_new
-
-@_new
-D = A
-
-@_ind_new
-D = D+A
-
-@new_address
+@_dest
 M = D
-
-@_old
-D = A
-
-@_ind_old
-D = D+A
-
-@new_address
-A = M
-M = D
-    
 """

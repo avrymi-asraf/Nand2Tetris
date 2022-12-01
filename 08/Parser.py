@@ -74,6 +74,7 @@ class Parser:
             self.curr_command = None
 
         self.curr_function = "main"
+        self._counter_calls = {}
 
     def advance(self) -> None:
         """Reads the next command from the input and makes it the current 
@@ -85,8 +86,11 @@ class Parser:
         if self.index_of_readen_commands < self.num_of_commands:
             self.curr_command = self.input_lines[self.index_of_readen_commands]
 
-            if self.command_type() == "function":
+            if self.command_type() == Command.C_FUNCTION:
                 self.curr_function = self.arg1()
+                self._counter_calls = {}
+            
+
 
         else:
             self.has_more_commands = False
@@ -187,3 +191,10 @@ class Parser:
             "C_FUNCTION" or "C_CALL".
         """
         return self.curr_function 
+
+    def calls_counter(self)-> int:
+        if self.command_type() != Command.C_CALL:
+            raise AssertionError("assert command type is Call, but is {}".format(self.command_type()))
+        function_name = self.arg1()
+        self._counter_calls[function_name] = self._counter_calls.get(function_name,0)+1
+        return self._counter_calls[function_name]

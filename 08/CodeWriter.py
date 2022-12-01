@@ -263,10 +263,9 @@ class CodeWriter:
         # repeat n_vars times:  // n_vars = number of local variables
         #   push constant 0     // initializes the local variables to 0
         for i in range(int(n_vars)): 
-            self.write_push_pop(Command.C_PUSH, Command.SEG_CONSTANT, str(0))
-    
+            self.write_push_pop(Command.C_PUSH, Command.SEG_CONSTANT, str(0)) 
 
-    def write_call(self, function_name: str, n_args: int) -> None:
+    def write_call(self, function_name: str, n_args: int, calls_counter: int) -> None:
         """Writes assembly code that affects the call command. 
         Let "Xxx.foo" be a function within the file Xxx.vm.
         The handling of each "call" command within Xxx.foo's code generates and
@@ -284,36 +283,33 @@ class CodeWriter:
         """
         # The pseudo-code of "call function_name n_args" is:
 
-        # push return_address   // generates a label and pushes it to the stack
-        i = 0 #TODO change i to the index of the called function from the curr function 
-        return_address = "function_name$ret." + str(i)
-
+        # push return_address   // generates a label and pushes it to the stack 
+        return_address = function_name  + "$ret." + str(calls_counter)
         self.output_stream.write("@" + return_address)
-        self.output_stream.write(Codes.push_static.replace("index", return_address))
+        self.output_stream.write(Codes.push_new_label.replace("_label", return_address))
 
         # push LCL              // saves LCL of the caller
-        self.output_stream.write(Codes.push_static.replace("index", "LCL"))
+        self.output_stream.write(Codes.push_segment.replace("_segment", "LCL"))
         # push ARG              // saves ARG of the caller
-        self.output_stream.write(Codes.push_static.replace("index", "ARG"))
+        self.output_stream.write(Codes.push_segment.replace("_segment", "ARG"))
         # push THIS             // saves THIS of the caller
-        self.output_stream.write(Codes.push_static.replace("index", "THIS"))
+        self.output_stream.write(Codes.push_segment.replace("_segment", "THIS"))
         # push THAT             // saves THAT of the caller
-        self.output_stream.write(Codes.push_static.replace("index", "THAT"))
+        self.output_stream.write(Codes.push_segment.replace("_segment", "THAT"))
 
         # ARG = SP-5-n_args     // repositions ARG
-        self.output_stream.write(Codes.C_reposition.replace("_old_ind", str(0)).replace("_new_ind", str(int(-n_args-5)))
-        .replace("_new", "SP").replace("_old", "ARG"))
+        self.output_stream.write(Codes.C_reposition.replace("_source_ind", str(int(-n_args-5)))
+        .replace("_source", "SP").replace("_dest", "ARG"))
 
         # LCL = SP              // repositions LCL
-        self.output_stream.write(Codes.C_reposition.replace("_old_ind", str(0)).replace("_new_ind", str(0))
-        .replace("_new", "SP").replace("_old", "LCL"))
+        self.output_stream.write(Codes.C_reposition.replace("_source_ind", str(0))
+        .replace("_source", "SP").replace("_dest", "LCL"))
 
         # goto function_name    // transfers control to the callee
         self.write_goto(function_name)
 
         # (return_address)      // injects the return address label into the code
-        self.output_stream.write("@" + return_address)
-
+        self.output_stream.write("(" + return_address + ")" )
 
     def write_return(self) -> None:
         """Writes assembly code that affects the return command."""
@@ -321,14 +317,15 @@ class CodeWriter:
     
         # frame = LCL                   // frame is a temporary variable
         self.output_stream.write("@frame")
+
         #frame_data = LCL_data
-        self.output_stream.write(Codes.C_reposition.replace("_old_ind", str(0)).replace("_new_ind", str(0))
-        .replace("_new", "LCL").replace("_old", "frame"))
+        # self.output_stream.write(Codes.C_reposition.replace("_source_ind", str(0))
+        # .replace("_new", "LCL").replace("_old", "frame"))
 
         # return_address = *(frame-5)   // puts the return address in a temp var
-        self.output_stream.write("@return_address")
-        self.output_stream.write(Codes.C_reposition.replace("_old_ind", str(0)).replace("_new_ind", str(-5))
-            .replace("_new", "frame").replace("_old", "return_address"))
+        # self.output_stream.write("@return_address")
+        # self.output_stream.write(Codes.C_reposition.replace("_old_ind", str(0)).replace("_new_ind", str(-5))
+        #     .replace("_new", "frame").replace("_old", "return_address"))
 
         # *ARG = pop()                  // repositions the return value for the caller
 
