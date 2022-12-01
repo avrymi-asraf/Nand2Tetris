@@ -1,10 +1,9 @@
 
 class Codes:
-    #TODO delete lines
 
     push_constant =  """
 //**push constant**
-@index
+@_index
 D = A
 
 @SP
@@ -14,13 +13,11 @@ M = D
 @SP
 M = M+1"""
 
-
-
     push_static = """
 //**push static**
 //go to static at the symbol "Xxx.i". write it in the top of the stack 
 
-@index
+@_index
 D = M
 
 // write in SP
@@ -32,9 +29,9 @@ M = D
 @SP
 M = M+1"""
 
-push_segment =  """
+    push_segment =  """
 //**push argument**
-//go to segment at index
+//go to segment at _index
 
 @_segment
 D = M
@@ -89,10 +86,10 @@ M = M+1
 //**pop argument**
 
 //find address
-@segment
+@_segment
 D = M
 
-@index
+@_index
 D = D + A
 
 @_temp_index
@@ -121,8 +118,8 @@ M = M-1
 A = M -1
 D = M
 
-//write data inside segment at the given index
-@index
+//write data inside segment at the given _index
+@_index
 M = D
 
 //decrement SP
@@ -313,7 +310,7 @@ M = M>>
 
     push_this_that ="""
 //**push this that**
-@index
+@_index
 D = M
 
 @SP         
@@ -330,7 +327,7 @@ M=M+1
 A = M-1      
 D = M
 
-@index
+@_index
 M = D
 
 @SP
@@ -383,7 +380,7 @@ D;JLT
 D;JGT
 """
 
-C_reposition = """ 
+    C_reposition = """ 
 @_source
 D = M
 
