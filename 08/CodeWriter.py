@@ -316,7 +316,7 @@ class CodeWriter:
         # The pseudo-code of "return" is:
     
         # frame = LCL                   // frame is a temporary variable
-        self.output_stream.write("@frame")
+        # self.output_stream.write("@frame")
 
         #frame_data = LCL_data
         # self.output_stream.write(Codes.C_reposition.replace("_source_ind", str(0))
