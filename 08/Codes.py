@@ -30,7 +30,7 @@ M = D
 M = M+1"""
 
     push_segment =  """
-//**push argument**
+//**push segment**
 //go to segment at _index
 
 @_segment
@@ -53,7 +53,7 @@ M = M+1"""
 
 
     push_segment_adress =  """
-//**push segment**
+//**push segment adress**
 
 @_segment
 D = M
@@ -380,12 +380,13 @@ D;JLT
 D;JGT
 """
 
-    C_reposition = """ 
+    C_reposition = """
+//**reposition** 
 @_source
 D = M
 
-@_source_ind
-D = D + A
+@_source_ind_to_reduce
+D = D - A
 
 @_dest
 M = D

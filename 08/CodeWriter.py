@@ -285,7 +285,6 @@ class CodeWriter:
 
         # push return_address   // generates a label and pushes it to the stack 
         return_address = function_name  + "$ret." + str(calls_counter)
-        self.output_stream.write("@" + return_address)
         self.output_stream.write(Codes.push_new_label.replace("_label", return_address))
 
         # push LCL              // saves LCL of the caller
@@ -298,7 +297,7 @@ class CodeWriter:
         self.output_stream.write(Codes.push_segment_adress.replace("_segment", "THAT"))
 
         # ARG = SP-5-n_args     // repositions ARG
-        self.output_stream.write(Codes.C_reposition.replace("_source_ind", str(int(-n_args-5)))
+        self.output_stream.write(Codes.C_reposition.replace("_source_ind_to_reduce", str(int(int(n_args)+5)))
         .replace("_source", "SP").replace("_dest", "ARG"))
 
         # LCL = SP              // repositions LCL
