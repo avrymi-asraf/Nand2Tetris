@@ -32,9 +32,31 @@ M = D
 @SP
 M = M+1"""
 
-    push_segment =  """
-//**push segment**
+push_segment =  """
+//**push argument**
+//go to segment at index
 
+@_segment
+D = M
+
+@_index
+D = D+A
+
+A = D
+D = M
+
+// write in SP
+@SP
+A = M
+M = D
+
+// inc SP
+@SP
+M = M+1"""
+
+
+    push_segment_adress =  """
+//**push segment**
 
 @_segment
 D = M

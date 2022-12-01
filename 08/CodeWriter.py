@@ -122,7 +122,7 @@ class CodeWriter:
             # (sp++, because we increase the stack)
             if segment == Command.SEG_CONSTANT:
                 self.output_stream.write(
-                    Codes.push_constant.replace("index", index))
+                    Codes.push_constant.replace("_index", index))
 
             # push static
             # example : push static i
@@ -130,7 +130,7 @@ class CodeWriter:
             # (sp++, because we increase the stack)
             elif segment == Command.SEG_STATIC:
                 self.output_stream.write(Codes.push_static.replace(
-                    "index", (self.file_name + "." + str(index))))
+                    "_index", (self.file_name + "." + str(index))))
 
             # push pointer
             # example : push pointer 0
@@ -139,19 +139,19 @@ class CodeWriter:
             elif segment == Command.SEG_POINTER:
                 if int(index) == 0:
                     self.output_stream.write(
-                        Codes.push_this_that.replace("index", "THIS"))
+                        Codes.push_this_that.replace("_index", "THIS"))
 
                 elif int(index) == 1:
                     self.output_stream.write(
-                        Codes.push_this_that.replace("index", "THAT"))
+                        Codes.push_this_that.replace("_index", "THAT"))
 
             # push other segment
             elif segment in Command.BASIC_SEGMENTS:
                 self.output_stream.write(Codes.push_segment.replace(
-                    "index", index).replace("segment", self.segments[segment]))
+                    "_index", index).replace("_segment", self.segments[segment]))
 
             elif segment == Command.SEG_TEMP:
-                self.output_stream.write( Codes.push_temp.replace("new_index", str(int(5 + int(index)))) )
+                self.output_stream.write( Codes.push_temp.replace("_new_index", str(int(5 + int(index)))) )
 
             else:
                 # illigal segment
@@ -171,7 +171,7 @@ class CodeWriter:
             # and put it inside segment at the given index
 
             if segment == Command.SEG_TEMP:
-                self.output_stream.write(Codes.pop_temp.replace("new_index", str(int(5 + int(index)))))
+                self.output_stream.write(Codes.pop_temp.replace("_new_index", str(int(5 + int(index)))))
 
             # pop static
             # example : pop static i
@@ -179,7 +179,7 @@ class CodeWriter:
             # and put it inside the new static data named (self.file_name + "." + str(index))
             elif segment == Command.SEG_STATIC:
                 self.output_stream.write(Codes.pop_static.replace(
-                    "index", (self.file_name + "." + str(index))))
+                    "_index", (self.file_name + "." + str(index))))
 
             # TODO COMMENT
             # pop pointer
@@ -190,17 +190,17 @@ class CodeWriter:
                 
                 if int(index) == 0:
                     self.output_stream.write(
-                        Codes.pop_this_that.replace("index", "THIS"))
+                        Codes.pop_this_that.replace("_index", "THIS"))
                     # print("got to pointer this")
 
                 elif int(index) == 1:
                     self.output_stream.write(
-                        Codes.pop_this_that.replace("index", "THAT"))
+                        Codes.pop_this_that.replace("_index", "THAT"))
 
 
             elif segment in Command.BASIC_SEGMENTS:
                 self.output_stream.write(Codes.pop_segment.replace(
-                    "index", index).replace("segment", self.segments[segment]))
+                    "_index", index).replace("_segment", self.segments[segment]))
 
             else:
                 # illigal segment
@@ -289,13 +289,13 @@ class CodeWriter:
         self.output_stream.write(Codes.push_new_label.replace("_label", return_address))
 
         # push LCL              // saves LCL of the caller
-        self.output_stream.write(Codes.push_segment.replace("_segment", "LCL"))
+        self.output_stream.write(Codes.push_segment_adress.replace("_segment", "LCL"))
         # push ARG              // saves ARG of the caller
-        self.output_stream.write(Codes.push_segment.replace("_segment", "ARG"))
+        self.output_stream.write(Codes.push_segment_adress.replace("_segment", "ARG"))
         # push THIS             // saves THIS of the caller
-        self.output_stream.write(Codes.push_segment.replace("_segment", "THIS"))
+        self.output_stream.write(Codes.push_segment_adress.replace("_segment", "THIS"))
         # push THAT             // saves THAT of the caller
-        self.output_stream.write(Codes.push_segment.replace("_segment", "THAT"))
+        self.output_stream.write(Codes.push_segment_adress.replace("_segment", "THAT"))
 
         # ARG = SP-5-n_args     // repositions ARG
         self.output_stream.write(Codes.C_reposition.replace("_source_ind", str(int(-n_args-5)))
