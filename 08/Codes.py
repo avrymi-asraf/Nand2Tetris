@@ -380,7 +380,7 @@ D;JLT
 D;JGT
 """
 
-    C_reposition = """
+    C_reposition_neg_ind = """
 //**reposition** 
 @_source
 D = M
@@ -391,3 +391,31 @@ D = D - A
 @_dest
 M = D
 """
+
+    C_reposition_pos_ind = """
+//**reposition** 
+@_source
+D = M
+
+@_source_ind_to_reduce
+D = D + A
+
+@_dest
+M = D
+"""
+
+    C_pop_to_arg = """
+        @sp
+        A = M-1  
+        D = M
+
+        @ARG
+        M = D
+
+        @sp
+        M = M-1 
+        """
+
+    C_init = """"
+//**init**
+    """
