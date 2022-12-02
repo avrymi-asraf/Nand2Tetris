@@ -34,11 +34,8 @@ def translate_file(
 
     code_writer.set_file_name(input_filename)
 
-    function_call_counter  = 0
-
     if bootstrap : 
-        #  code_writer.init
-        pass
+        code_writer.write_init()
 
     while parser.has_more_commands:
         
@@ -61,7 +58,7 @@ def translate_file(
             code_writer.write_function(parser.arg1(), parser.arg2())
         
         elif parser.command_type() == Command.C_RETURN:
-            pass
+            code_writer.write_return()
         
         elif parser.command_type() == Command.C_CALL:
             code_writer.write_call(parser.arg1(), parser.arg2(), parser.calls_counter())

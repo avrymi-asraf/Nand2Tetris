@@ -297,11 +297,11 @@ class CodeWriter:
         self.output_stream.write(Codes.push_segment_adress.replace("_segment", "THAT"))
 
         # ARG = SP-5-n_args     // repositions ARG
-        self.output_stream.write(Codes.C_reposition.replace("_source_ind_to_reduce", str(int(int(n_args)+5)))
+        self.output_stream.write(Codes.C_reposition_neg_ind.replace("_source_ind_to_reduce", str(int(int(n_args)+5)))
         .replace("_source", "SP").replace("_dest", "ARG"))
 
         # LCL = SP              // repositions LCL
-        self.output_stream.write(Codes.C_reposition.replace("_source_ind", str(0))
+        self.output_stream.write(Codes.C_reposition_neg_ind.replace("_source_ind", str(0))
         .replace("_source", "SP").replace("_dest", "LCL"))
 
         # goto function_name    // transfers control to the callee
@@ -315,25 +315,46 @@ class CodeWriter:
         # The pseudo-code of "return" is:
     
         # frame = LCL                   // frame is a temporary variable
-        # self.output_stream.write("@frame")
-
-        #frame_data = LCL_data
-        # self.output_stream.write(Codes.C_reposition.replace("_source_ind", str(0))
-        # .replace("_new", "LCL").replace("_old", "frame"))
+        self.output_stream.write("@frame")
+        self.output_stream.write(Codes.C_reposition_neg_ind.replace("_source_ind", str(0))
+        .replace("_source", "LCL").replace("_dest", "frame"))
 
         # return_address = *(frame-5)   // puts the return address in a temp var
-        # self.output_stream.write("@return_address")
-        # self.output_stream.write(Codes.C_reposition.replace("_old_ind", str(0)).replace("_new_ind", str(-5))
-        #     .replace("_new", "frame").replace("_old", "return_address"))
+
+        self.output_stream.write("@return_address")
+        self.output_stream.write(Codes.C_reposition_neg_ind.replace("_source_ind", str(5))
+        .replace("_source", "frame").replace("_dest", "return_address"))
 
         # *ARG = pop()                  // repositions the return value for the caller
-
+        self.output_stream.write(Codes.C_pop_to_arg)
+        
         # SP = ARG + 1                  // repositions SP for the caller
+        self.output_stream.write(Codes.C_reposition_pos_ind.replace("_source_ind", str(1))
+        .replace("_source", "LCL").replace("_dest", "frame"))
+
         # THAT = *(frame-1)             // restores THAT for the caller
+        self.output_stream.write(Codes.C_reposition_neg_ind.replace("_source_ind", str(1))
+        .replace("_source", "frame").replace("_dest", "THAT"))
+
         # THIS = *(frame-2)             // restores THIS for the caller
+        self.output_stream.write(Codes.C_reposition_neg_ind.replace("_source_ind", str(2))
+        .replace("_source", "frame").replace("_dest", "THIS"))
+
         # ARG = *(frame-3)              // restores ARG for the caller
+        self.output_stream.write(Codes.C_reposition_neg_ind.replace("_source_ind", str(3))
+        .replace("_source", "frame").replace("_dest", "ARG"))
+
         # LCL = *(frame-4)              // restores LCL for the caller
+        self.output_stream.write(Codes.C_reposition_neg_ind.replace("_source_ind", str(4))
+        .replace("_source", "frame").replace("_dest", "LCL"))
+
         # goto return_address           // go to the return address
-        pass
+        self.write_goto("return_address")
+
+
+    def write_init(self) -> None:
+        """ Write the init before all files"""
+        self.output_stream.write(Codes.C_init)
+        
 
 
