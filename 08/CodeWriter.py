@@ -308,7 +308,7 @@ class CodeWriter:
         self.write_goto(function_name)
 
         # (return_address)      // injects the return address label into the code
-        self.output_stream.write("(" + return_address + ")" )
+        self.output_stream.write("(" + return_address + ")"+ "\n")
 
     def write_return(self) -> None:
         """Writes assembly code that affects the return command."""
@@ -353,8 +353,7 @@ class CodeWriter:
 
 
     def write_init(self) -> None:
-        """ Write the init before all files"""
-        self.output_stream.write(Codes.C_init)
-        
+        self.output_stream.write(Codes.C_init_sp_to_256)
+        self.write_call("Sys.init", 0, 0)
 
 

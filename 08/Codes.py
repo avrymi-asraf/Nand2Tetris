@@ -20,19 +20,18 @@ M = M+1"""
 @_index
 D = M
 
-// write in SP
+//write in SP
 @SP
 A = M
 M = D
 
-// inc SP
+//inc SP
 @SP
 M = M+1"""
 
     push_segment =  """
 //**push segment**
 //go to segment at _index
-
 @_segment
 D = M
 
@@ -42,49 +41,48 @@ D = D+A
 A = D
 D = M
 
-// write in SP
+//write in SP
 @SP
 A = M
 M = D
 
-// inc SP
+//inc SP
 @SP
 M = M+1"""
 
 
     push_segment_adress =  """
 //**push segment adress**
-
 @_segment
 D = M
 
-// write in SP
+//write in SP
 @SP
 A = M
 M = D
 
-// inc SP
+//inc SP
 @SP
 M = M + 1
 """
 
-    push_new_label = """  
+    push_new_label = """
+//**push_new_label**  
 @_label
 D = A
 
-// write in SP
+//write in SP
 @SP
 A = M
 M = D
 
-// inc SP
+//inc SP
 @SP
 M = M+1
 """
 
     pop_segment = """ 
 //**pop argument**
-
 //find address
 @_segment
 D = M
@@ -112,7 +110,6 @@ M = M-1
 
     pop_static = """ 
 //**pop static**
-
 //take data from top of stack
 @SP
 A = M -1
@@ -165,7 +162,7 @@ M = -M
 AM = M-1
 D = M   //old value
 A = A-1
-D = D-M // the difference
+D = D-M //the difference 
 @eq._counter
 D;JEQ       //if is not equal         
 @SP          //else
@@ -224,6 +221,7 @@ M = 0
 """ 
     
     C_gt = """
+//**C_gt**
 @SP
 AM = M-1
 D = M
@@ -334,7 +332,6 @@ M = D
 M = M-1
 """
 
-
     pop_temp = """ 
 //**pop temp**
 @SP
@@ -346,10 +343,9 @@ M = D
 
 @SP
 M = M-1      
-
     """
     
-    push_temp ="""
+    push_temp = """
 //**push temp**
 @Rnew_index
 D = M
@@ -360,7 +356,6 @@ M = D
 
 @SP
 M = M+1 
-
     """
 
     C_goto = """
@@ -405,17 +400,19 @@ M = D
 """
 
     C_pop_to_arg = """
-        @sp
-        A = M-1  
-        D = M
+//**C_pop_to_arg**
+@sp
+A = M-1  
+D = M
 
-        @ARG
-        M = D
+@ARG
+M = D
 
-        @sp
-        M = M-1 
-        """
+@sp
+M = M-1 
+"""
 
-    C_init = """"
-//**init**
-    """
+    C_init_sp_to_256 = """
+@SP
+M = 256
+"""
