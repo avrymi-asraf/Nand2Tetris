@@ -232,6 +232,7 @@ class CodeWriter:
             label (str): the label to go to.
         """
         # @label
+        # A = M
         # 0;JMP
         self.output_stream.write(Codes.C_goto.replace("_label", label))
 
@@ -318,14 +319,11 @@ class CodeWriter:
         self.output_stream.write("\n" + "//**write return**" + "\n")
 
         # frame = LCL                   // frame is a temporary variable
-        # self.output_stream.write("@frame") #TODO check if needed
         self.output_stream.write(Codes.C_reposition_neg_ind.replace("_source_ind_to_reduce", str(0))
         .replace("_source", "LCL").replace("_dest", "frame"))
 
         # return_address = *(frame-5)   // puts the return address in a temp var
-
-        # self.output_stream.write("@return_address") #TODO check if needed
-        self.output_stream.write(Codes.C_reposition_neg_ind.replace("_source_ind_to_reduce", str(5))
+        self.output_stream.write(Codes.C_updte_address_from_data_neg.replace("_source_ind_to_reduce", str(5))
         .replace("_source", "frame").replace("_dest", "return_address"))
 
         # *ARG = pop()                  // repositions the return value for the caller
@@ -333,26 +331,26 @@ class CodeWriter:
         
         # SP = ARG + 1                  // repositions SP for the caller
         self.output_stream.write(Codes.C_reposition_pos_ind.replace("_source_ind_to_add", str(1))
-        .replace("_source", "LCL").replace("_dest", "frame"))
+        .replace("_source", "ARG").replace("_dest", "SP"))
 
         # THAT = *(frame-1)             // restores THAT for the caller
-        self.output_stream.write(Codes.C_reposition_neg_ind.replace("_source_ind_to_reduce", str(1))
+        self.output_stream.write(Codes.C_updte_address_from_data_neg.replace("_source_ind_to_reduce", str(1))
         .replace("_source", "frame").replace("_dest", "THAT"))
 
         # THIS = *(frame-2)             // restores THIS for the caller
-        self.output_stream.write(Codes.C_reposition_neg_ind.replace("_source_ind_to_reduce", str(2))
+        self.output_stream.write(Codes.C_updte_address_from_data_neg.replace("_source_ind_to_reduce", str(2))
         .replace("_source", "frame").replace("_dest", "THIS"))
 
         # ARG = *(frame-3)              // restores ARG for the caller
-        self.output_stream.write(Codes.C_reposition_neg_ind.replace("_source_ind_to_reduce", str(3))
+        self.output_stream.write(Codes.C_updte_address_from_data_neg.replace("_source_ind_to_reduce", str(3))
         .replace("_source", "frame").replace("_dest", "ARG"))
 
         # LCL = *(frame-4)              // restores LCL for the caller
-        self.output_stream.write(Codes.C_reposition_neg_ind.replace("_source_ind_to_reduce", str(4))
+        self.output_stream.write(Codes.C_updte_address_from_data_neg.replace("_source_ind_to_reduce", str(4))
         .replace("_source", "frame").replace("_dest", "LCL"))
 
         # goto return_address           // go to the return address
-        self.write_goto("return_address")
+        self.write_goto("return_address") #TODO RETURN
 
 
     def write_init(self) -> None:

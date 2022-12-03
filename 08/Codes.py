@@ -27,15 +27,33 @@ M = D
 @SP
 M = M+1"""
 
+#     push_segment =  """//**push segment**
+# //go to segment at _index
+# @_segment
+# D = M
+
+# @_index
+# D = D+A
+
+# A = D
+# D = M
+
+# //write in SP
+# @SP
+# A = M
+# M = D
+
+# //inc SP
+# @SP
+# M = M+1"""
+
     push_segment =  """//**push segment**
 //go to segment at _index
 @_segment
 D = M
 
 @_index
-D = D+A
-
-A = D
+A = D + A
 D = M
 
 //write in SP
@@ -118,17 +136,28 @@ M = M-1
 
 """
 
+#     C_add = """//**add**
+# @SP
+# AM=M-1
+# D=M
+
+# @SP 
+# AM = M-1
+# M = D+M
+
+# @SP
+# M =M+1"""
+
     C_add = """//**add**
 @SP
-AM=M-1
-D=M
+A = M-1
+D = M
 
-@SP 
-AM = M-1
-M = D+M
+A = A-1
+M = M + D
 
 @SP
-M =M+1"""
+M = M - 1"""
 
     C_sub = """//**sub**
 @SP
@@ -343,6 +372,7 @@ M = M+1
 
     C_goto = """//**goto**
 @_label
+A = M
 0;JMP
 """
 
@@ -352,6 +382,7 @@ AM = M-1
 D = M
 
 @_label
+A = M
 D;JLT
 D;JGT
 """
@@ -378,15 +409,28 @@ D = D + A
 M = D
 """
 
+    C_updte_address_from_data_neg = """//**updte_address_from_data_neg** 
+@_source
+D = M
+
+@_source_ind_to_reduce
+A = D - A
+D = M
+
+@_dest
+M = D
+"""
+
     C_pop_to_arg = """//**C_pop_to_arg**
-@sp
+@SP
 A = M-1  
 D = M
 
 @ARG
+A = M
 M = D
 
-@sp
+@SP
 M = M-1 
 """
 

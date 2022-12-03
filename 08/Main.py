@@ -35,7 +35,8 @@ def translate_file(
     code_writer.set_file_name(input_filename)
 
     if bootstrap : 
-        code_writer.write_init()
+        pass
+        # code_writer.write_init()
 
     while parser.has_more_commands:
         
