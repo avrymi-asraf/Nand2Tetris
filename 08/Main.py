@@ -59,9 +59,10 @@ def translate_file(
         
         elif parser.command_type() == Command.C_RETURN:
             code_writer.write_return()
-        
+            
         elif parser.command_type() == Command.C_CALL:
             code_writer.write_call(parser.arg1(), parser.arg2(), parser.calls_counter())
+            
 
 
         else:
