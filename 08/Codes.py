@@ -1,8 +1,7 @@
 
 class Codes:
 
-    push_constant =  """
-//**push constant**
+    push_constant =  """//**push constant**
 @_index
 D = A
 
@@ -13,8 +12,7 @@ M = D
 @SP
 M = M+1"""
 
-    push_static = """
-//**push static**
+    push_static = """//**push static**
 //go to static at the symbol "Xxx.i". write it in the top of the stack 
 
 @_index
@@ -29,8 +27,7 @@ M = D
 @SP
 M = M+1"""
 
-    push_segment =  """
-//**push segment**
+    push_segment =  """//**push segment**
 //go to segment at _index
 @_segment
 D = M
@@ -51,8 +48,7 @@ M = D
 M = M+1"""
 
 
-    push_segment_adress =  """
-//**push segment adress**
+    push_segment_adress =  """//**push segment adress**
 @_segment
 D = M
 
@@ -66,8 +62,7 @@ M = D
 M = M + 1
 """
 
-    push_new_label = """
-//**push_new_label**  
+    push_new_label = """//**push_new_label**  
 @_label
 D = A
 
@@ -81,8 +76,7 @@ M = D
 M = M+1
 """
 
-    pop_segment = """ 
-//**pop argument**
+    pop_segment = """//**pop argument**
 //find address
 @_segment
 D = M
@@ -108,8 +102,7 @@ M = M-1
 
 """
 
-    pop_static = """ 
-//**pop static**
+    pop_static = """//**pop static**
 //take data from top of stack
 @SP
 A = M -1
@@ -125,8 +118,7 @@ M = M-1
 
 """
 
-    C_add = """
-//**add**
+    C_add = """//**add**
 @SP
 AM=M-1
 D=M
@@ -138,8 +130,7 @@ M = D+M
 @SP
 M =M+1"""
 
-    C_sub = """
-//**sub**
+    C_sub = """//**sub**
 @SP
 AM=M-1
 D=M
@@ -151,13 +142,13 @@ M = M-D
 @SP
 M =M+1"""
 
-    C_neg = """ 
+    C_neg = """//**neg**
 @SP
 A = M-1
 M = -M
 """
    
-    C_eq = """
+    C_eq = """//**eq**
 @SP
 AM = M-1
 D = M   //old value
@@ -177,7 +168,7 @@ M = 0
 (end._counter)
 """  
   
-    C_lt = """
+    C_lt = """//**lt**
 @SP
 AM = M-1
 D = M
@@ -220,7 +211,7 @@ M = 0
 (end._counter) 
 """ 
     
-    C_gt = """
+    C_gt = """//**gt**
 //**C_gt**
 @SP
 AM = M-1
@@ -264,7 +255,7 @@ M = 0
 (end._counter) 
 """
     
-    C_and = """
+    C_and = """//**and**
 @SP
 AM = M-1
 D = M
@@ -274,8 +265,7 @@ A = M-1
 M = D&M
 """
     
-    C_or= """
-//OR  
+    C_or = """//**or**  
 @SP
 AM = M-1
 D = M
@@ -285,29 +275,25 @@ A = M-1
 M = D|M
     """
    
-    C_not = """
-//**not**
+    C_not = """//**not**
 @SP
 A = M-1
 M = !M
     """
 
-    C_shiftleft = """
-//**C_shiftleft**
+    C_shiftleft = """//**shiftleft**
 @SP
 A = M-1
 M = M<<
 """
 
-    C_shiftright = """
-//**C_shiftright**
+    C_shiftright = """//**shiftright**
 @SP
 A = M-1
 M = M>>
 """
 
-    push_this_that ="""
-//**push this that**
+    push_this_that ="""//**push this that**
 @_index
 D = M
 
@@ -319,8 +305,7 @@ M = D
 M=M+1
     """
 
-    pop_this_that ="""
-//**pop this that**
+    pop_this_that ="""//**pop this that**
 @SP
 A = M-1      
 D = M
@@ -332,8 +317,7 @@ M = D
 M = M-1
 """
 
-    pop_temp = """ 
-//**pop temp**
+    pop_temp = """//**pop temp**
 @SP
 A = M-1      
 D = M
@@ -345,8 +329,7 @@ M = D
 M = M-1      
     """
     
-    push_temp = """
-//**push temp**
+    push_temp = """//**push temp**
 @Rnew_index
 D = M
 
@@ -358,14 +341,12 @@ M = D
 M = M+1 
     """
 
-    C_goto = """
-//**goto**
+    C_goto = """//**goto**
 @_label
 0;JMP
 """
 
-    C_if = """
-//**if**
+    C_if = """//**if**
 @SP
 AM = M-1
 D = M
@@ -375,8 +356,7 @@ D;JLT
 D;JGT
 """
 
-    C_reposition_neg_ind = """
-//**reposition** 
+    C_reposition_neg_ind = """//**reposition** 
 @_source
 D = M
 
@@ -387,20 +367,18 @@ D = D - A
 M = D
 """
 
-    C_reposition_pos_ind = """
-//**reposition** 
+    C_reposition_pos_ind = """//**reposition** 
 @_source
 D = M
 
-@_source_ind_to_reduce
+@_source_ind_to_add
 D = D + A
 
 @_dest
 M = D
 """
 
-    C_pop_to_arg = """
-//**C_pop_to_arg**
+    C_pop_to_arg = """//**C_pop_to_arg**
 @sp
 A = M-1  
 D = M
@@ -412,7 +390,7 @@ M = D
 M = M-1 
 """
 
-    C_init_sp_to_256 = """
+    C_init_sp_to_256 = """//**init**
 @256
 D = A
 

@@ -46,7 +46,7 @@ def translate_file(
             code_writer.write_push_pop(parser.command_type() ,parser.arg1(), parser.arg2())
         
         elif parser.command_type() == Command.C_LABEL:
-            code_writer.write_label( parser.function() + "$" + parser.arg1())
+            code_writer.write_label(parser.function() + "$" + parser.arg1())
         
         elif parser.command_type() == Command.C_GOTO:
             code_writer.write_goto( parser.function() + "$" + parser.arg1())
@@ -63,8 +63,6 @@ def translate_file(
         elif parser.command_type() == Command.C_CALL:
             code_writer.write_call(parser.arg1(), parser.arg2(), parser.calls_counter())
             
-
-
         else:
             raise Exception("Unknown command {} ", parser.command_type())    
 
