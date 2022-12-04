@@ -440,3 +440,7 @@ D = A
 @SP
 M = D
 """
+
+    C_write_label = """// **label
+(_label)
+"""

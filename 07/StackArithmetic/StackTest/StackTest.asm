@@ -1,4 +1,3 @@
-
 //**push constant**
 @17
 D = A
@@ -8,8 +7,7 @@ A = M
 M = D
 
 @SP
-M = M+1
-//**push constant**
+M = M+1//**push constant**
 @17
 D = A
 
@@ -18,12 +16,12 @@ A = M
 M = D
 
 @SP
-M = M+1
+M = M+1//**eq**
 @SP
 AM = M-1
 D = M   //old value
 A = A-1
-D = D-M // the difference
+D = D-M //the difference 
 @eq.1
 D;JEQ       //if is not equal         
 @SP          //else
@@ -36,7 +34,6 @@ M = 0
     A = M-1
     M = -1
 (end.1)
-
 //**push constant**
 @17
 D = A
@@ -46,8 +43,7 @@ A = M
 M = D
 
 @SP
-M = M+1
-//**push constant**
+M = M+1//**push constant**
 @16
 D = A
 
@@ -56,12 +52,12 @@ A = M
 M = D
 
 @SP
-M = M+1
+M = M+1//**eq**
 @SP
 AM = M-1
 D = M   //old value
 A = A-1
-D = D-M // the difference
+D = D-M //the difference 
 @eq.2
 D;JEQ       //if is not equal         
 @SP          //else
@@ -74,7 +70,6 @@ M = 0
     A = M-1
     M = -1
 (end.2)
-
 //**push constant**
 @16
 D = A
@@ -84,8 +79,7 @@ A = M
 M = D
 
 @SP
-M = M+1
-//**push constant**
+M = M+1//**push constant**
 @17
 D = A
 
@@ -94,12 +88,12 @@ A = M
 M = D
 
 @SP
-M = M+1
+M = M+1//**eq**
 @SP
 AM = M-1
 D = M   //old value
 A = A-1
-D = D-M // the difference
+D = D-M //the difference 
 @eq.3
 D;JEQ       //if is not equal         
 @SP          //else
@@ -112,7 +106,6 @@ M = 0
     A = M-1
     M = -1
 (end.3)
-
 //**push constant**
 @892
 D = A
@@ -122,8 +115,7 @@ A = M
 M = D
 
 @SP
-M = M+1
-//**push constant**
+M = M+1//**push constant**
 @891
 D = A
 
@@ -132,7 +124,7 @@ A = M
 M = D
 
 @SP
-M = M+1
+M = M+1//**lt**
 @SP
 AM = M-1
 D = M
@@ -173,7 +165,6 @@ A = M-1
 M = 0
 
 (end.4) 
-
 //**push constant**
 @891
 D = A
@@ -183,8 +174,7 @@ A = M
 M = D
 
 @SP
-M = M+1
-//**push constant**
+M = M+1//**push constant**
 @892
 D = A
 
@@ -193,7 +183,7 @@ A = M
 M = D
 
 @SP
-M = M+1
+M = M+1//**lt**
 @SP
 AM = M-1
 D = M
@@ -234,7 +224,6 @@ A = M-1
 M = 0
 
 (end.5) 
-
 //**push constant**
 @891
 D = A
@@ -244,8 +233,7 @@ A = M
 M = D
 
 @SP
-M = M+1
-//**push constant**
+M = M+1//**push constant**
 @891
 D = A
 
@@ -254,7 +242,7 @@ A = M
 M = D
 
 @SP
-M = M+1
+M = M+1//**lt**
 @SP
 AM = M-1
 D = M
@@ -295,7 +283,6 @@ A = M-1
 M = 0
 
 (end.6) 
-
 //**push constant**
 @32767
 D = A
@@ -305,8 +292,7 @@ A = M
 M = D
 
 @SP
-M = M+1
-//**push constant**
+M = M+1//**push constant**
 @32766
 D = A
 
@@ -315,7 +301,8 @@ A = M
 M = D
 
 @SP
-M = M+1
+M = M+1//**gt**
+//**C_gt**
 @SP
 AM = M-1
 D = M
@@ -356,7 +343,6 @@ A = M-1
 M = 0
 
 (end.7) 
-
 //**push constant**
 @32766
 D = A
@@ -366,8 +352,7 @@ A = M
 M = D
 
 @SP
-M = M+1
-//**push constant**
+M = M+1//**push constant**
 @32767
 D = A
 
@@ -376,7 +361,8 @@ A = M
 M = D
 
 @SP
-M = M+1
+M = M+1//**gt**
+//**C_gt**
 @SP
 AM = M-1
 D = M
@@ -417,7 +403,6 @@ A = M-1
 M = 0
 
 (end.8) 
-
 //**push constant**
 @32766
 D = A
@@ -427,8 +412,7 @@ A = M
 M = D
 
 @SP
-M = M+1
-//**push constant**
+M = M+1//**push constant**
 @32766
 D = A
 
@@ -437,7 +421,8 @@ A = M
 M = D
 
 @SP
-M = M+1
+M = M+1//**gt**
+//**C_gt**
 @SP
 AM = M-1
 D = M
@@ -478,7 +463,6 @@ A = M-1
 M = 0
 
 (end.9) 
-
 //**push constant**
 @57
 D = A
@@ -488,8 +472,7 @@ A = M
 M = D
 
 @SP
-M = M+1
-//**push constant**
+M = M+1//**push constant**
 @31
 D = A
 
@@ -498,8 +481,7 @@ A = M
 M = D
 
 @SP
-M = M+1
-//**push constant**
+M = M+1//**push constant**
 @53
 D = A
 
@@ -508,19 +490,16 @@ A = M
 M = D
 
 @SP
-M = M+1
-//**add**
+M = M+1//**add**
 @SP
-AM=M-1
-D=M
+A = M-1
+D = M
 
-@SP 
-AM = M-1
-M = D+M
+A = A-1
+M = M + D
 
 @SP
-M =M+1
-//**push constant**
+M = M - 1//**push constant**
 @112
 D = A
 
@@ -529,8 +508,7 @@ A = M
 M = D
 
 @SP
-M = M+1
-//add
+M = M+1//**sub**
 @SP
 AM=M-1
 D=M
@@ -540,11 +518,11 @@ AM = M-1
 M = M-D
 
 @SP
-M =M+1 
+M =M+1//**neg**
 @SP
 A = M-1
 M = -M
-
+//**and**
 @SP
 AM = M-1
 D = M
@@ -552,7 +530,6 @@ D = M
 @SP
 A = M-1
 M = D&M
-
 //**push constant**
 @82
 D = A
@@ -562,8 +539,7 @@ A = M
 M = D
 
 @SP
-M = M+1
-//OR  
+M = M+1//**or**  
 @SP
 AM = M-1
 D = M
@@ -571,7 +547,7 @@ D = M
 @SP
 A = M-1
 M = D|M
-    
+    //**not**
 @SP
 A = M-1
 M = !M
