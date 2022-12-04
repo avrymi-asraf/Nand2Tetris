@@ -3,7 +3,7 @@
 // by Nisan and Schocken, MIT Press.
 // File name: projects/08/FunctionCalls/StaticsTest/StaticsTest.tst
 
-load StaticsTest.asm,
+load Sys.asm,
 output-file StaticsTest.out,
 compare-to StaticsTest.cmp,
 output-list RAM[0]%D1.6.1 RAM[261]%D1.6.1 RAM[262]%D1.6.1;

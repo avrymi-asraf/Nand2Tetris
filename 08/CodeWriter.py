@@ -232,7 +232,6 @@ class CodeWriter:
             label (str): the label to go to.
         """
         # @label
-        # A = M
         # 0;JMP
         self.output_stream.write(Codes.C_goto.replace("_label", label))
 
@@ -306,7 +305,7 @@ class CodeWriter:
         .replace("_source", "SP").replace("_dest", "LCL"))
 
         # goto function_name    // transfers control to the callee
-        self.write_goto(function_name)
+        self.write_goto(function_name) 
 
         # (return_address)      // injects the return address label into the code
         self.write_label(return_address)
@@ -350,7 +349,12 @@ class CodeWriter:
         .replace("_source", "frame").replace("_dest", "LCL"))
 
         # goto return_address           // go to the return address
-        self.write_goto("return_address") #TODO RETURN
+        # self.write_goto("return_address") #TODO RETURN
+        self.output_stream.write("""
+@return_address
+A = M
+0;JMP
+""")
 
 
     def write_init(self) -> None:

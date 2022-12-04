@@ -351,7 +351,7 @@ M = M-1
 A = M-1      
 D = M
 
-@Rnew_index
+@R_new_index
 M = D
 
 @SP
@@ -359,7 +359,7 @@ M = M-1
     """
     
     push_temp = """//**push temp**
-@Rnew_index
+@R_new_index
 D = M
 
 @SP
@@ -372,7 +372,6 @@ M = M+1
 
     C_goto = """//**goto**
 @_label
-A = M
 0;JMP
 """
 
