@@ -222,8 +222,7 @@ class CodeWriter:
         Args:
             label (str): the label to write.
         """
-        self.output_stream.write("\n" + "//**label**" + "\n") #TODO delete
-        self.output_stream.write("(" + label + ")"+ "\n")
+        self.output_stream.write(Codes.C_write_label.replace("_label", label))
 
     def write_goto(self, label: str) -> None:
         """Writes assembly code that affects the goto command.
@@ -297,7 +296,7 @@ class CodeWriter:
         self.output_stream.write(Codes.push_segment_adress.replace("_segment", "THAT"))
 
         # ARG = SP-5-n_args     // repositions ARG
-        self.output_stream.write(Codes.C_reposition_neg_ind.replace("_source_ind_to_reduce", str(int(int(n_args)+5)))
+        self.output_stream.write(Codes.C_reposition_neg_ind.replace("_source_ind_to_reduce", str(int(n_args)+5))
         .replace("_source", "SP").replace("_dest", "ARG"))
 
         # LCL = SP              // repositions LCL
@@ -355,7 +354,6 @@ class CodeWriter:
 A = M
 0;JMP
 """)
-
 
     def write_init(self) -> None:
         self.output_stream.write(Codes.C_init_sp_to_256)
