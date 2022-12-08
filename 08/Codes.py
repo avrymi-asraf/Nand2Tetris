@@ -441,6 +441,6 @@ D = A
 M = D
 """
 
-    C_write_label = """// **label
+    C_write_label = """// ** write label
 (_label)
 """

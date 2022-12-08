@@ -59,7 +59,6 @@ class Parser:
         self.input_lines = [
             line.split("//")[0].split("\t")[0] for line in self.input_lines]
 
-
         self.input_lines = [
             line for line in self.input_lines if not len(line) == 0]
 
@@ -88,9 +87,6 @@ class Parser:
 
             if self.command_type() == Command.C_FUNCTION:
                 self.curr_function = self.arg1()
-                self._counter_calls = {}
-            
-
 
         else:
             self.has_more_commands = False
@@ -154,7 +150,7 @@ class Parser:
         if self.command_type() == "C_RETURN":
             raise ValueError("return command asked for arg 1")
 
-        if self.command_type() == "":
+        elif self.command_type() == "":
             raise ValueError("empty command")
 
         splited_command = self.curr_command.split(" ")
@@ -163,8 +159,13 @@ class Parser:
             # add, sub, neg, eq, lt, gt, and, or, not
             return splited_command[0]
 
-        if self.command_type() in (Command.C_PUSH, Command.C_POP, Command.C_LABEL, Command.C_IF, Command.C_GOTO,Command.C_FUNCTION, Command.C_CALL) :
-            #push, pop
+        elif self.command_type() == Command.C_FUNCTION:
+            self.curr_function = splited_command[1]
+            return splited_command[1]
+
+        elif self.command_type() in (Command.C_PUSH, Command.C_POP, 
+        Command.C_LABEL, Command.C_IF, 
+        Command.C_GOTO, Command.C_CALL) :
             return splited_command[1]
 
     def arg2(self) -> int:

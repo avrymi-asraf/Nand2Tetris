@@ -38,6 +38,7 @@ def translate_file(
         code_writer.write_init()
 
     while parser.has_more_commands:
+        # print(parser.function())
         
         if parser.command_type() == Command.C_ARITHMETIC:
             code_writer.write_arithmetic(parser.arg1())
