@@ -348,7 +348,6 @@ class CodeWriter:
         .replace("_source", "frame").replace("_dest", "LCL"))
 
         # goto return_address           // go to the return address
-        # self.write_goto("return_address") #TODO RETURN
         self.output_stream.write("""
 @return_address
 A = M
