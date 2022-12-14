@@ -17,7 +17,6 @@ from Command import Command
 def translate_file(
         input_file: typing.TextIO, output_file: typing.TextIO,
         bootstrap: bool) -> None:
-
     """Translates a single file.
 
     Args:
@@ -29,43 +28,44 @@ def translate_file(
 
     parser = Parser(input_file)
     code_writer = CodeWriter(output_file)
-    
-    input_filename, input_extension = os.path.splitext(os.path.basename(input_file.name))
+    input_filename = os.path.splitext(os.path.basename(input_file.name))[0]
 
     code_writer.set_file_name(input_filename)
 
-    if bootstrap : 
+    if bootstrap:
         code_writer.write_init()
 
     while parser.has_more_commands:
         # print(parser.function())
-        
+
         if parser.command_type() == Command.C_ARITHMETIC:
             code_writer.write_arithmetic(parser.arg1())
-        
-        elif parser.command_type() in ( Command.C_PUSH, Command.C_POP ):
-            code_writer.write_push_pop(parser.command_type() ,parser.arg1(), parser.arg2())
-        
+
+        elif parser.command_type() in (Command.C_PUSH, Command.C_POP):
+            code_writer.write_push_pop(
+                parser.command_type(), parser.arg1(), parser.arg2())
+
         elif parser.command_type() == Command.C_LABEL:
             code_writer.write_label(parser.function() + "$" + parser.arg1())
-        
+
         elif parser.command_type() == Command.C_GOTO:
-            code_writer.write_goto( parser.function() + "$" + parser.arg1())
-        
+            code_writer.write_goto(parser.function() + "$" + parser.arg1())
+
         elif parser.command_type() == Command.C_IF:
             code_writer.write_if(parser.function() + "$" + parser.arg1())
-        
+
         elif parser.command_type() == Command.C_FUNCTION:
             code_writer.write_function(parser.arg1(), parser.arg2())
-        
+
         elif parser.command_type() == Command.C_RETURN:
             code_writer.write_return()
-            
+
         elif parser.command_type() == Command.C_CALL:
-            code_writer.write_call(parser.arg1(), parser.arg2(), parser.calls_counter())
-            
+            code_writer.write_call(
+                parser.arg1(), parser.arg2(), parser.calls_counter())
+
         else:
-            raise Exception("Unknown command {} ", parser.command_type())    
+            raise Exception("Unknown command {} ", parser.command_type())
 
         parser.advance()
 

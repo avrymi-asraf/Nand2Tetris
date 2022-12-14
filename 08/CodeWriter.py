@@ -68,10 +68,8 @@ class CodeWriter:
 
         self.file_name = filename
 
-        pass
-
     def write_initialization(self) -> None:
-      """ write the initialization commands"""  
+        """ write the initialization commands"""
 
     def write_arithmetic(self, command: str) -> None:
         """Writes assembly code that is the translation of the given 
@@ -151,7 +149,8 @@ class CodeWriter:
                     "_index", index).replace("_segment", self.segments[segment]))
 
             elif segment == Command.SEG_TEMP:
-                self.output_stream.write( Codes.push_temp.replace("_new_index", str(int(5 + int(index)))) )
+                self.output_stream.write(Codes.push_temp.replace(
+                    "_new_index", str(int(5 + int(index)))))
 
             else:
                 # illigal segment
@@ -164,14 +163,15 @@ class CodeWriter:
         #  and put it inside segment at the given index
         elif command == Command.C_POP:
             # print(segment)
-            
+
             # pop other segment
             # example : pop segment index
             # take the top of the stack (sp--, because we reduce the stack),
             # and put it inside segment at the given index
 
             if segment == Command.SEG_TEMP:
-                self.output_stream.write(Codes.pop_temp.replace("_new_index", str(int(5 + int(index)))))
+                self.output_stream.write(Codes.pop_temp.replace(
+                    "_new_index", str(int(5 + int(index)))))
 
             # pop static
             # example : pop static i
@@ -187,7 +187,7 @@ class CodeWriter:
             # take the top of the stack (sp--, because we reduce the stack),
             # and put it inside the new static data named (self.file_name + "." + str(index))
             elif segment == Command.SEG_POINTER:
-                
+
                 if int(index) == 0:
                     self.output_stream.write(
                         Codes.pop_this_that.replace("_index", "THIS"))
@@ -196,7 +196,6 @@ class CodeWriter:
                 elif int(index) == 1:
                     self.output_stream.write(
                         Codes.pop_this_that.replace("_index", "THAT"))
-
 
             elif segment in Command.BASIC_SEGMENTS:
                 self.output_stream.write(Codes.pop_segment.replace(
@@ -255,14 +254,14 @@ class CodeWriter:
             n_vars (int): the number of local variables of the function.
         """
         # The pseudo-code of "function function_name n_vars" is:
-        
+
         # (function_name)       // injects a function entry label into the code
-        self.write_label(function_name) 
+        self.write_label(function_name)
 
         # repeat n_vars times:  // n_vars = number of local variables
         #   push constant 0     // initializes the local variables to 0
-        for i in range(int(n_vars)): 
-            self.write_push_pop(Command.C_PUSH, Command.SEG_CONSTANT, str(0)) 
+        for i in range(int(n_vars)):
+            self.write_push_pop(Command.C_PUSH, Command.SEG_CONSTANT, str(0))
 
     def write_call(self, function_name: str, n_args: int, calls_counter: int) -> None:
         """Writes assembly code that affects the call command. 
@@ -282,29 +281,38 @@ class CodeWriter:
         """
         # The pseudo-code of "call function_name n_args" is:
 
-        # push return_address   // generates a label and pushes it to the stack 
-        return_address = function_name  + "$ret." + str(calls_counter)
-        self.output_stream.write(Codes.push_new_label.replace("_label", return_address))
+        # push return_address   // generates a label and pushes it to the stack
+        return_address = self.file_name + "." + \
+            function_name + "$ret." + str(calls_counter)
+
+        self.output_stream.write(
+            "// call" + function_name + str(calls_counter))
+        self.output_stream.write(
+            Codes.push_new_label.replace("_label", return_address))
 
         # push LCL              // saves LCL of the caller
-        self.output_stream.write(Codes.push_segment_adress.replace("_segment", "LCL"))
+        self.output_stream.write(
+            Codes.push_segment_adress.replace("_segment", "LCL"))
         # push ARG              // saves ARG of the caller
-        self.output_stream.write(Codes.push_segment_adress.replace("_segment", "ARG"))
+        self.output_stream.write(
+            Codes.push_segment_adress.replace("_segment", "ARG"))
         # push THIS             // saves THIS of the caller
-        self.output_stream.write(Codes.push_segment_adress.replace("_segment", "THIS"))
+        self.output_stream.write(
+            Codes.push_segment_adress.replace("_segment", "THIS"))
         # push THAT             // saves THAT of the caller
-        self.output_stream.write(Codes.push_segment_adress.replace("_segment", "THAT"))
+        self.output_stream.write(
+            Codes.push_segment_adress.replace("_segment", "THAT"))
 
         # ARG = SP-5-n_args     // repositions ARG
         self.output_stream.write(Codes.C_reposition_neg_ind.replace("_source_ind_to_reduce", str(int(n_args)+5))
-        .replace("_source", "SP").replace("_dest", "ARG"))
+                                 .replace("_source", "SP").replace("_dest", "ARG"))
 
         # LCL = SP              // repositions LCL
         self.output_stream.write(Codes.C_reposition_neg_ind.replace("_source_ind_to_reduce", str(0))
-        .replace("_source", "SP").replace("_dest", "LCL"))
+                                 .replace("_source", "SP").replace("_dest", "LCL"))
 
         # goto function_name    // transfers control to the callee
-        self.write_goto(function_name) 
+        self.write_goto(function_name)
 
         # (return_address)      // injects the return address label into the code
         self.write_label(return_address)
@@ -313,39 +321,39 @@ class CodeWriter:
         """Writes assembly code that affects the return command."""
         # The pseudo-code of "return" is:
 
-        #we added printing declaration
+        # we added printing declaration
         self.output_stream.write("\n" + "//**write return**" + "\n")
 
         # frame = LCL                   // frame is a temporary variable
         self.output_stream.write(Codes.C_reposition_neg_ind.replace("_source_ind_to_reduce", str(0))
-        .replace("_source", "LCL").replace("_dest", "frame"))
+                                 .replace("_source", "LCL").replace("_dest", "frame"))
 
         # return_address = *(frame-5)   // puts the return address in a temp var
         self.output_stream.write(Codes.C_updte_address_from_data_neg.replace("_source_ind_to_reduce", str(5))
-        .replace("_source", "frame").replace("_dest", "return_address"))
+                                 .replace("_source", "frame").replace("_dest", "return_address"))
 
         # *ARG = pop()                  // repositions the return value for the caller
         self.output_stream.write(Codes.C_pop_to_arg)
-        
+
         # SP = ARG + 1                  // repositions SP for the caller
         self.output_stream.write(Codes.C_reposition_pos_ind.replace("_source_ind_to_add", str(1))
-        .replace("_source", "ARG").replace("_dest", "SP"))
+                                 .replace("_source", "ARG").replace("_dest", "SP"))
 
         # THAT = *(frame-1)             // restores THAT for the caller
         self.output_stream.write(Codes.C_updte_address_from_data_neg.replace("_source_ind_to_reduce", str(1))
-        .replace("_source", "frame").replace("_dest", "THAT"))
+                                 .replace("_source", "frame").replace("_dest", "THAT"))
 
         # THIS = *(frame-2)             // restores THIS for the caller
         self.output_stream.write(Codes.C_updte_address_from_data_neg.replace("_source_ind_to_reduce", str(2))
-        .replace("_source", "frame").replace("_dest", "THIS"))
+                                 .replace("_source", "frame").replace("_dest", "THIS"))
 
         # ARG = *(frame-3)              // restores ARG for the caller
         self.output_stream.write(Codes.C_updte_address_from_data_neg.replace("_source_ind_to_reduce", str(3))
-        .replace("_source", "frame").replace("_dest", "ARG"))
+                                 .replace("_source", "frame").replace("_dest", "ARG"))
 
         # LCL = *(frame-4)              // restores LCL for the caller
         self.output_stream.write(Codes.C_updte_address_from_data_neg.replace("_source_ind_to_reduce", str(4))
-        .replace("_source", "frame").replace("_dest", "LCL"))
+                                 .replace("_source", "frame").replace("_dest", "LCL"))
 
         # goto return_address           // go to the return address
         self.output_stream.write("""
@@ -357,5 +365,3 @@ A = M
     def write_init(self) -> None:
         self.output_stream.write(Codes.C_init_sp_to_256)
         self.write_call("Sys.init", 0, 0)
-
-

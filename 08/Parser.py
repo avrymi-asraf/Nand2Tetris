@@ -6,6 +6,7 @@ as allowed by the Creative Common Attribution-NonCommercial-ShareAlike 3.0
 Unported [License](https://creativecommons.org/licenses/by-nc-sa/3.0/).
 """
 import typing
+import os
 import Command
 from Command import Command
 
@@ -47,7 +48,7 @@ class Parser:
       - function <function-name> <n-vars>
       - return
     """
-
+    
     def __init__(self, input_file: typing.TextIO) -> None:
         """Gets ready to parse the input file.
 
@@ -72,6 +73,7 @@ class Parser:
         else:
             self.curr_command = None
 
+        self.input_filename = os.path.splitext(os.path.basename(input_file.name))[0]
         self.curr_function = "main"
         self._counter_calls = {}
 
@@ -186,9 +188,7 @@ class Parser:
     def function(self) -> str:
         """
         Returns:
-            int: the second argument of the current command. Should be
-            called only if the current command is "C_PUSH", "C_POP", 
-            "C_FUNCTION" or "C_CALL".
+            name of current function
         """
         return self.curr_function 
 
