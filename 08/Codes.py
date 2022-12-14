@@ -136,40 +136,21 @@ M = M-1
 
 """
 
-#     C_add = """//**add**
-# @SP
-# AM=M-1
-# D=M
-
-# @SP 
-# AM = M-1
-# M = D+M
-
-# @SP
-# M =M+1"""
-
     C_add = """//**add**
 @SP
-A = M-1
+AM = M-1
 D = M
-
 A = A-1
 M = M + D
-
-@SP
-M = M - 1"""
+"""
 
     C_sub = """//**sub**
 @SP
 AM=M-1
 D=M
-
-@SP 
-AM = M-1
+A = A-1
 M = M-D
-
-@SP
-M =M+1"""
+"""
 
     C_neg = """//**neg**
 @SP
@@ -288,9 +269,7 @@ M = 0
 @SP
 AM = M-1
 D = M
-
-@SP
-A = M-1
+A = A-1
 M = D&M
 """
     
@@ -298,9 +277,7 @@ M = D&M
 @SP
 AM = M-1
 D = M
-
-@SP
-A = M-1
+A = A-1
 M = D|M
     """
    

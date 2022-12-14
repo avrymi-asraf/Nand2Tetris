@@ -492,14 +492,11 @@ M = D
 @SP
 M = M+1//**add**
 @SP
-A = M-1
+AM = M-1
 D = M
-
 A = A-1
 M = M + D
-
-@SP
-M = M - 1//**push constant**
+//**push constant**
 @112
 D = A
 
@@ -512,13 +509,9 @@ M = M+1//**sub**
 @SP
 AM=M-1
 D=M
-
-@SP 
-AM = M-1
+A = A-1
 M = M-D
-
-@SP
-M =M+1//**neg**
+//**neg**
 @SP
 A = M-1
 M = -M
@@ -526,9 +519,7 @@ M = -M
 @SP
 AM = M-1
 D = M
-
-@SP
-A = M-1
+A = A-1
 M = D&M
 //**push constant**
 @82
@@ -543,9 +534,7 @@ M = M+1//**or**
 @SP
 AM = M-1
 D = M
-
-@SP
-A = M-1
+A = A-1
 M = D|M
     //**not**
 @SP
