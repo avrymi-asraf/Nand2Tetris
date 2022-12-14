@@ -52,7 +52,7 @@ def translate_file(
             code_writer.write_goto(parser.function() + "$" + parser.arg1())
 
         elif parser.command_type() == Command.C_IF:
-            code_writer.write_if(parser.function() + "$" + parser.arg1())
+            code_writer.    write_if(parser.function() + "$" + parser.arg1())
 
         elif parser.command_type() == Command.C_FUNCTION:
             code_writer.write_function(parser.arg1(), parser.arg2())

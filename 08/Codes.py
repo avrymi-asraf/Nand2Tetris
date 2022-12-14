@@ -358,10 +358,9 @@ AM = M-1
 D = M
 
 @_label
-A = M
-D;JLT
-D;JGT
+D;JNE
 """
+
 
     C_reposition_neg_ind = """//**reposition** 
 @_source

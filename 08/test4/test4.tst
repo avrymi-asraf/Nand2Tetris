@@ -8,3 +8,9 @@ repeat 1000000 {
 }
 
 output;
+
+repeat 1000000 {
+  ticktock;
+}
+
+output;
