@@ -31,27 +31,28 @@ class CompilationEngine:
 
         self.write_class()
 
-        #write_class_name
+        #write class_name
         self.write_identifier()
 
         #write_left_curly_brackets
-        self.write_symbol(self, "{")
+        self.write_symbol("{")
 
         while( (self.input_stream.token_type() == "KEYWORDS")
         and (self.input_stream.keyword() in  {"static", "field"})):
-            self.compile_var_dec()
+            self.compile_class_var_dec()
 
         while( (self.input_stream.token_type() == "KEYWORDS") 
         and (self.input_stream.keyword() in {"constructor", "function", "method"}) ):
             self.compile_subroutine()
 
-        #write_rigth_curly_brackets
-        self.write_symbol(self, "}")
+        # #write_rigth_curly_brackets
+        # self.write_symbol("}")
 
     def compile_class_var_dec(self) -> None:
         """Compiles a static declaration or a field declaration."""
         # "static" | "field" type varName ("," varName)* ";"
 
+        
         self.write_static_or_field()
 
         self.write_type()
@@ -62,11 +63,11 @@ class CompilationEngine:
         #while curr = ","
         while(self.input_stream.token_type == "SYMBOL" 
         and self.input_stream.symbol == ","):
-            self.write_symbol(self, ",")
+            self.write_symbol(",")
             #write varName
             self.write_identifier()
 
-        self.write_symbol(self, ";")
+        self.write_symbol(";")
 
     def compile_subroutine(self) -> None:
         """
@@ -74,12 +75,6 @@ class CompilationEngine:
         You can assume that classes with constructors have at least one field,
         you will understand why this is necessary in project 11.
         """
-
-        
-        
-
-
-
         pass
 
     def compile_parameter_list(self) -> None:
@@ -153,8 +148,8 @@ class CompilationEngine:
     #helper methods:
 
     def write_class(self)->None:
-        if (self.input_stream.token_type == "KEYWORD" 
-        and self.input_stream.keyword == "class"):
+        if (self.input_stream.token_type() == "KEYWORD" 
+        and self.input_stream.keyword() == "class"):
             raise Exception("in write class - not starts with class")
 
         #<keyword> class </keyword>
@@ -166,11 +161,14 @@ class CompilationEngine:
 
     def write_symbol(self, symbol : str)->None:
         #check validity
-        if( (self.input_stream.token_type != "SYMBOL") or 
-        (self.input_stream.symbol() != symbol)) : 
-            raise Exception("in compile_class method - not a symbol")
+        if(self.input_stream.token_type() != "SYMBOL"):
+            raise Exception("Invalid input: in write_symbol method. current type:{}.".format(self.input_stream.token_type()))
 
-        #<symbol> } </symbol>
+        if (self.input_stream.symbol() != symbol):
+            raise Exception(
+                "Invalid input: in write_symbol method. current symbol:{}, requested symbol : {}".format(symbol, self.input_stream.symbol()))
+
+        #<symbol>  symbol </symbol>
         self.output_stream.write(output_format.format(
             token_type = self.input_stream.token_type().lower(), 
             token = self.input_stream.symbol()))
@@ -188,9 +186,9 @@ class CompilationEngine:
 
     def write_type(self)->None:
         #check validity of type
-        if not ( (self.input_stream.token_type == "KEYWORD" 
+        if not ( (self.input_stream.token_type() == "KEYWORD" 
         and self.input_stream.keyword() in {"char", "int", "boolean"})
-        or (self.input_stream.token_type == "IDENTIFIER")):
+        or (self.input_stream.token_type() == "IDENTIFIER")):
             raise Exception("in compile_class var dec method - not a type")
  
         # write <keyword> type </keyword>
@@ -202,8 +200,9 @@ class CompilationEngine:
 
     def write_identifier(self)->None:
         #check validity of type
-        if not self.input_stream.token_type == "IDENTIFIER":
-            raise Exception("in write_identifier method - not a identifier")
+        if self.input_stream.token_type() != "IDENTIFIER":
+            raise Exception("Invalid input: in write_identifier method. current type: {} "
+            .format(self.input_stream.token_type()))
  
         self.output_stream.write(output_format.format(
             token_type = self.input_stream.token_type().lower(), 
