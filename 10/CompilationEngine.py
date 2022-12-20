@@ -9,6 +9,8 @@ import typing
 from JackTokenizer import JackTokenizer
 
 output_format = "<{token_type}> {token} </{token_type}>\n"
+keyword = "KEYWORD"
+symbol = "SYMBOL"
 
 class CompilationEngine:
     """Gets input from a JackTokenizer and emits its parsed structure into an
@@ -36,24 +38,27 @@ class CompilationEngine:
 
         #write_left_curly_brackets
         self.write_symbol("{")
-
-        while( (self.input_stream.token_type() == "KEYWORDS")
-        and (self.input_stream.keyword() in  {"static", "field"})):
+        
+        
+        print(self.input_stream.keyword())
+        while( (self.input_stream.token_type() == "KEYWORD")
+        and (self.input_stream.keyword() in {"static", "field"})):
+            #todo delet
+            print(self.input_stream.keyword())
             self.compile_class_var_dec()
 
-        while( (self.input_stream.token_type() == "KEYWORDS") 
+        while( (self.input_stream.token_type() == "KEYWORD") 
         and (self.input_stream.keyword() in {"constructor", "function", "method"}) ):
             self.compile_subroutine()
 
-        # #write_rigth_curly_brackets
+        #write_rigth_curly_brackets
         # self.write_symbol("}")
 
     def compile_class_var_dec(self) -> None:
         """Compiles a static declaration or a field declaration."""
         # "static" | "field" type varName ("," varName)* ";"
 
-        
-        self.write_static_or_field()
+        self.write_keyword({"static", "field"})
 
         self.write_type()
 
@@ -75,6 +80,32 @@ class CompilationEngine:
         You can assume that classes with constructors have at least one field,
         you will understand why this is necessary in project 11.
         """
+
+        # constructor or function or method (keyword)
+        self.write_keyword({"constructor", "function", "method"})
+
+        # type  or void (keyword)
+        self.write_keyword({"void", "boolean", "int", "char"})
+
+        # subroutineName (identifier)
+        self.write_identifier()
+
+        # "("
+        self.write_symbol("(")
+
+        #parameterList
+        self.compile_parameter_list()
+
+        # ")"
+        self.write_symbol(")")
+
+        #subroutine Body
+        self.compile_subroutine_body()
+
+    def compile_subroutine_body(self) -> None:
+        """
+        """
+        # Your code goes here!
         pass
 
     def compile_parameter_list(self) -> None:
@@ -207,5 +238,21 @@ class CompilationEngine:
         self.output_stream.write(output_format.format(
             token_type = self.input_stream.token_type().lower(), 
             token = self.input_stream.identifier()))
+
+        self.input_stream.advance()
+
+    def write_keyword(self, lst)->None:
+        #check validity of type
+        if self.input_stream.token_type() != "KEYWORD":
+            raise Exception("Invalid input: in write_keyword method. current type: {} "
+            .format(self.input_stream.token_type()))
+
+        if self.input_stream.keyword() not in lst:
+            raise Exception("Invalid input: in write_keyword method. token not in lst, current token: {} "
+            .format(self.input_stream.keyword()))
+        
+        self.output_stream.write(output_format.format(
+            token_type = self.input_stream.token_type().lower(), 
+            token = self.input_stream.keyword()))
 
         self.input_stream.advance()
