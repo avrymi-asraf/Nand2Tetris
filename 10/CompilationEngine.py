@@ -28,7 +28,9 @@ class CompilationEngine:
     def compile_class(self) -> None:
         """Compiles a complete class."""
         # Your code goes here!
-        pass
+        self.compile_class_var_dec(self)
+        self.compile_subroutine(self)
+        
 
     def compile_class_var_dec(self) -> None:
         """Compiles a static declaration or a field declaration."""

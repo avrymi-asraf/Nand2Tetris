@@ -6,6 +6,17 @@ as allowed by the Creative Common Attribution-NonCommercial-ShareAlike 3.0
 Unported [License](https://creativecommons.org/licenses/by-nc-sa/3.0/).
 """
 import typing
+import array
+import re
+
+keywords = {"class", "constructor", "function", "method", "field", "static", "var",
+"int", "char", "boolean", "void", "true", "false", "null", "this", "let", "do", "if",
+"else", "while", "return"}
+
+symbols = {"{", "}", "(", ")", "[", "]", ".", ",", ";", "+", "-", "*", "/", "&",
+"|", "<", ">", "=", "~"}
+
+re_comments = re.compile(r"//.*|/\*.*\*/|(?:(\".*\"))")
 
 
 class JackTokenizer:
@@ -91,6 +102,7 @@ class JackTokenizer:
     
     Note that ^, # correspond to shiftleft and shiftright, respectively.
     """
+    
 
     def __init__(self, input_stream: typing.TextIO) -> None:
         """Opens the input stream and gets ready to tokenize it.
@@ -100,8 +112,15 @@ class JackTokenizer:
         """
         # Your code goes here!
         # A good place to start is to read all the lines of the input:
-        # input_lines = input_stream.read().splitlines()
-        pass
+        input_lines = input_stream.read().splitlines()
+        self.delete_comments()
+        tokens = ""
+        curr_token = ""
+        
+
+    def delete_comments(self)->None:
+        self.input_lines = [re_comments.sub(r'\1', line) for line in self.input_lines] 
+
 
     def has_more_tokens(self) -> bool:
         """Do we have more tokens in the input?
@@ -109,15 +128,18 @@ class JackTokenizer:
         Returns:
             bool: True if there are more tokens, False otherwise.
         """
-        # Your code goes here!
-        pass
-
+        return (len(self.tokens) > 0)
+        
     def advance(self) -> None:
         """Gets the next token from the input and makes it the current token. 
         This method should be called if has_more_tokens() is true. 
         Initially there is no current token.
         """
-        # Your code goes here!
+        if (self.has_more_tokens()):
+            self.tokens = self.tokens.removeprefix(self.curr_token)
+        self.curr_token = self.find_next_word() 
+
+    def find_next_word() ->str:
         pass
 
     def token_type(self) -> str:
@@ -125,9 +147,24 @@ class JackTokenizer:
         Returns:
             str: the type of the current token, can be
             "KEYWORD", "SYMBOL", "IDENTIFIER", "INT_CONST", "STRING_CONST"
-        """
-        # Your code goes here!
-        pass
+        # """
+
+        if self.curr_token in keywords:
+            return "KEYWORD"
+
+        elif self.curr_token in symbols:
+            return "SYMBOL"
+
+        alphanumeric_and_underscore = re.compile(r"([^a-zA-Z0-9_])") 
+        if ((alphanumeric_and_underscore.find(self.curr_token) == False)
+        and (self.curr_token[0].isdigit() == False)):
+            return "IDENTIFIER"
+
+        elif self.curr_token.isdigit() and int(self.curr_arr[0]) > 0:
+            return "INT_CONST"
+
+        elif self.curr_token.startswith("'") and self.curr_token.endswith("'"):
+            return "STRING_CONST"
 
     def keyword(self) -> str:
         """

@@ -17,35 +17,11 @@ M = M+1"""
 
 @_index
 D = M
-
-//write in SP
 @SP
 A = M
 M = D
-
-//inc SP
 @SP
 M = M+1"""
-
-#     push_segment =  """//**push segment**
-# //go to segment at _index
-# @_segment
-# D = M
-
-# @_index
-# D = D+A
-
-# A = D
-# D = M
-
-# //write in SP
-# @SP
-# A = M
-# M = D
-
-# //inc SP
-# @SP
-# M = M+1"""
 
     push_segment =  """//**push segment**
 //go to segment at _index
