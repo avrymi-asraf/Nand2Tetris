@@ -10,19 +10,20 @@ import array
 import re
 
 keywords = {"class", "constructor", "function", "method", "field", "static", "var",
-"int", "char", "boolean", "void", "true", "false", "null", "this", "let", "do", "if",
-"else", "while", "return"}
+            "int", "char", "boolean", "void", "true", "false", "null", "this", "let", "do", "if",
+            "else", "while", "return"}
 
 symbols = {"{", "}", "(", ")", "[", "]", ".", ",", ";", "+", "-", "*", "/", "&",
-"|", "<", ">", "=", "~"}
+           "|", "<", ">", "=", "~"}
 
 re_comments = re.compile(r"//.*|/\*.*\*/|(?:(\".*\"))")
+re_speaces = re.compile(r"\s+")
 
 
 class JackTokenizer:
     """Removes all comments from the input stream and breaks it
     into Jack language tokens, as specified by the Jack grammar.
-    
+
     # Jack Language Grammar
 
     A Jack file is a stream of characters. If the file represents a
@@ -62,7 +63,7 @@ class JackTokenizer:
     A Jack program is a collection of classes, each appearing in a separate 
     file. A compilation unit is a single class. A class is a sequence of tokens 
     structured according to the following context free syntax:
-    
+
     - class: 'class' className '{' classVarDec* subroutineDec* '}'
     - classVarDec: ('static' | 'field') type varName (',' varName)* ';'
     - type: 'int' | 'char' | 'boolean' | className
@@ -88,7 +89,7 @@ class JackTokenizer:
     - returnStatement: 'return' expression? ';'
 
     ## Expressions
-    
+
     - expression: term (op term)*
     - term: integerConstant | stringConstant | keywordConstant | varName | 
             varName '['expression']' | subroutineCall | '(' expression ')' | 
@@ -99,10 +100,9 @@ class JackTokenizer:
     - op: '+' | '-' | '*' | '/' | '&' | '|' | '<' | '>' | '='
     - unaryOp: '-' | '~' | '^' | '#'
     - keywordConstant: 'true' | 'false' | 'null' | 'this'
-    
+
     Note that ^, # correspond to shiftleft and shiftright, respectively.
     """
-    
 
     def __init__(self, input_stream: typing.TextIO) -> None:
         """Opens the input stream and gets ready to tokenize it.
@@ -112,15 +112,20 @@ class JackTokenizer:
         """
         # Your code goes here!
         # A good place to start is to read all the lines of the input:
-        input_lines = input_stream.read().splitlines()
-        self.delete_comments()
-        tokens = ""
-        curr_token = ""
-        
+        self.input_lines = input_stream.read().splitlines()
+        self.tokens = ""
+        self.curr_token = ""
+        self.make_tokens()
+        print(self.tokens)
 
-    def delete_comments(self)->None:
-        self.input_lines = [re_comments.sub(r'\1', line) for line in self.input_lines] 
+    def make_tokens(self) -> None:
+        self.input_lines = [
+            re_speaces.sub(
+                " ", re_comments.sub(
+                    r'\1', line)).strip()
+            for line in self.input_lines]
 
+        self.tokens = " ".join(self.input_lines)
 
     def has_more_tokens(self) -> bool:
         """Do we have more tokens in the input?
@@ -129,7 +134,7 @@ class JackTokenizer:
             bool: True if there are more tokens, False otherwise.
         """
         return (len(self.tokens) > 0)
-        
+
     def advance(self) -> None:
         """Gets the next token from the input and makes it the current token. 
         This method should be called if has_more_tokens() is true. 
@@ -137,9 +142,9 @@ class JackTokenizer:
         """
         if (self.has_more_tokens()):
             self.tokens = self.tokens.removeprefix(self.curr_token)
-        self.curr_token = self.find_next_word() 
+        self.curr_token = self.find_next_word()
 
-    def find_next_word() ->str:
+    def find_next_word() -> str:
         pass
 
     def token_type(self) -> str:
@@ -155,9 +160,9 @@ class JackTokenizer:
         elif self.curr_token in symbols:
             return "SYMBOL"
 
-        alphanumeric_and_underscore = re.compile(r"([^a-zA-Z0-9_])") 
+        alphanumeric_and_underscore = re.compile(r"([^a-zA-Z0-9_])")
         if ((alphanumeric_and_underscore.find(self.curr_token) == False)
-        and (self.curr_token[0].isdigit() == False)):
+                and (self.curr_token[0].isdigit() == False)):
             return "IDENTIFIER"
 
         elif self.curr_token.isdigit() and int(self.curr_arr[0]) > 0:

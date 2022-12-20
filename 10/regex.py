@@ -14,17 +14,8 @@ let str5 = "{\"temperature\": {\"type\"}}
 
 
 
-re_comments = re.compile(r"//.*|/\*.*\*/|(?:(\".*\"))")
-# print(re_comments.sub(r'\1',code_example_comments))
-
-
-
-is_number = re.compile(r'(4)')
-mo = is_number.search('My number is 433-555-4242.')
-print(mo.groups(3))
-
-re.findall(r'\bf[a-z]*', 'which foot or hand fell fastest')
-
-re.findall(r'(\w+)=(\d+)', 'set width=20 and height=10')
-# print(re.sub(re_comments, r'\1', code_example_comments))
+re_comments = re.compile(r"(?P<commant>//.*|/\*.*\*/)|(?:(?P<String>\".*\"))")
+tokens = re_comments.finditer(code_example_comments)
+for token in tokens:
+    print (token.groupdict())
 
