@@ -13,6 +13,9 @@ keyword = "keyword"
 symbol = "symbol"
 identifier = "identifier"
 
+type_lst = {"int", "boolean", "char"}
+statsments = {'let', 'do', 'if', 'while', "return"}
+
 class CompilationEngine:
     """Gets input from a JackTokenizer and emits its parsed structure into an
     output stream.
@@ -100,10 +103,17 @@ class CompilationEngine:
         self.compile_subroutine_body()
 
     def compile_subroutine_body(self) -> None:
-        """
-        """
-        # Your code goes here!
-        pass
+        # { var dec* statsment}
+        self.write_symbol("{")
+
+        while(self.input_stream.token_type() == keyword 
+        and self.input_stream.keyword() == "var"):
+            self.compile_var_dec()
+
+        self.compile_statements()
+        
+        self.write_symbol("}")
+
 
     def compile_parameter_list(self) -> None:
         """Compiles a (possibly empty) parameter list, not including the 
@@ -114,8 +124,18 @@ class CompilationEngine:
 
     def compile_var_dec(self) -> None:
         """Compiles a var declaration."""
-        # Your code goes here!
-        pass
+
+        # "var" type varName ("," varName)* ;
+        self.write_keyword({"var"})
+        self.write_keyword(type_lst)
+        self.write_identifier()
+
+        while(self.input_stream.token_type() == symbol 
+        and self.input_stream.symbol() == ","):
+            self.write_symbol(",")
+            self.write_identifier()
+
+        self.write_symbol(";")
 
     def compile_statements(self) -> None:
         """Compiles a sequence of statements, not including the enclosing 
