@@ -23,9 +23,18 @@ def analyze_file(
     # Your code goes here!
     # It might be good to start by creating a new JackTokenizer and CompilationEngine:
     tokenizer = JackTokenizer(input_file)
-    # engine = CompilationEngine(tokenizer, output_file)
-    pass
+    # for t in tokenizer.iter_tokens():
+    #     output_file.write(
+    #         f'<{t[0].lower()}> {t[1]} </{t[0].lower()}>\n'
+    #     )
 
+    while tokenizer.has_more_tokens():
+        t = tokenizer.curr_token
+        output_file.write(
+            f'<{t[0].lower()}> {t[1]} </{t[0].lower()}>\n'
+        )
+        tokenizer.advance()
+        
 
 if "__main__" == __name__:
     # Parses the input path and calls analyze_file on each input file.

@@ -1,21 +1,20 @@
 import re
-
-code_example_comments = """
-var String message; // this is my comment
-var String message; /* this is my comment */
-let message = "The //message"  //this is my comment
-ver String str3;   /*This is a Comments*/
-let str3 = "http://google.com"
-ver String str4;  //Comments
-let str4 = "('file:///xghsghsh.html/')"
-ver String str5;  //comments
-let str5 = "{\"temperature\": {\"type\"}}
-"""
-
-
-
-re_comments = re.compile(r"(?P<commant>//.*|/\*.*\*/)|(?:(?P<String>\".*\"))")
-tokens = re_comments.finditer(code_example_comments)
-for token in tokens:
-    print (token.groupdict())
-
+class RegxPatterns():
+    re_comments = re.compile(r'(?P<comments>//.*|/\*.*\*/)')
+    re_space = re.compile(r'(?P<space>\s+)')
+    re_SYMBOL = re.compile(r'(?P<SYMBOL>\{|\}|\(|\)|\[|\]|\.|,|;|\+|-|\*|/|&|\||<|>|=|~)')
+    re_KEYWORD = re.compile(r'(?P<KEYWORD>class|constructor|function|method|field|static|var|int|char|boolean|void|true|false|null|this|let|do|if|else|while|return)')
+    re_INT_CONST = re.compile(r'(?P<INT_CONST>\d+)')
+    re_STRING_CONST = re.compile(r'(?:(?P<STRING_CONST>\".*?\"|\'.*?\'))')
+    re_IDENTIFIER = re.compile(r'(?P<IDENTIFIER>[^0-9 ][\w]*)')
+    re_mismatch = re.compile(r'(?P<mismatch>.)')
+    re_token = re.compile(
+        re_SYMBOL.pattern + "|" +
+        re_KEYWORD.pattern + "|" +
+        re_INT_CONST.pattern + "|" +
+        re_STRING_CONST.pattern + "|" +
+        re_IDENTIFIER.pattern + "|" +
+        re_space.pattern + "|" +
+        re_mismatch.pattern  
+    )
+    re_remove_comments = re.compile(re_comments.pattern + "|(?:"+re_IDENTIFIER.pattern + ")")
