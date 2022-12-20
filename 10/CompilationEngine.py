@@ -12,6 +12,7 @@ output_format = "<{token_type}> {token} </{token_type}>\n"
 keyword = "keyword"
 symbol = "symbol"
 identifier = "identifier"
+ops = { '+', '-', '*', '/', '&', '|', '<', '>','='}
 
 type_lst = {"int", "boolean", "char"}
 statsments = {'let', 'do', 'if', 'while', "return"}
@@ -141,7 +142,7 @@ class CompilationEngine:
         """Compiles a sequence of statements, not including the enclosing 
         "{}".
         """
-        # Your code goes here!
+        
         pass
 
     def compile_do(self) -> None:
@@ -171,9 +172,12 @@ class CompilationEngine:
 
     def compile_expression(self) -> None:
         """Compiles an expression."""
-        # Your code goes here!
-        pass
-
+        self.compile_term()
+        while(self.input_stream.token_type() == keyword
+        and self.input_stream.keyword() in ops):
+            self.write_keyword(ops)
+            self.compile_term()
+        
     def compile_term(self) -> None:
         """Compiles a term. 
         This routine is faced with a slight difficulty when
@@ -184,14 +188,27 @@ class CompilationEngine:
         to distinguish between the three possibilities. Any other token is not
         part of this term and should not be advanced over.
         """
+        #integerConstant, StringConstant, keywordConstant
         # Your code goes here!
         pass
 
     def compile_expression_list(self) -> None:
         """Compiles a (possibly empty) comma-separated list of expressions."""
-        # Your code goes here!
-        pass
+        # ( expression (, expression)*)?
 
+        self.write_symbol("(")
+
+        #if not ")"
+        if not (self.input_stream.token_type() == symbol 
+        and self.input_stream.symbol() == ")"):
+            self.compile_expression()
+
+        while (self.input_stream.token_type() == symbol 
+        and self.input_stream.symbol() == ","):
+            self.write_symbol(",")
+            self.compile_expression()
+        
+        self.write_symbol(")")
 
     #helper methods:
 
