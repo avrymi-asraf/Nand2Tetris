@@ -23,10 +23,10 @@ def analyze_file(
     # Your code goes here!
     # It might be good to start by creating a new JackTokenizer and CompilationEngine:
     tokenizer = JackTokenizer(input_file)
-    # for t in tokenizer.iter_tokens():
-    #     output_file.write(
-    #         f'<{t[0].lower()}> {t[1]} </{t[0].lower()}>\n'
-    #     )
+    for t in tokenizer.iter_tokens():
+        output_file.write(
+            f'<{t[0].lower()}> {t[1]} </{t[0].lower()}>\n'
+        )
 
     while tokenizer.has_more_tokens():
         t = tokenizer.curr_token

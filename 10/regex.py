@@ -8,6 +8,7 @@ class RegxPatterns():
     re_STRING_CONST = re.compile(r'(?:(?P<STRING_CONST>\".*?\"|\'.*?\'))')
     re_IDENTIFIER = re.compile(r'(?P<IDENTIFIER>[^0-9 ][\w]*)')
     re_mismatch = re.compile(r'(?P<mismatch>.)')
+    
     re_token = re.compile(
         re_SYMBOL.pattern + "|" +
         re_KEYWORD.pattern + "|" +
@@ -17,4 +18,5 @@ class RegxPatterns():
         re_space.pattern + "|" +
         re_mismatch.pattern  
     )
-    re_remove_comments = re.compile(re_comments.pattern + "|(?:"+re_IDENTIFIER.pattern + ")")
+    
+    re_remove_comments = re.compile(re_comments.pattern + "|(?:"+re_STRING_CONST.pattern + ")")

@@ -10,6 +10,7 @@ import array
 import re
 from regex import RegxPatterns
 
+
 class JackTokenizer:
     """Removes all comments from the input stream and breaks it
     into Jack language tokens, as specified by the Jack grammar.
@@ -100,20 +101,23 @@ class JackTokenizer:
         Args:
             input_stream (typing.TextIO): input stream.
         """
-        self.tokens_text:str
-        self.tokens_list:List[Tuple[str,str]]
-        self.curr_token:Tuple[str,str]
+        self.tokens_text: str
+        self.tokens_list: List[Tuple[str, str]]
+        self.curr_token: Tuple[str, str]
+
         self.input_lines = input_stream.read().splitlines()
         self.make_tokens()
 
     def make_tokens(self) -> None:
         self.input_lines = [
             RegxPatterns.re_remove_comments.sub(
-                    r'\g<IDENTIFIER>', line) for line in self.input_lines]
+                r'\g<STRING_CONST>', line) for line in self.input_lines]
         self.tokens_text = " ".join(self.input_lines)
-        self.tokens_text = RegxPatterns.re_space.sub(" ", self.tokens_text).strip()
+        self.tokens_text = RegxPatterns.re_space.sub(
+            " ", self.tokens_text).strip()
         iter_token = RegxPatterns.re_token.finditer(self.tokens_text)
-        self.tokens_list = [(token.lastgroup, token.group()) for token in iter_token if token.lastgroup !="space"]
+        self.tokens_list = [(token.lastgroup, token.group())
+                            for token in iter_token if token.lastgroup != "space"]
         self.curr_token = self.tokens_list.pop(0)
 
     def has_more_tokens(self) -> bool:
@@ -122,7 +126,7 @@ class JackTokenizer:
         Returns:
             bool: True if there are more tokens, False otherwise.
         """
-        return (len(self.tokens_list)  > 0)
+        return (len(self.tokens_list) > 0)
 
     def advance(self) -> None:
         """Gets the next token from the input and makes it the current token. 
@@ -140,6 +144,7 @@ class JackTokenizer:
         # """
 
         return self.curr_token[0]
+
     def keyword(self) -> str:
         """
         Returns:
@@ -149,10 +154,11 @@ class JackTokenizer:
             "BOOLEAN", "CHAR", "VOID", "VAR", "STATIC", "FIELD", "LET", "DO", 
             "IF", "ELSE", "WHILE", "RETURN", "TRUE", "FALSE", "NULL", "THIS"
         """
-        if self.curr_token[0] =="KEYWORD":
+        if self.curr_token[0] == "KEYWORD":
             return self.curr_token[1].upper()
         else:
-            raise ValueError("Invalid token:try print keyword but current command is {}".format(self.curr_token[0]))
+            raise ValueError("Invalid token:try print keyword but current command is {}".format(
+                self.curr_token[0]))
 
     def symbol(self) -> str:
         """
@@ -163,10 +169,11 @@ class JackTokenizer:
             symbol: '{' | '}' | '(' | ')' | '[' | ']' | '.' | ',' | ';' | '+' | 
               '-' | '*' | '/' | '&' | '|' | '<' | '>' | '=' | '~' | '^' | '#'
         """
-        if self.curr_token[0] =="SYMBOL":
+        if self.curr_token[0] == "SYMBOL":
             return self.curr_token[1].upper()
         else:
-            raise ValueError("Invalid token:try print symbol but current command is {}".format(self.curr_token[0]))
+            raise ValueError("Invalid token:try print symbol but current command is {}".format(
+                self.curr_token[0]))
 
     def identifier(self) -> str:
         """
@@ -178,10 +185,11 @@ class JackTokenizer:
                   starting with a digit. You can assume keywords cannot be
                   identifiers, so 'self' cannot be an identifier, etc'.
         """
-        if self.curr_token[0] =="IDENTIFIER":
+        if self.curr_token[0] == "IDENTIFIER":
             return self.curr_token[1]
         else:
-            raise ValueError("Invalid token:try print IDENTIFIER but current command is {}".format(self.curr_token[0]))
+            raise ValueError("Invalid token:try print IDENTIFIER but current command is {}".format(
+                self.curr_token[0]))
 
     def int_val(self) -> int:
         """
@@ -191,11 +199,11 @@ class JackTokenizer:
             Recall that integerConstant was defined in the grammar like so:
             integerConstant: A decimal number in the range 0-32767.
         """
-        if self.curr_token[0] =="INT_CONST":
+        if self.curr_token[0] == "INT_CONST":
             return self.curr_token[1]
         else:
-            raise ValueError("Invalid token:try print INT_CONST but current command is {}".format(self.curr_token[0]))
-
+            raise ValueError("Invalid token:try print INT_CONST but current command is {}".format(
+                self.curr_token[0]))
 
     def string_val(self) -> str:
         """
@@ -206,17 +214,17 @@ class JackTokenizer:
             StringConstant: '"' A sequence of Unicode characters not including 
                       double quote or newline '"'
         """
-        if self.curr_token[0] =="STRING_CONST":
-            return self.curr_token[1].replace('"',"")
+        if self.curr_token[0] == "STRING_CONST":
+            return self.curr_token[1].replace('"', "")
         else:
-            raise ValueError("Invalid token:try print STRING_CONST but current command is {}".format(self.curr_token[0]))
-    
+            raise ValueError("Invalid token:try print STRING_CONST but current command is {}".format(
+                self.curr_token[0]))
+
     def iter_tokens(self):
         """Iterate over tokens
         Returns:(token_type, token_value)
         """
         for token in RegxPatterns.re_token.finditer(self.tokens_text):
             if token.lastgroup == "space":
-                continue 
+                continue
             yield (token.lastgroup, token.group())
-
