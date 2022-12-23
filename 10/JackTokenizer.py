@@ -5,10 +5,11 @@ was written by Aviv Yaish. It is an extension to the specifications given
 as allowed by the Creative Common Attribution-NonCommercial-ShareAlike 3.0
 Unported [License](https://creativecommons.org/licenses/by-nc-sa/3.0/).
 """
-from typing import Iterator, List, Tuple, TextIO
+from typing import Iterator, List, Tuple, TextIO, Optional
 import array
 import re
 from regex import RegxPatterns
+TokenType = Tuple[str,str]
 
 
 class JackTokenizer:
@@ -102,17 +103,8 @@ class JackTokenizer:
             input_stream (typing.TextIO): input stream.
         """
         self.tokens_text: str
-        self.tokens_list: List[Tuple[str, str]]
-        self.curr_token: Tuple[str, str]
-        self.func = {
-            "symbol": self.symbol,
-            "keyword": self.keyword,
-            "identifier": self.identifier,
-            "stringConstant": self.string_val,
-            "integerConstant": self.int_val,
-            "keyword": self.keyword,
-        }
-
+        self.tokens_list: List[TokenType]
+        self.curr_token: TokenType
         input_lines = input_stream.read().splitlines()
         input_lines = [
             RegxPatterns.re_remove_comments.sub(
@@ -248,4 +240,6 @@ class JackTokenizer:
             else:
                 yield (token.lastgroup, token.group())
 
-
+    def next_token_val(self)-> Optional[TokenType]:
+        if self.has_more_tokens():
+            return self.tokens_list[1][1]
