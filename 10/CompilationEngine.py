@@ -30,44 +30,44 @@ class CompilationEngine:
     def compile_class(self) -> None:
         """Compiles a complete class."""
 
-        self.write_class()
+        self.write_keyword({"class"})
 
-        #write_class_name
+        #write class_name
         self.write_identifier()
 
         #write_left_curly_brackets
-        self.write_symbol(self, "{")
+        self.write_symbol("{")
+   
+        while( (self.input_stream.token_type() == keyword)
+        and (self.input_stream.keyword() in {"static", "field"})):
+            self.compile_class_var_dec()
 
-        while( (self.input_stream.token_type() == "KEYWORDS")
-        and (self.input_stream.keyword() in  {"static", "field"})):
-            self.compile_var_dec()
-
-        while( (self.input_stream.token_type() == "KEYWORDS") 
+        while( (self.input_stream.token_type() == keyword) 
         and (self.input_stream.keyword() in {"constructor", "function", "method"}) ):
             self.compile_subroutine()
 
         #write_rigth_curly_brackets
-        self.write_symbol(self, "}")
+        # self.write_symbol("}")
 
     def compile_class_var_dec(self) -> None:
         """Compiles a static declaration or a field declaration."""
         # "static" | "field" type varName ("," varName)* ";"
 
-        self.write_static_or_field()
+        self.write_keyword({"static", "field"})
 
-        self.write_type()
+        self.write_keyword({"int", "boolean", "char"})
 
         #write varName
         self.write_identifier()
 
         #while curr = ","
-        while(self.input_stream.token_type == "SYMBOL" 
+        while(self.input_stream.token_type == symbol 
         and self.input_stream.symbol == ","):
-            self.write_symbol(self, ",")
+            self.write_symbol(",")
             #write varName
             self.write_identifier()
 
-        self.write_symbol(self, ";")
+        self.write_symbol(";")
 
     def compile_subroutine(self) -> None:
         """
@@ -76,12 +76,39 @@ class CompilationEngine:
         you will understand why this is necessary in project 11.
         """
 
+        # constructor or function or method (keyword)
+        self.write_keyword({"constructor", "function", "method"})
+
+        # type  or void (keyword)
+        self.write_keyword({"void", "boolean", "int", "char"})
+
+        # subroutineName (identifier)
+        self.write_identifier()
+
+        # "("
+        self.write_symbol("(")
+
+        #parameterList
+        self.compile_parameter_list()
+
+        # ")"
+        self.write_symbol(")")
+
+        #subroutine Body
+        self.compile_subroutine_body()
+
+    def compile_subroutine_body(self) -> None:
+        # { var dec* statsment}
+        self.write_symbol("{")
+
+        while(self.input_stream.token_type() == keyword 
+        and self.input_stream.keyword() == "var"):
+            self.compile_var_dec()
+
+        self.compile_statements()
         
-        
+        self.write_symbol("}")
 
-
-
-        pass
 
     def compile_parameter_list(self) -> None:
         """Compiles a (possibly empty) parameter list, not including the 
@@ -92,14 +119,24 @@ class CompilationEngine:
 
     def compile_var_dec(self) -> None:
         """Compiles a var declaration."""
-        # Your code goes here!
-        pass
+
+        # "var" type varName ("," varName)* ;
+        self.write_keyword({"var"})
+        self.write_keyword(type_lst)
+        self.write_identifier()
+
+        while(self.input_stream.token_type() == symbol 
+        and self.input_stream.symbol() == ","):
+            self.write_symbol(",")
+            self.write_identifier()
+
+        self.write_symbol(";")
 
     def compile_statements(self) -> None:
         """Compiles a sequence of statements, not including the enclosing 
         "{}".
         """
-        # Your code goes here!
+        
         pass
 
     def compile_do(self) -> None:
@@ -129,9 +166,12 @@ class CompilationEngine:
 
     def compile_expression(self) -> None:
         """Compiles an expression."""
-        # Your code goes here!
-        pass
-
+        self.compile_term()
+        while(self.input_stream.token_type() == keyword
+        and self.input_stream.keyword() in ops):
+            self.write_keyword(ops)
+            self.compile_term()
+        
     def compile_term(self) -> None:
         """Compiles a term. 
         This routine is faced with a slight difficulty when
@@ -142,38 +182,42 @@ class CompilationEngine:
         to distinguish between the three possibilities. Any other token is not
         part of this term and should not be advanced over.
         """
+        #integerConstant, StringConstant, keywordConstant
         # Your code goes here!
         pass
 
     def compile_expression_list(self) -> None:
         """Compiles a (possibly empty) comma-separated list of expressions."""
-        # Your code goes here!
-        pass
+        # ( expression (, expression)*)?
 
+        self.write_symbol("(")
+
+        #if not ")"
+        if not (self.input_stream.token_type() == symbol 
+        and self.input_stream.symbol() == ")"):
+            self.compile_expression()
+
+        while (self.input_stream.token_type() == symbol 
+        and self.input_stream.symbol() == ","):
+            self.write_symbol(",")
+            self.compile_expression()
+        
+        self.write_symbol(")")
 
     #helper methods:
 
-    def write_class(self)->None:
-        if (self.input_stream.token_type == "KEYWORD" 
-        and self.input_stream.keyword == "class"):
-            raise Exception("in write class - not starts with class")
-
-        #<keyword> class </keyword>
-        self.output_stream.write(output_format.format(
-            token_type = self.input_stream.token_type().lower(), token = "class"))
-
-        self.input_stream.advance()
-        return
-
     def write_symbol(self, symbol : str)->None:
         #check validity
-        if( (self.input_stream.token_type != "SYMBOL") or 
-        (self.input_stream.symbol() != symbol)) : 
-            raise Exception("in compile_class method - not a symbol")
+        if(self.input_stream.token_type() != symbol):
+            raise Exception("Invalid input: in write_symbol method. current type:{}.".format(self.input_stream.token_type()))
 
-        #<symbol> } </symbol>
+        if (self.input_stream.symbol() != symbol):
+            raise Exception(
+                "Invalid input: in write_symbol method. current symbol:{}, requested symbol : {}".format(symbol, self.input_stream.symbol()))
+
+        #<symbol>  symbol </symbol>
         self.output_stream.write(output_format.format(
-            token_type = self.input_stream.token_type().lower(), 
+            token_type = self.input_stream.token_type(), 
             token = self.input_stream.symbol()))
 
         self.input_stream.advance()
@@ -182,32 +226,35 @@ class CompilationEngine:
 
         # write <keyword> "static" or "field" </keyword>
         self.output_stream.write(output_format.format(
-            token_type = self.input_stream.token_type().lower(), 
+            token_type = self.input_stream.token_type(), 
             token = self.input_stream.keyword()))
 
-        self.input_stream.advance()
-
-    def write_type(self)->None:
-        #check validity of type
-        if not ( (self.input_stream.token_type == "KEYWORD" 
-        and self.input_stream.keyword() in {"char", "int", "boolean"})
-        or (self.input_stream.token_type == "IDENTIFIER")):
-            raise Exception("in compile_class var dec method - not a type")
- 
-        # write <keyword> type </keyword>
-        self.output_stream.write(output_format.format(
-            token_type = self.input_stream.token_type().lower(), 
-            token = self.input_stream.keyword()))
-        
         self.input_stream.advance()
 
     def write_identifier(self)->None:
         #check validity of type
-        if not self.input_stream.token_type == "IDENTIFIER":
-            raise Exception("in write_identifier method - not a identifier")
+        if self.input_stream.token_type() != identifier:
+            raise Exception("Invalid input: in write_identifier method. current type: {} "
+            .format(self.input_stream.token_type()))
  
         self.output_stream.write(output_format.format(
-            token_type = self.input_stream.token_type().lower(), 
+            token_type = self.input_stream.token_type(), 
             token = self.input_stream.identifier()))
+
+        self.input_stream.advance()
+
+    def write_keyword(self, lst)->None:
+        #check validity of type
+        if self.input_stream.token_type() != keyword:
+            raise Exception("Invalid input: in write_keyword method. current type: {} "
+            .format(self.input_stream.token_type()))
+
+        if self.input_stream.keyword() not in lst:
+            raise Exception("Invalid input: in write_keyword method. token not in lst, current token: {} "
+            .format(self.input_stream.keyword()))
+        
+        self.output_stream.write(output_format.format(
+            token_type = self.input_stream.token_type(), 
+            token = self.input_stream.keyword()))
 
         self.input_stream.advance()

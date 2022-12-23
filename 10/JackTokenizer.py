@@ -155,7 +155,7 @@ class JackTokenizer:
             "IF", "ELSE", "WHILE", "RETURN", "TRUE", "FALSE", "NULL", "THIS"
         """
         if self.curr_token[0] == "KEYWORD":
-            return self.curr_token[1].upper()
+            return self.curr_token[1]
         else:
             raise ValueError("Invalid token:try print keyword but current command is {}".format(
                 self.curr_token[0]))
