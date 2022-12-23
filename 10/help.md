@@ -25,3 +25,20 @@ let str5 = "{\"temperature\": {\"type\"}}"
 
 
 [Regex for comments](https://regex101.com/r/xn9rTN/1)
+
+
+- [ ] class
+- [ ] classVarDec
+- [x] subroutineDec
+- [x] parameterList
+- [x] subroutineBody
+- [x] varDec
+- [x] statements
+- [x] letStatement
+- [x] ifStatement
+- [x] whileStatement 
+- [x] doStatement 
+- [x] returnStatement 
+- [x] expression 
+- [x] term 
+- [x] expressionList 

@@ -20,17 +20,11 @@ def analyze_file(
         input_file (typing.TextIO): the file to analyze.
         output_file (typing.TextIO): writes all output to this file.
     """
-    # Your code goes here!
-    # It might be good to start by creating a new JackTokenizer and CompilationEngine:
+
     tokenizer = JackTokenizer(input_file)
-    # for t in tokenizer.iter_tokens():
-    #     output_file.write(
-    #         f'<{t[0]}> {t[1]} </{t[0]}>\n'
-    #     )
     engine = CompilationEngine(tokenizer, output_file)
-    output_file.write("<token>")
-    engine.compile_term()
-    output_file.write("</token>")
+    while engine.input_stream.has_more_tokens():
+        engine.compile_class()
     
 
 

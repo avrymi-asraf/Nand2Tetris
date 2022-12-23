@@ -6,8 +6,6 @@ as allowed by the Creative Common Attribution-NonCommercial-ShareAlike 3.0
 Unported [License](https://creativecommons.org/licenses/by-nc-sa/3.0/).
 """
 from typing import Iterator, List, Tuple, TextIO, Optional
-import array
-import re
 from regex import RegxPatterns
 TokenType = Tuple[str,str]
 
@@ -242,4 +240,4 @@ class JackTokenizer:
 
     def next_token_val(self)-> Optional[TokenType]:
         if self.has_more_tokens():
-            return self.tokens_list[1][1]
+            return self.tokens_list[0][1]
