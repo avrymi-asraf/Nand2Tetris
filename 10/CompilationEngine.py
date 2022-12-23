@@ -9,12 +9,13 @@ import typing
 from JackTokenizer import JackTokenizer
 
 output_format = "<{token_type}> {token} </{token_type}>\n"
+output_format = "<{input}> {token} </{token_type}>\n"
 
 class CompilationEngine:
     """Gets input from a JackTokenizer and emits its parsed structure into an
     output stream.
     """
-
+    
     #TODO why output stream is not of type typing.TextIO?
     def __init__(self, input_stream: JackTokenizer, output_stream) -> None:
         """
