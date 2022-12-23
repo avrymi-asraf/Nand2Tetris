@@ -104,20 +104,28 @@ class JackTokenizer:
         self.tokens_text: str
         self.tokens_list: List[Tuple[str, str]]
         self.curr_token: Tuple[str, str]
+        self.func = {
+            "symbol": self.symbol,
+            "keyword": self.keyword,
+            "identifier": self.identifier,
+            "stringConstant": self.string_val,
+            "integerConstant": self.int_val,
+            "keyword": self.keyword,
+        }
 
-        self.input_lines = input_stream.read().splitlines()
-        self.make_tokens()
-
-    def make_tokens(self) -> None:
-        self.input_lines = [
+        input_lines = input_stream.read().splitlines()
+        input_lines = [
             RegxPatterns.re_remove_comments.sub(
-                r'\g<STRING_CONST>', line) for line in self.input_lines]
-        self.tokens_text = " ".join(self.input_lines)
-        self.tokens_text = RegxPatterns.re_space.sub(
-            " ", self.tokens_text).strip()
-        iter_token = RegxPatterns.re_token.finditer(self.tokens_text)
-        self.tokens_list = [(token.lastgroup, token.group())
-                            for token in iter_token if token.lastgroup != "space"]
+                r'\g<stringConstant>', line) for line in input_lines]
+        self.tokens_text = " ".join(input_lines)
+        self.tokens_text = RegxPatterns.re_space.sub( " ", self.tokens_text).strip()
+        self.create_token_list()
+       
+
+    def create_token_list(self):
+        iter_token = self.iter_tokens()
+        self.tokens_list = [token
+                            for token in iter_token]
         self.curr_token = self.tokens_list.pop(0)
 
     def has_more_tokens(self) -> bool:
@@ -149,12 +157,12 @@ class JackTokenizer:
         """
         Returns:
             str: the keyword which is the current token.
-            Should be called only when token_type() is "KEYWORD".
+            Should be called only when token_type() is "keyword".
             Can return "CLASS", "METHOD", "FUNCTION", "CONSTRUCTOR", "INT", 
             "BOOLEAN", "CHAR", "VOID", "VAR", "STATIC", "FIELD", "LET", "DO", 
             "IF", "ELSE", "WHILE", "RETURN", "TRUE", "FALSE", "NULL", "THIS"
         """
-        if self.curr_token[0] == "KEYWORD":
+        if self.curr_token[0] == "keyword":
             return self.curr_token[1]
         else:
             raise ValueError("Invalid token:try print keyword but current command is {}".format(
@@ -164,13 +172,13 @@ class JackTokenizer:
         """
         Returns:
             str: the character which is the current token.
-            Should be called only when token_type() is "SYMBOL".
+            Should be called only when token_type() is "symbol".
             Recall that symbol was defined in the grammar like so:
             symbol: '{' | '}' | '(' | ')' | '[' | ']' | '.' | ',' | ';' | '+' | 
               '-' | '*' | '/' | '&' | '|' | '<' | '>' | '=' | '~' | '^' | '#'
         """
-        if self.curr_token[0] == "SYMBOL":
-            return self.curr_token[1].upper()
+        if self.curr_token[0] == "symbol":
+            return self.curr_token[1]
         else:
             raise ValueError("Invalid token:try print symbol but current command is {}".format(
                 self.curr_token[0]))
@@ -179,52 +187,65 @@ class JackTokenizer:
         """
         Returns:
             str: the identifier which is the current token.
-            Should be called only when token_type() is "IDENTIFIER".
+            Should be called only when token_type() is "identifier".
             Recall that identifiers were defined in the grammar like so:
             identifier: A sequence of letters, digits, and underscore ('_') not 
                   starting with a digit. You can assume keywords cannot be
                   identifiers, so 'self' cannot be an identifier, etc'.
         """
-        if self.curr_token[0] == "IDENTIFIER":
+        if self.curr_token[0] == "identifier":
             return self.curr_token[1]
         else:
-            raise ValueError("Invalid token:try print IDENTIFIER but current command is {}".format(
+            raise ValueError("Invalid token:try print identifier but current command is {}".format(
                 self.curr_token[0]))
 
     def int_val(self) -> int:
         """
         Returns:
             str: the integer value of the current token.
-            Should be called only when token_type() is "INT_CONST".
+            Should be called only when token_type() is "integerConstant".
             Recall that integerConstant was defined in the grammar like so:
             integerConstant: A decimal number in the range 0-32767.
         """
-        if self.curr_token[0] == "INT_CONST":
+        if self.curr_token[0] == "integerConstant":
             return self.curr_token[1]
         else:
-            raise ValueError("Invalid token:try print INT_CONST but current command is {}".format(
+            raise ValueError("Invalid token:try print integerConstant but current command is {}".format(
                 self.curr_token[0]))
 
     def string_val(self) -> str:
         """
         Returns:
             str: the string value of the current token, without the double 
-            quotes. Should be called only when token_type() is "STRING_CONST".
+            quotes. Should be called only when token_type() is "stringConstant".
             Recall that StringConstant was defined in the grammar like so:
             StringConstant: '"' A sequence of Unicode characters not including 
                       double quote or newline '"'
         """
-        if self.curr_token[0] == "STRING_CONST":
-            return self.curr_token[1].replace('"', "")
+        if self.curr_token[0] == "stringConstant":
+            return self.curr_token[1]
         else:
-            raise ValueError("Invalid token:try print STRING_CONST but current command is {}".format(
+            raise ValueError("Invalid token:try print stringConstant but current command is {}".format(
                 self.curr_token[0]))
 
     def iter_tokens(self):
         """Iterate over tokens
         Returns:(token_type, token_value)
         """
+        replacement = {
+            "<":"&lt;",
+            ">":"&gt;",
+            "&": "&amp;"
+
+        }
         for token in RegxPatterns.re_token.finditer(self.tokens_text):
             if token.lastgroup == "space":
                 continue
-            yield (token.lastgroup, token.group())
+            elif token.lastgroup == "symbol" and token.group() in "<>&":
+                yield (token.lastgroup, replacement[token.group()])
+            elif token.lastgroup == "stringConstant":
+                yield (token.lastgroup, token.group().replace("\"",""))
+            else:
+                yield (token.lastgroup, token.group())
+
+

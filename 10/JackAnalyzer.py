@@ -23,10 +23,15 @@ def analyze_file(
     # Your code goes here!
     # It might be good to start by creating a new JackTokenizer and CompilationEngine:
     tokenizer = JackTokenizer(input_file)
-    engine = CompilationEngine(tokenizer, output_file)
-    output_file.write("<token>")
-    engine.compile_class()
-    output_file.write("</token>")
+    for t in tokenizer.iter_tokens():
+        output_file.write(
+            f'<{t[0]}> {t[1]} </{t[0]}>\n'
+        )
+    # engine = CompilationEngine(tokenizer, output_file)
+    # output_file.write("<token>")
+    # engine.compile_class()
+    # output_file.write("</token>")
+    
 
 
 if "__main__" == __name__:

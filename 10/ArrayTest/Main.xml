@@ -1,4 +1,3 @@
-
 <keyword> class </keyword>
 <identifier> Main </identifier>
 <symbol> { </symbol>
@@ -29,7 +28,7 @@
 <symbol> . </symbol>
 <identifier> readInt </identifier>
 <symbol> ( </symbol>
-<string_const> "HOW MANY NUMBERS? " </string_const>
+<stringConstant> HOW MANY NUMBERS?  </stringConstant>
 <symbol> ) </symbol>
 <symbol> ; </symbol>
 <keyword> let </keyword>
@@ -45,12 +44,12 @@
 <keyword> let </keyword>
 <identifier> i </identifier>
 <symbol> = </symbol>
-<int_const> 0 </int_const>
+<integerConstant> 0 </integerConstant>
 <symbol> ; </symbol>
 <keyword> while </keyword>
 <symbol> ( </symbol>
 <identifier> i </identifier>
-<symbol> < </symbol>
+<symbol> &lt; </symbol>
 <identifier> length </identifier>
 <symbol> ) </symbol>
 <symbol> { </symbol>
@@ -64,7 +63,7 @@
 <symbol> . </symbol>
 <identifier> readInt </identifier>
 <symbol> ( </symbol>
-<string_const> "ENTER THE NEXT NUMBER: " </string_const>
+<stringConstant> ENTER THE NEXT NUMBER:  </stringConstant>
 <symbol> ) </symbol>
 <symbol> ; </symbol>
 <keyword> let </keyword>
@@ -72,23 +71,23 @@
 <symbol> = </symbol>
 <identifier> i </identifier>
 <symbol> + </symbol>
-<int_const> 1 </int_const>
+<integerConstant> 1 </integerConstant>
 <symbol> ; </symbol>
 <symbol> } </symbol>
 <keyword> let </keyword>
 <identifier> i </identifier>
 <symbol> = </symbol>
-<int_const> 0 </int_const>
+<integerConstant> 0 </integerConstant>
 <symbol> ; </symbol>
 <keyword> let </keyword>
 <identifier> sum </identifier>
 <symbol> = </symbol>
-<int_const> 0 </int_const>
+<integerConstant> 0 </integerConstant>
 <symbol> ; </symbol>
 <keyword> while </keyword>
 <symbol> ( </symbol>
 <identifier> i </identifier>
-<symbol> < </symbol>
+<symbol> &lt; </symbol>
 <identifier> length </identifier>
 <symbol> ) </symbol>
 <symbol> { </symbol>
@@ -107,7 +106,7 @@
 <symbol> = </symbol>
 <identifier> i </identifier>
 <symbol> + </symbol>
-<int_const> 1 </int_const>
+<integerConstant> 1 </integerConstant>
 <symbol> ; </symbol>
 <symbol> } </symbol>
 <keyword> do </keyword>
@@ -115,7 +114,7 @@
 <symbol> . </symbol>
 <identifier> printString </identifier>
 <symbol> ( </symbol>
-<string_const> "THE AVERAGE IS: " </string_const>
+<stringConstant> THE AVERAGE IS:  </stringConstant>
 <symbol> ) </symbol>
 <symbol> ; </symbol>
 <keyword> do </keyword>
