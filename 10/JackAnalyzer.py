@@ -13,7 +13,8 @@ from JackTokenizer import JackTokenizer
 
 
 def analyze_file(
-        input_file: typing.TextIO, output_file: typing.TextIO) -> None:
+    input_file: typing.TextIO, output_file: typing.TextIO
+) -> None:
     """Analyzes a single file.
 
     Args:
@@ -22,10 +23,10 @@ def analyze_file(
     """
 
     tokenizer = JackTokenizer(input_file)
+    # output_file.write("\n".join((f'<{t[0]}> {t[1]}</{t[0]}>' for t in tokenizer.tokens_list)))
     engine = CompilationEngine(tokenizer, output_file)
     while engine.input_stream.has_more_tokens():
         engine.compile_class()
-    
 
 
 if "__main__" == __name__:
@@ -34,13 +35,16 @@ if "__main__" == __name__:
     # Both are closed automatically when the code finishes running.
     # If the output file does not exist, it is created automatically in the
     # correct path, using the correct filename.
-    if not len(sys.argv) == 2:
-        sys.exit("Invalid usage, please use: JackAnalyzer <input path>")
+    if len(sys.argv) != 2:
+        sys.exit(
+            "Invalid usage, please use: JackAnalyzer <input path>"
+        )
     argument_path = os.path.abspath(sys.argv[1])
     if os.path.isdir(argument_path):
         files_to_assemble = [
             os.path.join(argument_path, filename)
-            for filename in os.listdir(argument_path)]
+            for filename in os.listdir(argument_path)
+        ]
     else:
         files_to_assemble = [argument_path]
     for input_path in files_to_assemble:
@@ -48,6 +52,7 @@ if "__main__" == __name__:
         if extension.lower() != ".jack":
             continue
         output_path = filename + ".xml"
-        with open(input_path, 'r') as input_file, \
-                open(output_path, 'w') as output_file:
+        with open(input_path, "r") as input_file, open(
+            output_path, "w"
+        ) as output_file:
             analyze_file(input_file, output_file)

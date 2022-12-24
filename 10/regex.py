@@ -2,7 +2,7 @@ import re
 
 
 class RegxPatterns():
-    re_comments = re.compile(r'(?P<comments>//.*|/\*.*\*/)')
+    re_comments = re.compile(r'(?P<comments>//.*|/\*(.|\n)*?\*/)')
     re_space = re.compile(r'(?P<space>\s+)')
     re_symbol = re.compile(
         r'(?P<symbol>\{|\}|\(|\)|\[|\]|\.|,|;|\+|-|\*|/|&|\||<|>|=|~)')
@@ -23,7 +23,7 @@ class RegxPatterns():
         re_mismatch.pattern
     )
     re_remove_comments = re.compile(
-        re_comments.pattern + "|(?:"+re_stringConstant.pattern + ")")
+        re_comments.pattern + "|"+re_stringConstant.pattern )
 
     # re_class_name = re_identifier
     # re_subroutinDoc = re_identifier

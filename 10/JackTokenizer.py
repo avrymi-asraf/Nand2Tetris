@@ -6,8 +6,12 @@ as allowed by the Creative Common Attribution-NonCommercial-ShareAlike 3.0
 Unported [License](https://creativecommons.org/licenses/by-nc-sa/3.0/).
 """
 from typing import Iterator, List, Tuple, TextIO, Optional
+from pathspec import RegexPattern
+
+from pyparsing import Regex
 from regex import RegxPatterns
-TokenType = Tuple[str,str]
+
+TokenType = Tuple[str, str]
 
 
 class JackTokenizer:
@@ -18,13 +22,13 @@ class JackTokenizer:
 
     A Jack file is a stream of characters. If the file represents a
     valid program, it can be tokenized into a stream of valid tokens. The
-    tokens may be separated by an arbitrary number of whitespace characters, 
-    and comments, which are ignored. There are three possible comment formats: 
-    /* comment until closing */ , /** API comment until closing */ , and 
+    tokens may be separated by an arbitrary number of whitespace characters,
+    and comments, which are ignored. There are three possible comment formats:
+    /* comment until closing */ , /** API comment until closing */ , and
     // comment until the line’s end.
 
     - ‘xxx’: quotes are used for tokens that appear verbatim (‘terminals’).
-    - xxx: regular typeface is used for names of language constructs 
+    - xxx: regular typeface is used for names of language constructs
            (‘non-terminals’).
     - (): parentheses are used for grouping of language constructs.
     - x | y: indicates that either x or y can appear.
@@ -35,29 +39,29 @@ class JackTokenizer:
 
     The Jack language includes five types of terminal elements (tokens).
 
-    - keyword: 'class' | 'constructor' | 'function' | 'method' | 'field' | 
+    - keyword: 'class' | 'constructor' | 'function' | 'method' | 'field' |
                'static' | 'var' | 'int' | 'char' | 'boolean' | 'void' | 'true' |
-               'false' | 'null' | 'this' | 'let' | 'do' | 'if' | 'else' | 
+               'false' | 'null' | 'this' | 'let' | 'do' | 'if' | 'else' |
                'while' | 'return'
-    - symbol: '{' | '}' | '(' | ')' | '[' | ']' | '.' | ',' | ';' | '+' | 
+    - symbol: '{' | '}' | '(' | ')' | '[' | ']' | '.' | ',' | ';' | '+' |
               '-' | '*' | '/' | '&' | '|' | '<' | '>' | '=' | '~' | '^' | '#'
     - integerConstant: A decimal number in the range 0-32767.
-    - StringConstant: '"' A sequence of Unicode characters not including 
+    - StringConstant: '"' A sequence of Unicode characters not including
                       double quote or newline '"'
-    - identifier: A sequence of letters, digits, and underscore ('_') not 
+    - identifier: A sequence of letters, digits, and underscore ('_') not
                   starting with a digit. You can assume keywords cannot be
                   identifiers, so 'self' cannot be an identifier, etc'.
 
     ## Program Structure
 
-    A Jack program is a collection of classes, each appearing in a separate 
-    file. A compilation unit is a single class. A class is a sequence of tokens 
+    A Jack program is a collection of classes, each appearing in a separate
+    file. A compilation unit is a single class. A class is a sequence of tokens
     structured according to the following context free syntax:
 
     - class: 'class' className '{' classVarDec* subroutineDec* '}'
     - classVarDec: ('static' | 'field') type varName (',' varName)* ';'
     - type: 'int' | 'char' | 'boolean' | className
-    - subroutineDec: ('constructor' | 'function' | 'method') ('void' | type) 
+    - subroutineDec: ('constructor' | 'function' | 'method') ('void' | type)
     - subroutineName '(' parameterList ')' subroutineBody
     - parameterList: ((type varName) (',' type varName)*)?
     - subroutineBody: '{' varDec* statements '}'
@@ -69,10 +73,10 @@ class JackTokenizer:
     ## Statements
 
     - statements: statement*
-    - statement: letStatement | ifStatement | whileStatement | doStatement | 
+    - statement: letStatement | ifStatement | whileStatement | doStatement |
                  returnStatement
     - letStatement: 'let' varName ('[' expression ']')? '=' expression ';'
-    - ifStatement: 'if' '(' expression ')' '{' statements '}' ('else' '{' 
+    - ifStatement: 'if' '(' expression ')' '{' statements '}' ('else' '{'
                    statements '}')?
     - whileStatement: 'while' '(' 'expression' ')' '{' statements '}'
     - doStatement: 'do' subroutineCall ';'
@@ -81,10 +85,10 @@ class JackTokenizer:
     ## Expressions
 
     - expression: term (op term)*
-    - term: integerConstant | stringConstant | keywordConstant | varName | 
-            varName '['expression']' | subroutineCall | '(' expression ')' | 
+    - term: integerConstant | stringConstant | keywordConstant | varName |
+            varName '['expression']' | subroutineCall | '(' expression ')' |
             unaryOp term
-    - subroutineCall: subroutineName '(' expressionList ')' | (className | 
+    - subroutineCall: subroutineName '(' expressionList ')' | (className |
                       varName) '.' subroutineName '(' expressionList ')'
     - expressionList: (expression (',' expression)* )?
     - op: '+' | '-' | '*' | '/' | '&' | '|' | '<' | '>' | '='
@@ -103,19 +107,26 @@ class JackTokenizer:
         self.tokens_text: str
         self.tokens_list: List[TokenType]
         self.curr_token: TokenType
-        input_lines = input_stream.read().splitlines()
-        input_lines = [
-            RegxPatterns.re_remove_comments.sub(
-                r'\g<stringConstant>', line) for line in input_lines]
-        self.tokens_text = " ".join(input_lines)
-        self.tokens_text = RegxPatterns.re_space.sub( " ", self.tokens_text).strip()
+        # input_lines = input_stream.read().splitlines()
+        # input_lines =
+        # input_lines = [
+        #     RegxPatterns.re_remove_comments.sub(
+        #         r"\g<stringConstant>", line
+        #     )
+        #     for line in input_lines
+        # ]
+        # self.tokens_text = " ".join(input_lines)
+        self.tokens_text = RegxPatterns.re_remove_comments.sub(
+            r"\g<stringConstant>", input_stream.read()
+        )
+        self.tokens_text = RegxPatterns.re_space.sub(
+            " ", self.tokens_text
+        ).strip()
         self.create_token_list()
-       
 
     def create_token_list(self):
         iter_token = self.iter_tokens()
-        self.tokens_list = [token
-                            for token in iter_token]
+        self.tokens_list = [token for token in iter_token]
         self.curr_token = self.tokens_list.pop(0)
 
     def has_more_tokens(self) -> bool:
@@ -124,14 +135,14 @@ class JackTokenizer:
         Returns:
             bool: True if there are more tokens, False otherwise.
         """
-        return (len(self.tokens_list) > 0)
+        return len(self.tokens_list) > 0
 
     def advance(self) -> None:
-        """Gets the next token from the input and makes it the current token. 
-        This method should be called if has_more_tokens() is true. 
+        """Gets the next token from the input and makes it the current token.
+        This method should be called if has_more_tokens() is true.
         Initially there is no current token.
         """
-        if (self.has_more_tokens()):
+        if self.has_more_tokens():
             self.curr_token = self.tokens_list.pop(0)
 
     def token_type(self) -> str:
@@ -139,7 +150,7 @@ class JackTokenizer:
         Returns:
             str: the type of the current token, can be
             "KEYWORD", "SYMBOL", "IDENTIFIER", "INT_CONST", "STRING_CONST"
-        # """
+        #"""
 
         return self.curr_token[0]
 
@@ -148,15 +159,18 @@ class JackTokenizer:
         Returns:
             str: the keyword which is the current token.
             Should be called only when token_type() is "keyword".
-            Can return "CLASS", "METHOD", "FUNCTION", "CONSTRUCTOR", "INT", 
-            "BOOLEAN", "CHAR", "VOID", "VAR", "STATIC", "FIELD", "LET", "DO", 
+            Can return "CLASS", "METHOD", "FUNCTION", "CONSTRUCTOR", "INT",
+            "BOOLEAN", "CHAR", "VOID", "VAR", "STATIC", "FIELD", "LET", "DO",
             "IF", "ELSE", "WHILE", "RETURN", "TRUE", "FALSE", "NULL", "THIS"
         """
         if self.curr_token[0] == "keyword":
             return self.curr_token[1]
         else:
-            raise ValueError("Invalid token:try print keyword but current command is {}".format(
-                self.curr_token[0]))
+            raise ValueError(
+                "Invalid token:try print keyword but current command is {}".format(
+                    self.curr_token[0]
+                )
+            )
 
     def symbol(self) -> str:
         """
@@ -164,14 +178,17 @@ class JackTokenizer:
             str: the character which is the current token.
             Should be called only when token_type() is "symbol".
             Recall that symbol was defined in the grammar like so:
-            symbol: '{' | '}' | '(' | ')' | '[' | ']' | '.' | ',' | ';' | '+' | 
+            symbol: '{' | '}' | '(' | ')' | '[' | ']' | '.' | ',' | ';' | '+' |
               '-' | '*' | '/' | '&' | '|' | '<' | '>' | '=' | '~' | '^' | '#'
         """
         if self.curr_token[0] == "symbol":
             return self.curr_token[1]
         else:
-            raise ValueError("Invalid token:try print symbol but current command is {}".format(
-                self.curr_token[0]))
+            raise ValueError(
+                "Invalid token:try print symbol but current command is {}".format(
+                    self.curr_token[0]
+                )
+            )
 
     def identifier(self) -> str:
         """
@@ -179,15 +196,18 @@ class JackTokenizer:
             str: the identifier which is the current token.
             Should be called only when token_type() is "identifier".
             Recall that identifiers were defined in the grammar like so:
-            identifier: A sequence of letters, digits, and underscore ('_') not 
+            identifier: A sequence of letters, digits, and underscore ('_') not
                   starting with a digit. You can assume keywords cannot be
                   identifiers, so 'self' cannot be an identifier, etc'.
         """
         if self.curr_token[0] == "identifier":
             return self.curr_token[1]
         else:
-            raise ValueError("Invalid token:try print identifier but current command is {}".format(
-                self.curr_token[0]))
+            raise ValueError(
+                "Invalid token:try print identifier but current command is {}".format(
+                    self.curr_token[0]
+                )
+            )
 
     def int_val(self) -> int:
         """
@@ -200,44 +220,50 @@ class JackTokenizer:
         if self.curr_token[0] == "integerConstant":
             return self.curr_token[1]
         else:
-            raise ValueError("Invalid token:try print integerConstant but current command is {}".format(
-                self.curr_token[0]))
+            raise ValueError(
+                "Invalid token:try print integerConstant but current command is {}".format(
+                    self.curr_token[0]
+                )
+            )
 
     def string_val(self) -> str:
         """
         Returns:
-            str: the string value of the current token, without the double 
+            str: the string value of the current token, without the double
             quotes. Should be called only when token_type() is "stringConstant".
             Recall that StringConstant was defined in the grammar like so:
-            StringConstant: '"' A sequence of Unicode characters not including 
+            StringConstant: '"' A sequence of Unicode characters not including
                       double quote or newline '"'
         """
         if self.curr_token[0] == "stringConstant":
             return self.curr_token[1]
         else:
-            raise ValueError("Invalid token:try print stringConstant but current command is {}".format(
-                self.curr_token[0]))
+            raise ValueError(
+                "Invalid token:try print stringConstant but current command is {}".format(
+                    self.curr_token[0]
+                )
+            )
 
     def iter_tokens(self):
         """Iterate over tokens
         Returns:(token_type, token_value)
         """
-        replacement = {
-            "<":"&lt;",
-            ">":"&gt;",
-            "&": "&amp;"
-
-        }
+        replacement = {"<": "&lt;", ">": "&gt;", "&": "&amp;"}
         for token in RegxPatterns.re_token.finditer(self.tokens_text):
             if token.lastgroup == "space":
                 continue
-            elif token.lastgroup == "symbol" and token.group() in "<>&":
+            elif (
+                token.lastgroup == "symbol" and token.group() in "<>&"
+            ):
                 yield (token.lastgroup, replacement[token.group()])
             elif token.lastgroup == "stringConstant":
-                yield (token.lastgroup, token.group().replace("\"",""))
+                yield (
+                    token.lastgroup,
+                    token.group().replace('"', ""),
+                )
             else:
                 yield (token.lastgroup, token.group())
 
-    def next_token_val(self)-> Optional[TokenType]:
+    def next_token_val(self) -> Optional[TokenType]:
         if self.has_more_tokens():
             return self.tokens_list[0][1]
