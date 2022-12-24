@@ -6,9 +6,7 @@ as allowed by the Creative Common Attribution-NonCommercial-ShareAlike 3.0
 Unported [License](https://creativecommons.org/licenses/by-nc-sa/3.0/).
 """
 from typing import Iterator, List, Tuple, TextIO, Optional
-from pathspec import RegexPattern
 
-from pyparsing import Regex
 from regex import RegxPatterns
 
 TokenType = Tuple[str, str]
@@ -17,23 +15,6 @@ TokenType = Tuple[str, str]
 class JackTokenizer:
     """Removes all comments from the input stream and breaks it
     into Jack language tokens, as specified by the Jack grammar.
-
-    # Jack Language Grammar
-
-    A Jack file is a stream of characters. If the file represents a
-    valid program, it can be tokenized into a stream of valid tokens. The
-    tokens may be separated by an arbitrary number of whitespace characters,
-    and comments, which are ignored. There are three possible comment formats:
-    /* comment until closing */ , /** API comment until closing */ , and
-    // comment until the line’s end.
-
-    - ‘xxx’: quotes are used for tokens that appear verbatim (‘terminals’).
-    - xxx: regular typeface is used for names of language constructs
-           (‘non-terminals’).
-    - (): parentheses are used for grouping of language constructs.
-    - x | y: indicates that either x or y can appear.
-    - x?: indicates that x appears 0 or 1 times.
-    - x*: indicates that x appears 0 or more times.
 
     ## Lexical Elements
 
@@ -52,45 +33,6 @@ class JackTokenizer:
                   starting with a digit. You can assume keywords cannot be
                   identifiers, so 'self' cannot be an identifier, etc'.
 
-    ## Program Structure
-
-    A Jack program is a collection of classes, each appearing in a separate
-    file. A compilation unit is a single class. A class is a sequence of tokens
-    structured according to the following context free syntax:
-
-    - class: 'class' className '{' classVarDec* subroutineDec* '}'
-    - classVarDec: ('static' | 'field') type varName (',' varName)* ';'
-    - type: 'int' | 'char' | 'boolean' | className
-    - subroutineDec: ('constructor' | 'function' | 'method') ('void' | type)
-    - subroutineName '(' parameterList ')' subroutineBody
-    - parameterList: ((type varName) (',' type varName)*)?
-    - subroutineBody: '{' varDec* statements '}'
-    - varDec: 'var' type varName (',' varName)* ';'
-    - className: identifier
-    - subroutineName: identifier
-    - varName: identifier
-
-    ## Statements
-
-    - statements: statement*
-    - statement: letStatement | ifStatement | whileStatement | doStatement |
-                 returnStatement
-    - letStatement: 'let' varName ('[' expression ']')? '=' expression ';'
-    - ifStatement: 'if' '(' expression ')' '{' statements '}' ('else' '{'
-                   statements '}')?
-    - whileStatement: 'while' '(' 'expression' ')' '{' statements '}'
-    - doStatement: 'do' subroutineCall ';'
-    - returnStatement: 'return' expression? ';'
-
-    ## Expressions
-
-    - expression: term (op term)*
-    - term: integerConstant | stringConstant | keywordConstant | varName |
-            varName '['expression']' | subroutineCall | '(' expression ')' |
-            unaryOp term
-    - subroutineCall: subroutineName '(' expressionList ')' | (className |
-                      varName) '.' subroutineName '(' expressionList ')'
-    - expressionList: (expression (',' expression)* )?
     - op: '+' | '-' | '*' | '/' | '&' | '|' | '<' | '>' | '='
     - unaryOp: '-' | '~' | '^' | '#'
     - keywordConstant: 'true' | 'false' | 'null' | 'this'
@@ -107,24 +49,33 @@ class JackTokenizer:
         self.tokens_text: str
         self.tokens_list: List[TokenType]
         self.curr_token: TokenType
-        # input_lines = input_stream.read().splitlines()
-        # input_lines =
-        # input_lines = [
-        #     RegxPatterns.re_remove_comments.sub(
-        #         r"\g<stringConstant>", line
-        #     )
-        #     for line in input_lines
-        # ]
-        # self.tokens_text = " ".join(input_lines)
+
+        self.tokens_text = input_stream.read()
+        #remove comments 
         self.tokens_text = RegxPatterns.re_remove_comments.sub(
-            r"\g<stringConstant>", input_stream.read()
+            r"\g<stringConstant>", self.tokens_text
         )
+        #remove whitespace and newlines
         self.tokens_text = RegxPatterns.re_space.sub(
             " ", self.tokens_text
-        ).strip()
-        self.create_token_list()
+        )
+    
+        self.__create_token_list()
+    def __token_error(self,mst=""):
+        """ ## raise value error
+            ### format error message: 
+            `Invalid token:try print _mst_ but current command is _curr_token[0]_`
 
-    def create_token_list(self):
+        """
+        return ValueError(
+                "Invalid token:try print {mst} but current command is {}".format(
+                    self.curr_token[0]
+                ))
+
+    def __create_token_list(self)->None:
+        """
+        Create list with all tokens, using iter_tokens
+        """
         iter_token = self.iter_tokens()
         self.tokens_list = [token for token in iter_token]
         self.curr_token = self.tokens_list.pop(0)
@@ -166,11 +117,8 @@ class JackTokenizer:
         if self.curr_token[0] == "keyword":
             return self.curr_token[1]
         else:
-            raise ValueError(
-                "Invalid token:try print keyword but current command is {}".format(
-                    self.curr_token[0]
-                )
-            )
+            raise self.__token_error("keyword")
+            
 
     def symbol(self) -> str:
         """
@@ -184,11 +132,8 @@ class JackTokenizer:
         if self.curr_token[0] == "symbol":
             return self.curr_token[1]
         else:
-            raise ValueError(
-                "Invalid token:try print symbol but current command is {}".format(
-                    self.curr_token[0]
-                )
-            )
+            raise self.__token_error("symbol")
+
 
     def identifier(self) -> str:
         """
@@ -203,11 +148,7 @@ class JackTokenizer:
         if self.curr_token[0] == "identifier":
             return self.curr_token[1]
         else:
-            raise ValueError(
-                "Invalid token:try print identifier but current command is {}".format(
-                    self.curr_token[0]
-                )
-            )
+            raise  self.__token_error("identifier")
 
     def int_val(self) -> int:
         """
@@ -220,11 +161,8 @@ class JackTokenizer:
         if self.curr_token[0] == "integerConstant":
             return self.curr_token[1]
         else:
-            raise ValueError(
-                "Invalid token:try print integerConstant but current command is {}".format(
-                    self.curr_token[0]
-                )
-            )
+           raise self.__token_error("integerConstant")
+            
 
     def string_val(self) -> str:
         """
@@ -238,11 +176,7 @@ class JackTokenizer:
         if self.curr_token[0] == "stringConstant":
             return self.curr_token[1]
         else:
-            raise ValueError(
-                "Invalid token:try print stringConstant but current command is {}".format(
-                    self.curr_token[0]
-                )
-            )
+            raise self.__token_error("stringConstant")
 
     def iter_tokens(self):
         """Iterate over tokens

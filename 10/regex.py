@@ -3,7 +3,7 @@ import re
 
 class RegxPatterns():
     re_comments = re.compile(r'(?P<comments>//.*|/\*(.|\n)*?\*/)')
-    re_space = re.compile(r'(?P<space>\s+)')
+    re_space = re.compile(r'(?P<space>\s+|\n)')
     re_symbol = re.compile(
         r'(?P<symbol>\{|\}|\(|\)|\[|\]|\.|,|;|\+|-|\*|/|&|\||<|>|=|~)')
     re_keyword = re.compile(
