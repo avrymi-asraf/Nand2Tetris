@@ -1,1 +1,6 @@
-<token>
+<class>
+<keyword> class </keyword>
+<identifier> Main </identifier>
+<symbol> { </symbol>
+<classVarDec>
+<keyword> static </keyword>

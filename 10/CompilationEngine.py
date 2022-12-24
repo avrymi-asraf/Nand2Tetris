@@ -15,15 +15,15 @@ integerConstant = "integerConstant"
 stringConstant = "stringConstant"
 keywordConstant = {"true", "false", "null", "this"}
 symbols = {"{", "}", "(", ")", "[", "]", ".", ",", ";", "+", "-", "*", "/", "&",
-           "|", "<", ">", "=", "~"}
+           "|", "<", ">", "=", "~", "&lt;", "&gt;", "&amp;"}
 unaryOp = {"-", "~"}
 output_format = "<{token_type}> {token} </{token_type}>\n"
-ops = {"+", "-", "*", "/", "<", ">", "|", "&", "="}
+ops = {"+", "-", "*", "/", "<", ">", "|", "&", "=", "&lt;", "&gt;", "&amp;"}
 statementKeywords = {"let", "if", "while", "do", "return"}
 keywords = {"class", "constructor", "function", "method", "field", "static", "var",
             "int", "char", "boolean", "void", "true", "false", "null", "this", "let", "do", "if",
             "else", "while", "return"}
-types = {"int", "char", "boolean"}
+basic_types = {"int", "char", "boolean"}
 
 
 class CompilationEngine:
@@ -44,18 +44,9 @@ class CompilationEngine:
         self.compile_error = lambda: ValueError("can't compile this expression{}"
                                                 .format(self.input_stream.curr_token))
 
-    def _write_base_token(self, token: str, flog: str):
-        if flog == "e":
-            self.output_stream.write("</{}>\n".format(token))
-        elif flog == "s":
-            self.output_stream.write("<{}>\n".format(token))
-        else:
-            raise ValueError(
-                "end must be a string 's' or 'e' it was{}".format(flog))
-
     def compile_class(self) -> None:
         """Compiles a complete class."""
-        self._write_base_token("class","s")
+        self._write_base_token("class", "s")
         self.write_keyword({"class"})
         # write class_name
         self.write_identifier()
@@ -68,7 +59,7 @@ class CompilationEngine:
         while((self.input_stream.token_type() == keyword)
               and (self.input_stream.keyword() in {"constructor", "function", "method"})):
             self.compile_subroutine()
-        self._write_base_token("class","e")
+        self._write_base_token("class", "e")
 
     def compile_class_var_dec(self) -> None:
         """Compiles a static declaration or a field declaration.
@@ -76,13 +67,13 @@ class CompilationEngine:
 
         self._write_base_token("classVarDec", "s")
         self.write_keyword({"static", "field"})
-        self.write_type()
+        self._write_type()
         # varName
         self.write_identifier()
 
         # while curr = ","
-        while(self.input_stream.token_type == symbol
-              and self.input_stream.symbol == ","):
+        while(self.input_stream.token_type() == symbol
+              and self.input_stream.symbol() == ","):
             self.write_symbol(",")
             # write varName
             self.write_identifier()
@@ -99,7 +90,7 @@ class CompilationEngine:
         # constructor or function or method
         self.write_keyword({"constructor", "function", "method"})
         # write type + void
-        self.write_type({"void"})
+        self._write_type({"void"})
         # subroutine name
         self.write_identifier()
         self.write_symbol("(")
@@ -127,27 +118,30 @@ class CompilationEngine:
         enclosing "()".
         """
         self._write_base_token("parameterList", "s")
-        self.write_type()
+        # if the parameter list is empty
+        if self.input_stream.token_type() == symbol and self.input_stream.symbol() == ")":
+            self._write_base_token("parameterList", "e")
+            return
+
+        self._write_type()
         # varName
         self.write_identifier()
 
         # aditional parameters
         while self.input_stream.token_type() == symbol and self.input_stream.keyword() == ",":
             self.write_symbol({","})
-            self.write_type()
+            self._write_type()
             # varName
             self.write_identifier()
         self._write_base_token("parameterList", "e")
 
     def compile_var_dec(self) -> None:
         """Compiles a var declaration."""
-        self._write_base_token("varDecl", "s")
+        self._write_base_token("varDec", "s")
         self.write_keyword({"var"})
-        # type can be keyword or now class
-        if self.input_stream.token_type() == keyword and self.input_stream.keyword() in types:
-            self.write_keyword(types)
-        else:
-            self.write_identifier()
+        self._write_type()
+        # varName
+        self.write_identifier()
 
         while(self.input_stream.token_type() == symbol
               and self.input_stream.symbol() == ","):
@@ -155,46 +149,44 @@ class CompilationEngine:
             self.write_identifier()
 
         self.write_symbol(";")
-        self._write_base_token("varDecl", "e")
+        self._write_base_token("varDec", "e")
 
     def compile_statements(self) -> None:
         """Compiles a sequence of statements, not including the enclosing 
         "{}".
         """
         self._write_base_token("statements", "s")
-        while self.output_stream.token_type == symbol and self.output_stream.symbol() == statementKeywords:
-            if self.output_stream.symbol() == "let":
+        while self.input_stream.token_type() == keyword and self.input_stream.keyword() in statementKeywords:
+            if self.input_stream.keyword() == "let":
                 self.compile_let()
-            if self.output_stream.symbol() == "if":
+            elif self.input_stream.keyword() == "if":
                 self.compile_if()
-            if self.output_stream.symbol() == "while":
+            elif self.input_stream.keyword() == "while":
                 self.compile_while()
-            if self.output_stream.symbol() == "do":
+            elif self.input_stream.keyword() == "do":
                 self.compile_do()
-            if self.output_stream.symbol() == "return":
+            elif self.input_stream.keyword() == "return":
                 self.compile_return()
+            else:
+                raise self.compile_error()
         self._write_base_token("statements", "e")
 
     def compile_do(self) -> None:
         """Compiles a do statement."""
         self._write_base_token("doStatement", "s")
+        # we calld the do statements sometimes insted call subroutines, so only
         self.write_keyword({"do"})
-        self.write_identifier()
-        if self.output_stream.token_type() == symbol and self.output_stream.symbol() == ".":
-            self.write_symbol({"."})
-            self.write_identifier()
-        self.write_symbol({"("})
-        self.compile_expression_list()
-        self.write_symbol({")"})
+        self._write_callSubroutine()
+        self.write_symbol({";"})
         self._write_base_token("doStatement", "e")
 
     def compile_let(self) -> None:
         """Compiles a let statement."""
         self._write_base_token("letStatement", "s")
         self.write_keyword("let")
-        if self.output_stream.token_type == identifier:
+        if self.input_stream.token_type() == identifier:
             self.write_identifier()
-            if self.input_stream.token_type() == symbol and self.input_stream.symbol == "[":
+            if self.input_stream.token_type() == symbol and self.input_stream.symbol() == "[":
                 self.write_symbol({"["})
                 self.compile_expression()
                 self.write_symbol({"]"})
@@ -207,7 +199,7 @@ class CompilationEngine:
 
     def compile_while(self) -> None:
         """Compiles a while statement."""
-        self._write_base_token("whileStatment", "s")
+        self._write_base_token("whileStatement", "s")
         self.write_keyword({"while"})
         self.write_symbol({"("})
         self.compile_expression()
@@ -215,15 +207,16 @@ class CompilationEngine:
         self.write_symbol({"{"})
         self.compile_statements()
         self.write_symbol({"}"})
-        self._write_base_token("whileStatment", "e")
+        self._write_base_token("whileStatement", "e")
 
     def compile_return(self) -> None:
         """Compiles a return statement."""
-        self._writt_base_token("returnStatement", "s")
-        if not (self.output_stream.token_type() == symbol and self.output_stream.symble() == ";"):
+        self._write_base_token("returnStatement", "s")
+        self.write_keyword({"return"})
+        if not (self.input_stream.token_type() == symbol and self.input_stream.symbol() == ";"):
             self.compile_expression()
         self.write_symbol({";"})
-        self._writt_base_token("returnStatement", "e")
+        self._write_base_token("returnStatement", "e")
 
     def compile_if(self) -> None:
         """Compiles a if statement, possibly with a trailing else clause."""
@@ -235,7 +228,7 @@ class CompilationEngine:
         self.write_symbol({"{"})
         self.compile_statements()
         self.write_symbol({"}"})
-        if self.output_stream.token_type() == keyword and self.output_stream.keyword == "else":
+        if self.input_stream.token_type() == keyword and self.input_stream.keyword == "else":
             self.write_keyword({"else"})
             self.write_symbol({"{"})
             self.compile_statements()
@@ -269,15 +262,15 @@ class CompilationEngine:
             self.write_string()
         # varname|varname[expression]| subroutineCall
         elif self.input_stream.token_type() == identifier:
-            if self.input_stream.next_token_val() and self.input_stream.next_token_val() in "([":
+            if self.input_stream.next_token_val() and self.input_stream.next_token_val() in "([.":
                 # varname[expression]
                 if self.input_stream.next_token_val() == "[":
                     self.write_identifier()
                     self.write_symbol({"["})
                     self.compile_expression()
                     self.write_symbol({"]"})
-                elif self.input_stream.next_token_val() == "(":  # subroutineCall
-                    self.compile_do()
+                elif self.input_stream.next_token_val() in "(.":  # subroutineCall
+                    self._write_callSubroutine()
             else:
                 self.write_identifier()
         elif self.input_stream.token_type() == symbol:  # (expression) | unaryOpTerm
@@ -389,17 +382,35 @@ class CompilationEngine:
 
         self.input_stream.advance()
 
-    def write_type(self, additional_keywords: Set[str] = set()):
+    def _write_type(self, additional_keywords: Set[str] = set()):
         """Write the type, type can be either keyword or identifier
         we can add additional keyword (like void),
         additional_keywords must be form keyword"""
         # is type is keyword int , boolean or char
-        if self.output_stream.token_type() in (keyword, identifier):
-            if self.input_stream.token_type() == keyword \
-                    and self.input_stream.keyword() in types.union(additional_keywords):
-                self.write_keyword(types)
-            # if type is not now class
-            elif self.input_stream.token_type() == identifier:
-                self.write_identifier()
-            else:
-                self.compile_error()
+        types = basic_types.union(additional_keywords)
+        if self.input_stream.token_type() == keyword \
+                and self.input_stream.keyword() in types:
+            self.write_keyword(types)
+            # if type is new class
+        elif self.input_stream.token_type() == identifier:
+            self.write_identifier()
+        else:
+            self.compile_error()
+
+    def _write_callSubroutine(self):
+        self.write_identifier()
+        if self.input_stream.token_type() == symbol and self.input_stream.symbol() == ".":
+            self.write_symbol({"."})
+            self.write_identifier()
+        self.write_symbol({"("})
+        self.compile_expression_list()
+        self.write_symbol({")"})
+
+    def _write_base_token(self, token: str, flog: str):
+        if flog == "e":
+            self.output_stream.write("</{}>\n".format(token))
+        elif flog == "s":
+            self.output_stream.write("<{}>\n".format(token))
+        else:
+            raise ValueError(
+                "end must be a string 's' or 'e' it was{}".format(flog))
