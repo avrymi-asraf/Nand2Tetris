@@ -51,28 +51,30 @@ class JackTokenizer:
         self.curr_token: TokenType
 
         self.tokens_text = input_stream.read()
-        #remove comments 
+        # remove comments
         self.tokens_text = RegxPatterns.re_remove_comments.sub(
             r"\g<stringConstant>", self.tokens_text
         )
-        #remove whitespace and newlines
+        # remove whitespace and newlines
         self.tokens_text = RegxPatterns.re_space.sub(
             " ", self.tokens_text
         )
-    
+
         self.__create_token_list()
-    def __token_error(self,mst=""):
-        """ ## raise value error
-            ### format error message: 
-            `Invalid token:try print _mst_ but current command is _curr_token[0]_`
+
+    def __token_error(self, mst=""):
+        """## raise value error
+        ### format error message:
+        `Invalid token:try print _mst_ but current command is _curr_token[0]_`
 
         """
         return ValueError(
-                "Invalid token:try print {mst} but current command is {}".format(
-                    self.curr_token[0]
-                ))
+            "Invalid token:try print {mst} but current command is {}".format(
+                self.curr_token[0]
+            )
+        )
 
-    def __create_token_list(self)->None:
+    def __create_token_list(self) -> None:
         """
         Create list with all tokens, using iter_tokens
         """
@@ -118,7 +120,6 @@ class JackTokenizer:
             return self.curr_token[1]
         else:
             raise self.__token_error("keyword")
-            
 
     def symbol(self) -> str:
         """
@@ -134,7 +135,6 @@ class JackTokenizer:
         else:
             raise self.__token_error("symbol")
 
-
     def identifier(self) -> str:
         """
         Returns:
@@ -148,7 +148,7 @@ class JackTokenizer:
         if self.curr_token[0] == "identifier":
             return self.curr_token[1]
         else:
-            raise  self.__token_error("identifier")
+            raise self.__token_error("identifier")
 
     def int_val(self) -> int:
         """
@@ -161,8 +161,7 @@ class JackTokenizer:
         if self.curr_token[0] == "integerConstant":
             return self.curr_token[1]
         else:
-           raise self.__token_error("integerConstant")
-            
+            raise self.__token_error("integerConstant")
 
     def string_val(self) -> str:
         """
@@ -194,6 +193,11 @@ class JackTokenizer:
                 yield (
                     token.lastgroup,
                     token.group().replace('"', ""),
+                )
+            elif token.lastgroup == "keyword":
+                yield (
+                    token.lastgroup,
+                    token.group().replace(" ", ""),
                 )
             else:
                 yield (token.lastgroup, token.group())
