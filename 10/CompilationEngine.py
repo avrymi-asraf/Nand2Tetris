@@ -8,6 +8,8 @@ Unported [License](https://creativecommons.org/licenses/by-nc-sa/3.0/).
 from typing import Set, List, Tuple, Optional
 from JackTokenizer import JackTokenizer
 
+output_format = "<{token_type}> {token} </{token_type}>\n"
+
 KEYWORD = "keyword"
 SYMBOL = "symbol"
 IDENTIFIER = "identifier"
@@ -40,7 +42,6 @@ SYMBOLS = {
     "&amp;",
 }
 UNARY_OP = {"-", "~","#", "-"}
-output_format = "<{token_type}> {token} </{token_type}>\n"
 OP = {
     "+",
     "-",
