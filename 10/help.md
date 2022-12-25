@@ -22,7 +22,7 @@ let str5 = "{\"temperature\": {\"type\"}}"
 
 [Regex editor](https://regex101.com/r/vOjcqP/1)
 [Regex for comments](https://regex101.com/r/xn9rTN/1)
-[Regex for tokens](https://regex101.com/r/RZaYGV/1)
+[Regex for tokens](https://regex101.com/r/53ZudP/1)
 
 
 

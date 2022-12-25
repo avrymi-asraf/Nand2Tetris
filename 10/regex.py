@@ -3,7 +3,7 @@ import re
 
 class RegxPatterns:
     re_comments = re.compile(r"(?P<comments>//.*|/\*(.|\n)*?\*/)")
-    re_space = re.compile(r"(?P<space>\s+|\n)")
+    re_space = re.compile(r"(?P<space>[\s\n]+)")
     re_symbol = re.compile(
         r"(?P<symbol>\{|\}|\(|\)|\[|\]|\.|,|;|\+|-|\*|/|&|\||<|>|=|~)"
     )
@@ -12,9 +12,9 @@ class RegxPatterns:
     )
     re_integerConstant = re.compile(r"(?P<integerConstant>\d+)")
     re_stringConstant = re.compile(
-        r"(?:(?P<stringConstant>\".*?\"|\'.*?\'))"
+        r"(?:(?P<stringConstant>\".*?\"|'.*?'))"
     )
-    re_identifier = re.compile(r"(?P<identifier>[^0-9 ][\w]*)")
+    re_identifier = re.compile(r"(?P<identifier>[^0-9\s][\w]*)")
     re_mismatch = re.compile(r"(?P<mismatch>.)")
 
     re_token = re.compile(
