@@ -7,6 +7,15 @@ Unported [License](https://creativecommons.org/licenses/by-nc-sa/3.0/).
 """
 from typing import Set, List, Tuple, Optional
 from JackTokenizer import JackTokenizer
+from SymbolTable import SymbolTable
+
+
+ARG = "ARG"
+VAR = "VAR"
+
+STATIC = "STATIC"
+FIELD = "FIELD"
+
 
 output_format = "<{token_type}> {token} </{token_type}>\n"
 
@@ -41,7 +50,7 @@ SYMBOLS = {
     "&gt;",
     "&amp;",
 }
-UNARY_OP = {"-", "~","#", "-"}
+UNARY_OP = {"-", "~", "#", "-"}
 OP = {
     "+",
     "-",
@@ -101,11 +110,14 @@ class CompilationEngine:
         """
         self.input_stream = input_stream
         self.output_stream = output_stream
+        self.symble_table = SymbolTable()
         self.compile_error = lambda: ValueError(
             "can't compile this expression{}".format(
                 self.input_stream.curr_token
             )
         )
+        self.curr_type = ""
+        self.curr_kind = ""
 
     def compile_class(self) -> None:
         """Compiles a complete class."""
@@ -133,9 +145,12 @@ class CompilationEngine:
         "static" | "field" type varName ("," varName)* ";"""
 
         self._write_base_token("classVarDec", "s")
+        self.curr_kind = self.input_stream.keyword()
         self.write_keyword({"static", "field"})
         self._write_type()
         # varName
+        self.symble_table.define(
+            self.input_stream.identifier(), self.curr_type, self.curr_kind)
         self.write_identifier()
 
         # while curr = ","
@@ -145,7 +160,10 @@ class CompilationEngine:
         ):
             self.write_symbol(",")
             # write varName
+            self.symble_table.define(
+                self.input_stream.identifier(), self.curr_type, self.curr_kind)
             self.write_identifier()
+
         self.write_symbol(";")
         self._write_base_token("classVarDec", "e")
 
@@ -155,6 +173,9 @@ class CompilationEngine:
         You can assume that classes with constructors have at least one field,
         you will understand why this is necessary in project 11.
         """
+
+        self.symble_table.start_subroutine()
+
         self._write_base_token("subroutineDec", "s")
         # constructor or function or method
         self.write_keyword({"constructor", "function", "method"})
@@ -197,8 +218,11 @@ class CompilationEngine:
             self._write_base_token("parameterList", "e")
             return
 
+        self.curr_kind = VAR
         self._write_type()
         # varName
+        self.symble_table.define(
+            self.input_stream.identifier(), self.curr_type, self.curr_kind)
         self.write_identifier()
 
         # aditional parameters
@@ -209,6 +233,10 @@ class CompilationEngine:
             self.write_symbol({","})
             self._write_type()
             # varName
+
+            self.symble_table.define(
+            self.input_stream.identifier(), self.curr_type, self.curr_kind)
+
             self.write_identifier()
         self._write_base_token("parameterList", "e")
 
@@ -531,7 +559,7 @@ class CompilationEngine:
         self.input_stream.advance()
 
     def _write_type(self, additional_keywords: Set[str] = set()):
-        """Write the type, type can be either keyword or identifier
+        """Write the type, and update the cuur_type type can be either keyword or identifier
         we can add additional keyword (like void),
         additional_keywords must be form keyword"""
         # is type is keyword int , boolean or char
@@ -540,9 +568,15 @@ class CompilationEngine:
             self.input_stream.token_type() == KEYWORD
             and self.input_stream.keyword() in types
         ):
+
+            self.curr_type = self.input_stream.keyword()
+
             self.write_keyword(types)
             # if type is new class
         elif self.input_stream.token_type() == IDENTIFIER:
+
+            self.curr_type = self.input_stream.identifier()
+
             self.write_identifier()
         else:
             self.compile_error()
