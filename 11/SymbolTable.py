@@ -32,7 +32,6 @@ class SymbolTable:
         symbol table).
         """
         self.subroutineStable.clear()
-        pass
 
     def define(self, name: str, type: str, kind: str) -> None:
         """Defines a new identifier of a given name, type and kind and assigns 
