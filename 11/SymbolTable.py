@@ -7,23 +7,31 @@ Unported [License](https://creativecommons.org/licenses/by-nc-sa/3.0/).
 """
 import typing
 
+TYPEIND = 0
+KINDIND = 1
+INDEXIND = 2
+
 
 class SymbolTable:
     """A symbol table that associates names with information needed for Jack
     compilation: type, kind and running index. The symbol table has two nested
     scopes (class/subroutine).
     """
+    
+    subroutineStable = None
+    classStable = None
 
     def __init__(self) -> None:
         """Creates a new empty symbol table."""
-        # Your code goes here!
-        pass
+
+        #name, type, kind, ind
+        self.subroutineStable, self.classStable = {}
 
     def start_subroutine(self) -> None:
         """Starts a new subroutine scope (i.e., resets the subroutine's 
         symbol table).
         """
-        # Your code goes here!
+        self.subroutineStable.clear()
         pass
 
     def define(self, name: str, type: str, kind: str) -> None:
@@ -37,8 +45,14 @@ class SymbolTable:
             kind (str): the kind of the new identifier, can be:
             "STATIC", "FIELD", "ARG", "VAR".
         """
-        # Your code goes here!
-        pass
+        if (kind in {"STATIC", "FIELD"}):
+            #class scope
+            self.classStable[name] = tuple(type, kind, self.var_count(kind) +1 )
+
+        elif (kind in {"ARG", "VAR"}):
+            #subroutine scope
+            self.subroutineStable[name] = tuple(type, kind, self.var_count(kind) +1 )
+        
 
     def var_count(self, kind: str) -> int:
         """
@@ -49,8 +63,21 @@ class SymbolTable:
             int: the number of variables of the given kind already defined in 
             the current scope.
         """
-        # Your code goes here!
-        pass
+        counter = 0
+
+        if (kind in {"STATIC", "FIELD"}):
+            #class scope
+            for val in self.classStable.values:
+                if (val[KINDIND] == kind):
+                    counter+=1
+
+        elif (kind in {"ARG", "VAR"}):
+            #subroutine scope
+            for val in self.subroutineStable.values:
+                if (val[KINDIND] == kind):
+                    counter+=1
+        
+        return counter
 
     def kind_of(self, name: str) -> str:
         """
@@ -61,8 +88,13 @@ class SymbolTable:
             str: the kind of the named identifier in the current scope, or None
             if the identifier is unknown in the current scope.
         """
-        # Your code goes here!
-        pass
+        if (name in self.subroutineStable):
+            return self.subroutineStable[name][KINDIND]
+        
+        if (name in self.classStable):
+            return self.classStable[name][KINDIND]
+
+        return None
 
     def type_of(self, name: str) -> str:
         """
@@ -72,8 +104,14 @@ class SymbolTable:
         Returns:
             str: the type of the named identifier in the current scope.
         """
-        # Your code goes here!
-        pass
+        if (name in self.subroutineStable):
+            return self.subroutineStable[name][TYPEIND]
+        
+        if (name in self.classStable):
+            return self.classStable[name][TYPEIND]
+            
+        return None
+
 
     def index_of(self, name: str) -> int:
         """
@@ -83,5 +121,10 @@ class SymbolTable:
         Returns:
             int: the index assigned to the named identifier.
         """
-        # Your code goes here!
-        pass
+        if (name in self.subroutineStable):
+            return self.subroutineStable[name][INDEXIND]
+        
+        if (name in self.classStable):
+            return self.classStable[name][INDEXIND]
+            
+        return None
