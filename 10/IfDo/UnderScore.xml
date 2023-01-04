@@ -1,43 +1,43 @@
 <class>
 <keyword> class </keyword>
-<identifier> Main </identifier>
+<identifier> UnderScore </identifier>
 <symbol> { </symbol>
 <subroutineDec>
-<keyword> function </keyword>
+<keyword> method </keyword>
 <keyword> void </keyword>
-<identifier> main </identifier>
+<identifier> blaBla </identifier>
 <symbol> ( </symbol>
 <parameterList>
+<keyword> boolean </keyword>
+<identifier> h </identifier>
 </parameterList>
 <symbol> ) </symbol>
 <subroutineBody>
 <symbol> { </symbol>
 <varDec>
 <keyword> var </keyword>
-<identifier> Array </identifier>
-<identifier> a </identifier>
+<keyword> int </keyword>
+<identifier> _i </identifier>
+<symbol> , </symbol>
+<identifier> j </identifier>
 <symbol> ; </symbol>
 </varDec>
 <statements>
+<letStatement>
+<keyword> let </keyword>
+<identifier> j </identifier>
+<symbol> = </symbol>
+<expression>
+<term>
+<identifier> _i </identifier>
+</term>
+</expression>
+<symbol> ; </symbol>
+</letStatement>
 <returnStatement>
 <keyword> return </keyword>
 <symbol> ; </symbol>
 </returnStatement>
-</statements>
-<symbol> } </symbol>
-</subroutineBody>
-</subroutineDec>
-<subroutineDec>
-<keyword> function </keyword>
-<keyword> void </keyword>
-<identifier> functionA </identifier>
-<symbol> ( </symbol>
-<parameterList>
-</parameterList>
-<symbol> ) </symbol>
-<subroutineBody>
-<symbol> { </symbol>
-<statements>
 </statements>
 <symbol> } </symbol>
 </subroutineBody>
