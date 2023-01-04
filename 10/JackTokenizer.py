@@ -202,6 +202,6 @@ class JackTokenizer:
             else:
                 yield (token.lastgroup, token.group())
 
-    def next_token_val(self) -> Optional[TokenType]:
+    def next_token_val(self) -> Optional[str]:
         if self.has_more_tokens():
             return self.tokens_list[0][1]

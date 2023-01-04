@@ -5,7 +5,8 @@ was written by Aviv Yaish. It is an extension to the specifications given
 as allowed by the Creative Common Attribution-NonCommercial-ShareAlike 3.0
 Unported [License](https://creativecommons.org/licenses/by-nc-sa/3.0/).
 """
-import typing
+from typing import Dict, Optional,Tuple
+SymbolTableType = Dict[str,Tuple[str,str,int]]
 
 TYPEIND = 0
 KINDIND = 1
@@ -18,8 +19,8 @@ class SymbolTable:
     scopes (class/subroutine).
     """
     
-    subroutineStable = None
-    classStable = None
+    subroutineStable:SymbolTableType = {}
+    classStable:SymbolTableType = {}
 
     def __init__(self) -> None:
         """Creates a new empty symbol table."""
@@ -46,11 +47,10 @@ class SymbolTable:
         """
         if (kind in {"STATIC", "FIELD"}):
             #class scope
-            self.classStable[name] = tuple(type, kind, self.var_count(kind) +1 )
-
+            self.classStable[name] = tuple(type, kind, self.var_count(kind) +1 ) # type: ignore
         elif (kind in {"ARG", "VAR"}):
             #subroutine scope
-            self.subroutineStable[name] = tuple(type, kind, self.var_count(kind) +1 )
+            self.subroutineStable[name] = tuple(type, kind, self.var_count(kind) +1 ) 
         
 
     def var_count(self, kind: str) -> int:
@@ -66,19 +66,19 @@ class SymbolTable:
 
         if (kind in {"STATIC", "FIELD"}):
             #class scope
-            for val in self.classStable.values:
+            for val in self.classStable.values():
                 if (val[KINDIND] == kind):
                     counter+=1
 
         elif (kind in {"ARG", "VAR"}):
             #subroutine scope
-            for val in self.subroutineStable.values:
+            for val in self.subroutineStable.values():
                 if (val[KINDIND] == kind):
                     counter+=1
         
         return counter
 
-    def kind_of(self, name: str) -> str:
+    def kind_of(self, name: str) -> Optional[str]:
         """
         Args:
             name (str): name of an identifier.
@@ -95,7 +95,7 @@ class SymbolTable:
 
         return None
 
-    def type_of(self, name: str) -> str:
+    def type_of(self, name: str) ->  Optional[str]:
         """
         Args:
             name (str):  name of an identifier.
@@ -112,7 +112,7 @@ class SymbolTable:
         return None
 
 
-    def index_of(self, name: str) -> int:
+    def index_of(self, name: str) ->  Optional[int]:
         """
         Args:
             name (str):  name of an identifier.
@@ -127,3 +127,6 @@ class SymbolTable:
             return self.classStable[name][INDEXIND]
             
         return None
+
+
+

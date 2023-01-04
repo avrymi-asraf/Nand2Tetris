@@ -5,7 +5,16 @@ was written by Aviv Yaish. It is an extension to the specifications given
 as allowed by the Creative Common Attribution-NonCommercial-ShareAlike 3.0
 Unported [License](https://creativecommons.org/licenses/by-nc-sa/3.0/).
 """
-from typing import Set, List, Tuple, Optional
+from typing import (
+    Callable,
+    Literal,
+    Set,
+    List,
+    TextIO,
+    Tuple,
+    Optional,
+    Union,
+)
 from JackTokenizer import JackTokenizer
 from SymbolTable import SymbolTable
 
@@ -100,7 +109,7 @@ class CompilationEngine:
     # TODO why output stream is not of type typing.TextIO?
 
     def __init__(
-        self, input_stream: JackTokenizer, output_stream
+        self, input_stream: JackTokenizer, output_stream: TextIO
     ) -> None:
         """
         Creates a new compilation engine with the given input and output. The
@@ -108,16 +117,18 @@ class CompilationEngine:
         :param input_stream: The input stream.
         :param output_stream: The output stream.
         """
-        self.input_stream = input_stream
-        self.output_stream = output_stream
-        self.symble_table = SymbolTable()
-        self.compile_error = lambda: ValueError(
+        self.input_stream: JackTokenizer = input_stream
+        self.output_stream: TextIO = output_stream
+        self.symble_table: SymbolTable = SymbolTable()
+        self.compile_error: Callable[
+            [], ValueError
+        ] = lambda: ValueError(
             "can't compile this expression{}".format(
                 self.input_stream.curr_token
             )
         )
-        self.curr_type = ""
-        self.curr_kind = ""
+        self.curr_type: Literal["int", "char", "boolean"]
+        self.curr_kind: Literal["ARG", "VAR", "STATIC", "FIELD"]
 
     def compile_class(self) -> None:
         """Compiles a complete class."""
@@ -125,7 +136,7 @@ class CompilationEngine:
         self.write_keyword({"class"})
         # write class_name
         self.write_identifier()
-        self.write_symbol("{")
+        self.write_symbol({"{"})
 
         while (self.input_stream.token_type() == KEYWORD) and (
             self.input_stream.keyword() in {"static", "field"}
@@ -150,7 +161,10 @@ class CompilationEngine:
         self._write_type()
         # varName
         self.symble_table.define(
-            self.input_stream.identifier(), self.curr_type, self.curr_kind)
+            self.input_stream.identifier(),
+            self.curr_type,
+            self.curr_kind,
+        )
         self.write_identifier()
 
         # while curr = ","
@@ -158,13 +172,16 @@ class CompilationEngine:
             self.input_stream.token_type() == SYMBOL
             and self.input_stream.symbol() == ","
         ):
-            self.write_symbol(",")
+            self.write_symbol({","})
             # write varName
             self.symble_table.define(
-                self.input_stream.identifier(), self.curr_type, self.curr_kind)
+                self.input_stream.identifier(),
+                self.curr_type,
+                self.curr_kind,
+            )
             self.write_identifier()
 
-        self.write_symbol(";")
+        self.write_symbol({";"})
         self._write_base_token("classVarDec", "e")
 
     def compile_subroutine(self) -> None:
@@ -183,16 +200,16 @@ class CompilationEngine:
         self._write_type({"void"})
         # subroutine name
         self.write_identifier()
-        self.write_symbol("(")
+        self.write_symbol({"("})
         self.compile_parameter_list()
-        self.write_symbol(")")
+        self.write_symbol({")"})
         # subroutine Body
         self.compile_subroutine_body()
         self._write_base_token("subroutineDec", "e")
 
     def compile_subroutine_body(self) -> None:
         self._write_base_token("subroutineBody", "s")
-        self.write_symbol("{")
+        self.write_symbol({"{"})
 
         while (
             self.input_stream.token_type() == KEYWORD
@@ -202,7 +219,7 @@ class CompilationEngine:
 
         self.compile_statements()
 
-        self.write_symbol("}")
+        self.write_symbol({"}"})
         self._write_base_token("subroutineBody", "e")
 
     def compile_parameter_list(self) -> None:
@@ -218,11 +235,14 @@ class CompilationEngine:
             self._write_base_token("parameterList", "e")
             return
 
-        self.curr_kind = VAR
+        self.curr_kind = ARG
         self._write_type()
         # varName
         self.symble_table.define(
-            self.input_stream.identifier(), self.curr_type, self.curr_kind)
+            self.input_stream.identifier(),
+            self.curr_type,
+            self.curr_kind,
+        )
         self.write_identifier()
 
         # aditional parameters
@@ -235,7 +255,10 @@ class CompilationEngine:
             # varName
 
             self.symble_table.define(
-            self.input_stream.identifier(), self.curr_type, self.curr_kind)
+                self.input_stream.identifier(),
+                self.curr_type,
+                self.curr_kind,
+            )
 
             self.write_identifier()
         self._write_base_token("parameterList", "e")
@@ -293,7 +316,7 @@ class CompilationEngine:
     def compile_let(self) -> None:
         """Compiles a let statement."""
         self._write_base_token("letStatement", "s")
-        self.write_keyword("let")
+        self.write_keyword({"let"})
         if self.input_stream.token_type() == IDENTIFIER:
             self.write_identifier()
             if (
@@ -410,7 +433,9 @@ class CompilationEngine:
                 self.write_symbol({"("})
                 self.compile_expression()
                 self.write_symbol({")"})
-            elif self.input_stream.symbol() in UNARY_OP:  # unaryOpTerm
+            elif (
+                self.input_stream.symbol() in UNARY_OP
+            ):  # unaryOpTerm
                 self.write_symbol(UNARY_OP)
                 self.compile_term()
             else:
@@ -451,7 +476,7 @@ class CompilationEngine:
     # helper methods:
 
     def write_symbol(
-        self, option_symbol: Optional[Set[str]] = None
+        self, option_symbol: Union[Set[str], str, None] = None
     ) -> None:
         # check validity
         if self.input_stream.token_type() != SYMBOL:

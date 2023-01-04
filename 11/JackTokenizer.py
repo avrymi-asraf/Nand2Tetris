@@ -5,7 +5,7 @@ was written by Aviv Yaish. It is an extension to the specifications given
 as allowed by the Creative Common Attribution-NonCommercial-ShareAlike 3.0
 Unported [License](https://creativecommons.org/licenses/by-nc-sa/3.0/).
 """
-from typing import Iterator, List, Tuple, TextIO, Optional, Dict
+from typing import Generator, Iterator, List, Tuple, TextIO, Optional, Dict
 
 
 from regex import RegxPatterns
@@ -153,7 +153,7 @@ class JackTokenizer:
         else:
             raise self.__token_error("identifier")
 
-    def int_val(self) -> int:
+    def int_val(self) -> str:
         """
         Returns:
             str: the integer value of the current token.
@@ -180,7 +180,7 @@ class JackTokenizer:
         else:
             raise self.__token_error("stringConstant")
 
-    def iter_tokens(self):
+    def iter_tokens(self)->Generator[TokenType,None,None]:
         """Iterate over tokens
         Returns:(token_type, token_value)
         """
@@ -203,9 +203,9 @@ class JackTokenizer:
                     token.group().replace(" ", ""),
                 )
             else:
-                yield (token.lastgroup, token.group())
+                yield (token.lastgroup, token.group())   # type: ignore
 
-    def next_token_val(self) -> Optional[TokenType]:
+    def next_token_val(self) -> Optional[str]:
         if self.has_more_tokens():
             return self.tokens_list[0][1]
 
