@@ -106,8 +106,6 @@ class CompilationEngine:
     output stream.
     """
 
-    # TODO why output stream is not of type typing.TextIO?
-
     def __init__(
         self, input_stream: JackTokenizer, output_stream: TextIO
     ) -> None:
@@ -127,7 +125,7 @@ class CompilationEngine:
                 self.input_stream.curr_token
             )
         )
-        self.curr_type: Literal["int", "char", "boolean"]
+        self.curr_type: str
         self.curr_kind: Literal["ARG", "VAR", "STATIC", "FIELD"]
 
     def compile_class(self) -> None:
@@ -156,15 +154,15 @@ class CompilationEngine:
         "static" | "field" type varName ("," varName)* ";"""
 
         self._write_base_token("classVarDec", "s")
-        self.curr_kind = self.input_stream.keyword()
+        self.curr_kind = (
+            STATIC
+            if self.input_stream.keyword() == "static"
+            else FIELD
+        )
         self.write_keyword({"static", "field"})
         self._write_type()
         # varName
-        self.symble_table.define(
-            self.input_stream.identifier(),
-            self.curr_type,
-            self.curr_kind,
-        )
+        self._write_symbol_table()
         self.write_identifier()
 
         # while curr = ","
@@ -174,11 +172,7 @@ class CompilationEngine:
         ):
             self.write_symbol({","})
             # write varName
-            self.symble_table.define(
-                self.input_stream.identifier(),
-                self.curr_type,
-                self.curr_kind,
-            )
+            self._write_symbol_table()
             self.write_identifier()
 
         self.write_symbol({";"})
@@ -238,11 +232,7 @@ class CompilationEngine:
         self.curr_kind = ARG
         self._write_type()
         # varName
-        self.symble_table.define(
-            self.input_stream.identifier(),
-            self.curr_type,
-            self.curr_kind,
-        )
+        self._write_symbol_table()
         self.write_identifier()
 
         # aditional parameters
@@ -253,12 +243,7 @@ class CompilationEngine:
             self.write_symbol({","})
             self._write_type()
             # varName
-
-            self.symble_table.define(
-                self.input_stream.identifier(),
-                self.curr_type,
-                self.curr_kind,
-            )
+            self._write_symbol_table()
 
             self.write_identifier()
         self._write_base_token("parameterList", "e")
@@ -267,8 +252,10 @@ class CompilationEngine:
         """Compiles a var declaration."""
         self._write_base_token("varDec", "s")
         self.write_keyword({"var"})
+        self.curr_kind = VAR
         self._write_type()
         # varName
+        self._write_symbol_table()
         self.write_identifier()
 
         while (
@@ -276,6 +263,7 @@ class CompilationEngine:
             and self.input_stream.symbol() == ","
         ):
             self.write_symbol(",")
+            self._write_symbol_table()
             self.write_identifier()
 
         self.write_symbol(";")
@@ -629,3 +617,10 @@ class CompilationEngine:
                     flog
                 )
             )
+
+    def _write_symbol_table(self) -> None:
+        self.symble_table.define(
+            self.input_stream.identifier(),
+            self.curr_type,
+            self.curr_kind,
+        )
