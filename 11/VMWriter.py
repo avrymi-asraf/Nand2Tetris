@@ -21,7 +21,6 @@ class VMWriter:
         # output_stream.write("Hello world! \n")
 
         self.output_stream = output_stream
-        pass
 
     def write_push(self, segment: str, index: int) -> None:
         """Writes a VM push command.

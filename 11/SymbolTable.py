@@ -12,6 +12,11 @@ TYPEIND = 0
 KINDIND = 1
 INDEXIND = 2
 
+FIELD = "FIELD"
+STATIC = "STATIC"
+ARG = "ARG"
+VAR = "VAR"
+
 
 class SymbolTable:
     """A symbol table that associates names with information needed for Jack
@@ -47,12 +52,13 @@ class SymbolTable:
         """
         if (kind in {"STATIC", "FIELD"}):
             #class scope
-            self.classStable[name] = tuple(type, kind, self.var_count(kind) +1 ) # type: ignore
+            self.classStable[name] = tuple(type, kind, self.var_count(kind) +1 ) 
+
+            # type: ignore
         elif (kind in {"ARG", "VAR"}):
             #subroutine scope
             self.subroutineStable[name] = tuple(type, kind, self.var_count(kind) +1 ) 
-        
-
+    
     def var_count(self, kind: str) -> int:
         """
         Args:
