@@ -24,6 +24,9 @@ def compile_file(
 
     tokenizer = JackTokenizer(input_file)
     vmWriter = VMWriter(output_file)
+    # output_file.write("got here")
+
+
     engine = CompilationEngine(tokenizer, vmWriter)
     while engine.tokenizer.has_more_tokens():
         engine.compile_class()

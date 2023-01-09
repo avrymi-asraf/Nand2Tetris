@@ -7,8 +7,7 @@ Unported [License](https://creativecommons.org/licenses/by-nc-sa/3.0/).
 """
 from typing import Generator, Iterator, List, Tuple, TextIO, Optional, Dict
 
-
-from regex import RegxPatterns
+from Regex import RegxPatterns
 KINDS = ("field", "var",)
 TokenType = Tuple[str, str]
 
@@ -63,14 +62,14 @@ class JackTokenizer:
 
         self.__create_token_list()
 
-    def __token_error(self, mst=""):
+    def __token_error(self, mst = ""):
         """## raise value error
         ### format error message:
         `Invalid token:try print _mst_ but current command is _curr_token[0]_`
 
         """
         return ValueError(
-            "Invalid token:try print {mst} but current command is {}".format(
+            "Invalid token:try print {} but current command is {}".format(mst,
                 self.curr_token[0]
             )
         )
@@ -99,8 +98,6 @@ class JackTokenizer:
         if self.has_more_tokens():
             self.curr_token = self.tokens_list.pop(0)
             
-
-
     def token_type(self) -> str:
         """
         Returns:

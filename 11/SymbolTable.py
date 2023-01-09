@@ -31,7 +31,8 @@ class SymbolTable:
         """Creates a new empty symbol table."""
 
         #name, type, kind, ind
-        self.subroutineStable, self.classStable = {}
+        self.subroutineStable = {}
+        self.classStable = {}
 
     def start_subroutine(self) -> None:
         """Starts a new subroutine scope (i.e., resets the subroutine's 

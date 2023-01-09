@@ -6,13 +6,13 @@ as allowed by the Creative Common Attribution-NonCommercial-ShareAlike 3.0
 Unported [License](https://creativecommons.org/licenses/by-nc-sa/3.0/).
 """
 import typing
+import Constants
 
 
 class VMWriter:
     """
     Writes VM commands into a file. Encapsulates the VM command syntax.
     """
-
 
     def __init__(self, output_stream: typing.TextIO) -> None:
         """Creates a new file and prepares it for writing VM commands."""
@@ -31,11 +31,12 @@ class VMWriter:
             index (int): the index to push to.
         """
         #check validity
-        if segment not in {"CONST", "ARG", 
+        if segment.upper() not in {Constants.CONST, "ARG", 
             "LOCAL", "STATIC", "THIS", "THAT", "POINTER", "TEMP"}:
             self.write_error(segment + " " + str(index))
 
         self.output_stream.write("push {} {}". format(segment.lower(), index))
+        self.output_stream.write("/n")
         
 
     def write_pop(self, segment: str, index: int) -> None:
@@ -109,6 +110,7 @@ class VMWriter:
             n_locals (int): the number of local variables the function uses.
         """
         self.output_stream.write("function {} {}".format(name, n_locals))
+        self.output_stream.write("\n")
 
     def write_return(self) -> None:
         """Writes a VM return command."""
@@ -116,5 +118,13 @@ class VMWriter:
 
     def write_error(self, val : str) -> None:
         """Writes a VM return command."""
-        raise Exception("can't write this expression{}".format(val))
+        raise Exception("can't write this expression: {}".format(val))
+   
+
+    #TODO implement?
+    def write_push_str(self, val : str) -> None:
+        """Writes a VM return command."""
+        pass
+
+
    
