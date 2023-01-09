@@ -8,7 +8,6 @@ Unported [License](https://creativecommons.org/licenses/by-nc-sa/3.0/).
 import typing
 import Constants
 
-
 class VMWriter:
     """
     Writes VM commands into a file. Encapsulates the VM command syntax.
@@ -31,12 +30,13 @@ class VMWriter:
             index (int): the index to push to.
         """
         #check validity
-        if segment.upper() not in {Constants.CONST, "ARG", 
-            "LOCAL", "STATIC", "THIS", "THAT", "POINTER", "TEMP"}:
+        if segment not in {Constants.CONST, Constants.ARG, 
+            Constants.LOCAL, Constants.STATIC, Constants.THIS, Constants.THAT,
+            Constants.POINTER, Constants.TEMP}:
             self.write_error(segment + " " + str(index))
 
         self.output_stream.write("push {} {}". format(segment.lower(), index))
-        self.output_stream.write("/n")
+        self.output_stream.write("\n")
         
 
     def write_pop(self, segment: str, index: int) -> None:
@@ -63,7 +63,7 @@ class VMWriter:
             "EQ", "GT", "LT", "AND", "OR", "NOT", "SHIFTLEFT", "SHIFTRIGHT".
         """
         #check validity
-        if command not in {"ADD", "SUB", "NEG", 
+        if command.upper() not in {"ADD", "SUB", "NEG", 
             "EQ", "GT", "LT", "AND", "OR", "NOT", "SHIFTLEFT", "SHIFTRIGHT"}:
             self.write_error(command)
 

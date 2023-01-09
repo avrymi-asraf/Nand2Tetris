@@ -1,10 +1,14 @@
 
-ARG = "ARG"
-VAR = "VAR"
-
-STATIC = "STATIC"
+ARG = "argunemt"
+VAR = "var"
+STATIC = "static"
 FIELD = "FIELD"
-CONST = "CONSTANT"
+CONST = "constant"
+LOCAL = "local"
+THIS = "this" 
+THAT = "that"
+POINTER = "pointer"
+TEMP = "temp"
 
 CONSTRUCTOR = "constructor"
 FUNCTION = "function"
@@ -16,7 +20,9 @@ IDENTIFIER = "identifier"
 VARNAME = IDENTIFIER
 INTEGER_CONSTANT = "integerConstant"
 STRING_CONSTANT = "stringConstant"
+
 KYWORD_CONSTANT = {"true", "false", "null", "this"}
+
 SYMBOLS = {
     "{",
     "}",
@@ -41,7 +47,7 @@ SYMBOLS = {
     "&gt;",
     "&amp;",
 }
-UNARY_OP = {"-", "~", "#", "-"}
+UNARY_OP = {"-", "~", "#", "-"} #TODO WHY - TWICE?
 OP = {
     "+",
     "-",
@@ -56,7 +62,7 @@ OP = {
     "&gt;",
     "&amp;",
 }
-STATEMENT_KEYWORDS = {"let", "if", "while", "do", "return"}
+STATEMENT_KEYWORDS = ["let", "if", "while", "do", "return"]
 KEYWORDS = {
     "class",
     "constructor",
@@ -80,8 +86,25 @@ KEYWORDS = {
     "while",
     "return",
 }
+
 BASIC_TYPES = ["int", "char", "boolean"]
+
 BASIC_TYPES_WITH_VOID = ["int", "char", "boolean", "void"]
 
-#TODO FIX
-segmentsDict = { STATIC : "static", FIELD : "local",  ARG : "arg", VAR : "local" }
+opDict = {
+    "+" : "ADD",
+    "-" : "SUB",
+    "/" : "/", #TODO
+    "|" : "OR", 
+    "&": "&", #TODO
+    "=" : "EQ", 
+    "<" : "LT",
+    ">" : "GT",
+    "&amp;" : "&amp;", #TODO
+    ">>" : "SHIFTLEFT",
+    "<<" : "SHIFRIGHT"
+}
+
+# "NEG",  "AND", , "NOT", #TODO
+
+           
