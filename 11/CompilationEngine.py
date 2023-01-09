@@ -102,12 +102,12 @@ class CompilationEngine:
             self.tokenizer.token_type() == Constants.SYMBOL
             and self.tokenizer.symbol() == ","
         ):
-            self.expect_symbol({","})
+            self.expect_symbol(",")
 
             # write varName
             self._write_symbol_table()
 
-        self.expect_symbol({";"})
+        self.expect_symbol(";")
 
     def compile_subroutine(self) -> None:
         """
@@ -140,13 +140,13 @@ class CompilationEngine:
 
         self.writer.write_function(self.curr_subroutineName, argNuM)
 
-        self.expect_symbol({")"}) #TODO
+        self.expect_symbol(")") #TODO
 
         # subroutine Body
         self.compile_subroutine_body() 
     
     def compile_subroutine_body(self) -> None:
-        self.expect_symbol({"{"})
+        self.expect_symbol("{")
 
         while (
             self.tokenizer.token_type() == Constants.KEYWORD
@@ -190,7 +190,7 @@ class CompilationEngine:
             and self.tokenizer.symbol() == ","
         ):
             #update type
-            self.expect_symbol({","})
+            self.expect_symbol(",")
             self.curr_type = self.tokenizer.keyword()
             self.tokenizer.advance()
 
@@ -255,7 +255,7 @@ class CompilationEngine:
         self.tokenizer.advance()
         
         self.compile_subroutineCall()
-        self.expect_symbol({";"})
+        self.expect_symbol(";")
         
 
     def compile_let(self) -> None:
@@ -281,10 +281,10 @@ class CompilationEngine:
             self.tokenizer.token_type() == Constants.SYMBOL
             and self.tokenizer.symbol() == "["
         ):
-            self.expect_symbol({"["})
+            self.expect_symbol("[")
             self.compile_expression() #TODO FIX
-            self.expect_symbol({"]"})
-        self.expect_symbol({"="})
+            self.expect_symbol("]")
+        self.expect_symbol("=")
         self.compile_expression() #TODO FIX
 
         #pop to var
@@ -383,9 +383,9 @@ class CompilationEngine:
                     varName = self.tokenizer.identifier()
                     self.tokenizer.advance()
 
-                    self.expect_symbol({"["})
+                    self.expect_symbol("[")
                     self.compile_expression()
-                    self.expect_symbol({"]"})
+                    self.expect_symbol("]")
                 elif (
                     self.tokenizer.next_token_val() in "(."
                 ):  # subroutineCall
@@ -479,18 +479,18 @@ class CompilationEngine:
             self.tokenizer.token_type() == Constants.SYMBOL
             and self.tokenizer.symbol() == "."
         ):
-            self.expect_symbol({"."})
+            self.expect_symbol(".")
 
             #add the rest of the func name
             self.curr_subroutineName += self.tokenizer.identifier()
             self.tokenizer.advance()
 
-        self.expect_symbol({"("})
+        self.expect_symbol("(")
         n_args = self.compile_expression_list()
         
         self.writer.write_call(self.curr_subroutineName, n_args)
 
-        self.expect_symbol({")"})
+        self.expect_symbol(")")
 
         
     def _write_symbol_table(self) -> None:
@@ -518,8 +518,6 @@ class CompilationEngine:
             self.compile_error()
 
         self.tokenizer.advance()
-
-
 
     # def write_symbol(
     #     self, option_symbol: Union[Set[str], str, None] = None
