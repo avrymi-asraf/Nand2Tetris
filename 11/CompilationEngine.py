@@ -99,7 +99,7 @@ KEYWORDS = {
     "while",
     "return",
 }
-BASIC_TYPES = {"int", "char", "boolean"}
+BASIC_TYPES = ["int", "char", "boolean"]
 
 #TODO FIX
 segmentsDict = { STATIC : "static", FIELD : "local",  ARG : "arg", VAR : "local" }
@@ -119,7 +119,7 @@ class CompilationEngine:
         :param output_stream: The output stream.
         """
         self.tokenizer: JackTokenizer = tokenizer
-        self.vmWriter: VMWriter = vmWriter
+        self.writer: VMWriter = vmWriter
         self.symble_table: SymbolTable = SymbolTable()
 
         self.compile_error: Callable[
@@ -130,10 +130,10 @@ class CompilationEngine:
             )
         )
 
-        self.curr_type: str
+        self.curr_type: str = None
         self.curr_kind: Literal["ARG", "VAR", "STATIC", "FIELD"]
-        #to keep tracking the current class
         self.curr_class = "Main"
+        self.curr_subroutineName = "main"
 
     def compile_class(self) -> None:
         """Compiles a complete class."""
@@ -145,12 +145,12 @@ class CompilationEngine:
         #update class_name
         self.expect_identifier()
         self.update_class_name()
-
-        self.expect_symbol("{")
         self.tokenizer.advance()
 
+        self.expect_symbol("{")
+
         while (self.tokenizer.token_type() == KEYWORD) and (
-            self.tokenizer.keyword() in {"static", "field"}
+            self.tokenizer.keyword() in {STATIC.lower(), FIELD.lower()}
         ):
             self.compile_class_var_dec()
 
@@ -166,7 +166,7 @@ class CompilationEngine:
         """Compiles a static declaration or a field declaration.
         "static" | "field" type varName ("," varName)* ";"""
 
-        self.expect_keyword({STATIC, FIELD})
+        self.expect_keyword([STATIC, FIELD])
         self.curr_kind = self.tokenizer.keyword()
         self.tokenizer.advance()
 
@@ -198,18 +198,18 @@ class CompilationEngine:
 
         self.symble_table.start_subroutine()
 
-        self.expect_keyword({"constructor", "function", "method"})
+        self.expect_keyword(["constructor", "function", "method"])
 
         isMethod = (self.tokenizer.keyword() == "method")
         
         self.tokenizer.advance()
 
-        self.expect_keyword(BASIC_TYPES + "void")
+        self.expect_keyword(Union(BASIC_TYPES, "void"))
         self.tokenizer.advance()
 
         # update subroutine name
         self.expect_identifier()
-        self.currFunc = self.tokenizer.identifier()
+        self.curr_subroutineName = self.tokenizer.identifier()
         self.tokenizer.advance()
 
         self.expect_symbol("(")
@@ -217,9 +217,9 @@ class CompilationEngine:
         argNuM = self.compile_parameter_list()
 
         if isMethod:
-            self.symble_table.define("this", self.curr_class + self.currFunc, "arg", 0)
+            self.symble_table.define("this", self.curr_class + self.curr_subroutineName, "arg", 0)
 
-        self.vmWriter.write_function(self.curr_class + self.currFunc, argNuM)
+        self.writer.write_function(self.curr_class + self.curr_subroutineName, argNuM)
 
         self.expect_symbol({")"})
 
@@ -255,11 +255,15 @@ class CompilationEngine:
         ):
             return counter
 
+        # if the parameter list NOT empty
         self.expect_keyword(BASIC_TYPES)    
-        self._write_type()
+        self.curr_kind = segmentsDict[VAR]
+        self.curr_type = self.tokenizer.keyword()
+        self.tokenizer.advance()
+
         # varName
         self._write_symbol_table()
-        self.write_identifier()
+        self.tokenizer.advance()
         counter += 1
 
         # aditional parameters
@@ -267,25 +271,26 @@ class CompilationEngine:
             self.tokenizer.token_type() == SYMBOL
             and self.tokenizer.symbol() == ","
         ):
-            self.write_symbol({","})
-            self._write_type()
-            # varName
-            self._write_symbol_table()
+            #update type
+            self.expect_symbol({","})
+            self.curr_type = self.tokenizer.keyword()
+            self.tokenizer.advance()
 
-            self.write_identifier()
+            #update varName
+            self._write_symbol_table()
+            self.tokenizer.advance()
             counter += 1
-        # self._write_base_token("parameterList", "e")
 
         return counter
 
     def compile_var_dec(self) -> None:
         """Compiles a var declaration."""
         
-        self.curr_kind = VAR
-        self.tokenizer.advance()
+        self.curr_kind = segmentsDict[VAR]
         
         #update current type
-        self.expect_type()
+        self.expect_and_update_type()
+        self.tokenizer.advance()
 
         # varName
         self._write_symbol_table()
@@ -326,40 +331,50 @@ class CompilationEngine:
 
     def compile_do(self) -> None:
         """Compiles a do statement."""
-        self._write_base_token("doStatement", "s")
         # we calld the do statements sometimes insted call subroutines, so only
-        self.write_keyword({"do"})
-        self._write_callSubroutine()
-        self.write_symbol({";"})
-        self._write_base_token("doStatement", "e")
+
+        self.expect_keyword("do")
+        self.tokenizer.advance()
+        
+        self.compile_subroutineCall()
+        self.expect_symbol({";"})
+        
 
     def compile_let(self) -> None:
-        """Compiles a let statement."""
+        """Compiles a let statement.
+        for example : let x = x+1
+        turns to:
+        push local 0
+        push constant 1
+        add
+        pop local 0
+"""
 
-        if self.tokenizer.token_type() == IDENTIFIER:
+        self.expect_identifier()
 
-            token  = self.tokenizer.identifier()
+        varToAssignTo  = self.tokenizer.identifier()
 
-            segment = self.symble_table.kind_of(token)
-            index = self.symble_table.index_of(token)
-            segment = segmentsDict[segment]
+        segmentToAssignTo = self.symble_table.kind_of(varToAssignTo)
+        indexToAssignTo = self.symble_table.index_of(varToAssignTo)
 
-            self.vmWriter.write_push(segment, index)
+        self.tokenizer.advance()
 
-            self.tokenizer.advance()
-
-            if (
-                self.tokenizer.token_type() == SYMBOL
-                and self.tokenizer.symbol() == "["
-            ):
-                self.expect_symbol({"["})
-                self.compile_expression() #TODO FIX
-                self.expect_symbol({"]"})
-            self.expect_symbol({"="})
+        if (
+            self.tokenizer.token_type() == SYMBOL
+            and self.tokenizer.symbol() == "["
+        ):
+            self.expect_symbol({"["})
             self.compile_expression() #TODO FIX
-            self.expect_symbol(";")
-        else:
-            raise self.compile_error()
+            self.expect_symbol({"]"})
+        self.expect_symbol({"="})
+        self.compile_expression() #TODO FIX
+
+        #pop to var
+        self.writer.write_pop(segmentToAssignTo, indexToAssignTo)
+        self.tokenizer.advance()
+
+        self.expect_symbol(";")
+        
         
 
     def compile_while(self) -> None:
@@ -410,6 +425,7 @@ class CompilationEngine:
         """Compiles an expression."""
         
         self.compile_term()
+
         while (
             self.tokenizer.token_type() == SYMBOL
             and self.tokenizer.symbol() in OP
@@ -418,7 +434,7 @@ class CompilationEngine:
             self.compile_term()
         self._write_base_token("expression", "e")
 
-    def compile_term(self) -> None:
+    def compile_term(self) -> None: #TODO write this method
         """Compiles a term.
         This routine is faced with a slight difficulty when
         trying to decide between some of the alternative parsing rules.
@@ -428,15 +444,16 @@ class CompilationEngine:
         to distinguish between the three possibilities. Any other token is not
         part of this term and should not be advanced over.
         """
-        self._write_base_token("term", "s")
         if (
             self.tokenizer.token_type() == INTEGER_CONSTANT
         ):  # integeConstant
-            self.write_integer()
+            self.writer.write_push("constant", self.tokenizer.curr_token())
+
         elif (
             self.tokenizer.token_type() == STRING_CONSTANT
         ):  # stringConstant
-            self.write_string()
+            self.writer.write_push_str(self.tokenizer.curr_token()) #TODO create this method
+
         # varname|varname[expression]| subroutineCall
         elif self.tokenizer.token_type() == IDENTIFIER:
             if (
@@ -445,14 +462,17 @@ class CompilationEngine:
             ):
                 # varname[expression]
                 if self.tokenizer.next_token_val() == "[":
-                    self.write_identifier()
-                    self.write_symbol({"["})
+
+                    varName = self.tokenizer.identifier()
+                    self.tokenizer.advance()
+
+                    self.expect_symbol({"["})
                     self.compile_expression()
-                    self.write_symbol({"]"})
+                    self.expect_symbol({"]"})
                 elif (
                     self.tokenizer.next_token_val() in "(."
                 ):  # subroutineCall
-                    self._write_callSubroutine()
+                    self.compile_subroutineCall()
             else:
                 self.write_identifier()
         elif (
@@ -478,141 +498,35 @@ class CompilationEngine:
                 raise self.compile_error()
         else:
             raise self.compile_error()
-        self._write_base_token("term", "e")
+        
 
-    def compile_expression_list(self) -> None:
+    def compile_expression_list(self) -> int:
         """Compiles a (possibly empty) comma-separated list of expressions."""
-        self._write_base_token("expressionList", "s")
 
-        # if is ")" - conntine
+        counter = 0
+
+        # if is ")" - continue
         if (
             self.tokenizer.token_type() == SYMBOL
             and self.tokenizer.symbol() == ")"
         ):
-            self._write_base_token("expressionList", "e")
-            return
+            return counter
         else:
             self.compile_expression()
+            counter += 1
 
         while (
             self.tokenizer.token_type() == SYMBOL
             and self.tokenizer.symbol() == ","
         ):
-            self.write_symbol(",")
+            self.expect_symbol(",")
             self.compile_expression()
-        self._write_base_token("expressionList", "e")
+            counter += 1
+        return counter
 
-    # helper methods:
+    """helper methods:"""
 
-    def write_symbol(
-        self, option_symbol: Union[Set[str], str, None] = None
-    ) -> None:
-        # check validity
-        if self.tokenizer.token_type() != SYMBOL:
-            raise self.compile_error()
-        if (
-            option_symbol
-            and self.tokenizer.symbol() not in option_symbol
-        ):
-            raise self.compile_error()
-
-        # <symbol>  symbol </symbol>
-        self.output_stream.write(
-            output_format.format(
-                token_type=self.tokenizer.token_type(),
-                token=self.tokenizer.symbol(),
-            )
-        )
-
-        self.tokenizer.advance()
-
-    def write_static_or_field(self) -> None:
-
-        # write <keyword> "static" or "field" </keyword>
-        self.output_stream.write(
-            output_format.format(
-                token_type=self.tokenizer.token_type(),
-                token=self.tokenizer.keyword(),
-            )
-        )
-
-        self.tokenizer.advance()
-
-    def write_identifier(self) -> None:
-        # check validity of type
-        if self.tokenizer.token_type() != IDENTIFIER:
-            raise self.compile_error()
-        self.output_stream.write(
-            output_format.format(
-                token_type=self.tokenizer.token_type(),
-                token=self.tokenizer.identifier(),
-            )
-        )
-
-        self.tokenizer.advance()
-
-    def write_keyword(
-        self, option_keywards: Optional[Set[str]] = None
-    ) -> None:
-        # check validity of type
-        if self.tokenizer.token_type() != KEYWORD:
-            raise Exception(
-                "Invalid input: in write_keyword method. current type: {} ".format(
-                    self.tokenizer.token_type()
-                )
-            )
-        if option_keywards:
-            if self.tokenizer.keyword() not in option_keywards:
-                raise Exception(
-                    "Invalid input: in write_keyword method. token not in lst, current token: {} ".format(
-                        self.tokenizer.keyword()
-                    )
-                )
-
-        self.output_stream.write(
-            output_format.format(
-                token_type=self.tokenizer.token_type(),
-                token=self.tokenizer.keyword(),
-            )
-        )
-
-        self.tokenizer.advance()
-
-    def write_integer(self) -> None:
-        if self.tokenizer.token_type() != "integerConstant":
-            raise Exception(
-                "Invalid input: in write_keyword method. current type: {} ".format(
-                    self.tokenizer.token_type()
-                )
-            )
-
-        self.output_stream.write(
-            output_format.format(
-                token_type=self.tokenizer.token_type(),
-                token=self.tokenizer.int_val(),
-            )
-        )
-
-        self.tokenizer.advance()
-
-    def write_string(self) -> None:
-        if self.tokenizer.token_type() != "stringConstant":
-            raise Exception(
-                "Invalid input: in write_string method. current type: {} ".format(
-                    self.tokenizer.token_type()
-                )
-            )
-
-        self.output_stream.write(
-            output_format.format(
-                token_type=self.tokenizer.token_type(),
-                token=self.tokenizer.string_val(),
-            )
-        )
-
-        self.tokenizer.advance()
-
-    def expect_type(self, additional_keywords: Set[str] = set()) -> str:
+    def expect_and_update_type(self, additional_keywords: Set[str] = set()) -> str:
         """Write the type, and update the cuur_type type can be either keyword or identifier
         we can add additional keyword (like void),
         additional_keywords must be form keyword"""
@@ -626,8 +540,7 @@ class CompilationEngine:
             self.curr_type = self.tokenizer.keyword()
             return self.tokenizer.keyword()
 
-
-            # if type is new class
+        # if type is a class
         elif self.tokenizer.token_type() == IDENTIFIER:
 
             self.curr_type = self.tokenizer.identifier()
@@ -636,31 +549,34 @@ class CompilationEngine:
         else:
             self.compile_error()
 
-    def _write_callSubroutine(self):
-        self.write_identifier()
+    def compile_subroutineCall(self):
+
+        #update subroutine name    
+        self.expect_identifier()
+        self.curr_subroutineName = self.tokenizer.identifier()
+        self.tokenizer.advance()
+
         if (
             self.tokenizer.token_type() == SYMBOL
             and self.tokenizer.symbol() == "."
         ):
-            self.write_symbol({"."})
-            self.write_identifier()
-        self.write_symbol({"("})
-        self.compile_expression_list()
-        self.write_symbol({")"})
+            self.expect_symbol({"."})
 
-    def _write_base_token(self, token: str, flag: str):
-        if flag == "e":
-            self.output_stream.write("</{}>\n".format(token))
-        elif flag == "s":
-            self.output_stream.write("<{}>\n".format(token))
-        else:
-            raise ValueError(
-                "end must be a string 's' or 'e' it was{}".format(
-                    flag
-                )
-            )
+            #add the rest of the func name
+            self.curr_subroutineName += self.tokenizer.identifier()
+            self.tokenizer.advance()
 
+        self.expect_symbol({"("})
+        n_args = self.compile_expression_list()
+        
+        self.writer.write_call(self.curr_subroutineName, n_args)
+
+        self.expect_symbol({")"})
+
+        
     def _write_symbol_table(self) -> None:
+        #check that the token is actually an identifier
+        self.expect_identifier()
         self.symble_table.define(
             self.tokenizer.identifier(),
             self.curr_type,
@@ -678,9 +594,13 @@ class CompilationEngine:
         self.tokenizer.advance()
 
 
-    def expect_keyword(self, keyword: set(str)):
+    def expect_keyword(self, keyword):
         if ((self.tokenizer.token_type() != KEYWORD)
-         or (self.tokenizer.keyword() != keyword)):
+         or (self.tokenizer.keyword() not in keyword)):
+            self.compile_error()
+
+    def expect_identifier(self):
+        if (self.tokenizer.token_type() != IDENTIFIER):
             self.compile_error()
 
     def expect_symbol(self, symbol: str):
@@ -688,10 +608,129 @@ class CompilationEngine:
          or (self.tokenizer.symbol() != symbol)):
             self.compile_error()
         self.tokenizer.advance()
-            
-    def expect_identifier(self):
-        if (self.tokenizer.token_type() != IDENTIFIER):
-            self.compile_error()
+
+
+
+    # def write_symbol(
+    #     self, option_symbol: Union[Set[str], str, None] = None
+    # ) -> None:
+    #     # check validity
+    #     if self.tokenizer.token_type() != SYMBOL:
+    #         raise self.compile_error()
+    #     if (
+    #         option_symbol
+    #         and self.tokenizer.symbol() not in option_symbol
+    #     ):
+    #         raise self.compile_error()
+
+    #     # <symbol>  symbol </symbol>
+    #     self.output_stream.write(
+    #         output_format.format(
+    #             token_type=self.tokenizer.token_type(),
+    #             token=self.tokenizer.symbol(),
+    #         )
+    #     )
+
+    #     self.tokenizer.advance()
+
+    # def write_static_or_field(self) -> None:
+
+    #     # write <keyword> "static" or "field" </keyword>
+    #     self.output_stream.write(
+    #         output_format.format(
+    #             token_type=self.tokenizer.token_type(),
+    #             token=self.tokenizer.keyword(),
+    #         )
+    #     )
+
+    #     self.tokenizer.advance()
+
+    # def write_identifier(self) -> None:
+    #     # check validity of type
+    #     if self.tokenizer.token_type() != IDENTIFIER:
+    #         raise self.compile_error()
+    #     self.output_stream.write(
+    #         output_format.format(
+    #             token_type=self.tokenizer.token_type(),
+    #             token=self.tokenizer.identifier(),
+    #         )
+    #     )
+
+    #     self.tokenizer.advance()
+
+    # def write_keyword(
+    #     self, option_keywards: Optional[Set[str]] = None
+    # ) -> None:
+    #     # check validity of type
+    #     if self.tokenizer.token_type() != KEYWORD:
+    #         raise Exception(
+    #             "Invalid input: in write_keyword method. current type: {} ".format(
+    #                 self.tokenizer.token_type()
+    #             )
+    #         )
+    #     if option_keywards:
+    #         if self.tokenizer.keyword() not in option_keywards:
+    #             raise Exception(
+    #                 "Invalid input: in write_keyword method. token not in lst, current token: {} ".format(
+    #                     self.tokenizer.keyword()
+    #                 )
+    #             )
+
+    #     self.output_stream.write(
+    #         output_format.format(
+    #             token_type=self.tokenizer.token_type(),
+    #             token=self.tokenizer.keyword(),
+    #         )
+    #     )
+
+    #     self.tokenizer.advance()
+
+    # def write_integer(self) -> None:
+    #     if self.tokenizer.token_type() != "integerConstant":
+    #         raise Exception(
+    #             "Invalid input: in write_keyword method. current type: {} ".format(
+    #                 self.tokenizer.token_type()
+    #             )
+    #         )
+
+    #     self.output_stream.write(
+    #         output_format.format(
+    #             token_type=self.tokenizer.token_type(),
+    #             token=self.tokenizer.int_val(),
+    #         )
+    #     )
+
+        # self.tokenizer.advance()
+
+    # def write_string(self) -> None:
+    #     if self.tokenizer.token_type() != "stringConstant":
+    #         raise Exception(
+    #             "Invalid input: in write_string method. current type: {} ".format(
+    #                 self.tokenizer.token_type()
+    #             )
+    #         )
+
+    #     self.output_stream.write(
+    #         output_format.format(
+    #             token_type=self.tokenizer.token_type(),
+    #             token=self.tokenizer.string_val(),
+    #         )
+    #     )
+
+    #     self.tokenizer.advance()   
+
+    # def _write_base_token(self, token: str, flag: str):
+    #     if flag == "e":
+    #         self.output_stream.write("</{}>\n".format(token))
+    #     elif flag == "s":
+    #         self.output_stream.write("<{}>\n".format(token))
+    #     else:
+    #         raise ValueError(
+    #             "end must be a string 's' or 'e' it was{}".format(
+    #                 flag
+    #             )
+    #         )
+
 
 
 
