@@ -1,0 +1,21 @@
+function Main.main 0
+push constant 8
+call String.new 1
+push constant 49
+call String.appendChar 2
+push constant 50
+call String.appendChar 2
+push constant 51
+call String.appendChar 2
+push constant 52
+call String.appendChar 2
+push constant 53
+call String.appendChar 2
+push constant 54
+call String.appendChar 2
+push constant 55
+call String.appendChar 2
+push constant 56
+call String.appendChar 2
+call Output.printString 1
+return

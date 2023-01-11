@@ -5,17 +5,12 @@ was written by Aviv Yaish. It is an extension to the specifications given
 as allowed by the Creative Common Attribution-NonCommercial-ShareAlike 3.0
 Unported [License](https://creativecommons.org/licenses/by-nc-sa/3.0/).
 """
+import Constants
 from typing import Dict, Optional,Tuple
-SymbolTableType = Dict[str,Tuple[str,str,int]]
 
 TYPEIND = 0
 KINDIND = 1
 INDEXIND = 2
-
-FIELD = "FIELD"
-STATIC = "STATIC"
-ARG = "ARG"
-VAR = "VAR"
 
 
 class SymbolTable:
@@ -24,8 +19,8 @@ class SymbolTable:
     scopes (class/subroutine).
     """
     
-    subroutineStable:SymbolTableType = {}
-    classStable:SymbolTableType = {}
+    subroutineStable:Constants.SymbolTableType = {}
+    classStable:Constants.SymbolTableType = {}
 
     def __init__(self) -> None:
         """Creates a new empty symbol table."""

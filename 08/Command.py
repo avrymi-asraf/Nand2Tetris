@@ -7,26 +7,35 @@ Unported [License](https://creativecommons.org/licenses/by-nc-sa/3.0/).
 """
 import typing
 
+
 class Command:
 
     C_ARITHMETIC = "C_ARITHMETIC"
     C_PUSH = "C_PUSH"
     C_POP = "C_POP"
-    C_LABEL = "C_LABEL" 
-    C_GOTO = "C_GOTO" 
+    C_LABEL = "C_LABEL"
+    C_GOTO = "C_GOTO"
     C_IF = "C_IF"
     C_FUNCTION = "C_FUNCTION"
-    C_RETURN = "C_RETURN" 
+    C_RETURN = "C_RETURN"
     C_CALL = "C_CALL"
 
     SEG_POINTER = "pointer"
     SEG_STATIC = "static"
     SEG_TEMP = "temp"
     SEG_CONSTANT = "constant"
-    BASIC_SEGMENTS = ["argument","this","that","local"]
-    ARITHMETIC_ACTIONS = ["add", "sub", "neg", "eq", "lt", "gt", "and", "or", "not"]
-    
-    
+    BASIC_SEGMENTS = ["argument", "this", "that", "local"]
+    ARITHMETIC_ACTIONS = [
+        "add",
+        "sub",
+        "neg",
+        "eq",
+        "lt",
+        "gt",
+        "and",
+        "or",
+        "not",
+    ]
+
     def __init__(self) -> None:
         pass
-

@@ -22,16 +22,15 @@ def compile_file(
         output_file (typing.TextIO): writes all output to this file.
     """
 
-    tokenizer = JackTokenizer(input_file)
-    vmWriter = VMWriter(output_file)
+    tokenizer: JackTokenizer = JackTokenizer(input_file)
+    vmWriter: VMWriter = VMWriter(output_file)
     # output_file.write("got here")
 
 
-    engine = CompilationEngine(tokenizer, vmWriter)
+    engine: CompilationEngine = CompilationEngine(tokenizer, vmWriter)
     while engine.tokenizer.has_more_tokens():
         engine.compile_class()
     
-    pass
 
 
 if "__main__" == __name__:

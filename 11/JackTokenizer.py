@@ -5,11 +5,23 @@ was written by Aviv Yaish. It is an extension to the specifications given
 as allowed by the Creative Common Attribution-NonCommercial-ShareAlike 3.0
 Unported [License](https://creativecommons.org/licenses/by-nc-sa/3.0/).
 """
-from typing import Generator, Iterator, List, Tuple, TextIO, Optional, Dict
+from typing import (
+    Generator,
+    Iterator,
+    List,
+    Tuple,
+    TextIO,
+    Optional,
+    Dict,
+    Union,
+)
+import Constants
+from regex import RegxPatterns
 
-from Regex import RegxPatterns
-KINDS = ("field", "var",)
-TokenType = Tuple[str, str]
+KINDS = (
+    "field",
+    "var",
+)
 
 
 class JackTokenizer:
@@ -47,8 +59,8 @@ class JackTokenizer:
             input_stream (typing.TextIO): input stream.
         """
         self.tokens_text: str
-        self.tokens_list: List[TokenType]
-        self.curr_token: TokenType
+        self.tokens_list: List[Constants.TokenType]
+        self.curr_token: Constants.TokenType
 
         self.tokens_text = input_stream.read()
         # remove comments
@@ -62,15 +74,15 @@ class JackTokenizer:
 
         self.__create_token_list()
 
-    def __token_error(self, mst = ""):
+    def __token_error(self, mst=""):
         """## raise value error
         ### format error message:
         `Invalid token:try print _mst_ but current command is _curr_token[0]_`
 
         """
         return ValueError(
-            "Invalid token:try print {} but current command is {}".format(mst,
-                self.curr_token[0]
+            "Invalid token:try print {} but current command is {}".format(
+                mst, self.curr_token[0]
             )
         )
 
@@ -97,7 +109,7 @@ class JackTokenizer:
         """
         if self.has_more_tokens():
             self.curr_token = self.tokens_list.pop(0)
-            
+
     def token_type(self) -> str:
         """
         Returns:
@@ -107,7 +119,7 @@ class JackTokenizer:
 
         return self.curr_token[0]
 
-    def keyword(self) -> str:
+    def keyword(self) -> Constants.KeywordType:
         """
         Returns:
             str: the keyword which is the current token.
@@ -117,7 +129,7 @@ class JackTokenizer:
             "IF", "ELSE", "WHILE", "RETURN", "TRUE", "FALSE", "NULL", "THIS"
         """
         if self.curr_token[0] == "keyword":
-            return self.curr_token[1]
+            return self.curr_token[1]  # type: ignore
         else:
             raise self.__token_error("keyword")
 
@@ -177,7 +189,9 @@ class JackTokenizer:
         else:
             raise self.__token_error("stringConstant")
 
-    def iter_tokens(self)->Generator[TokenType,None,None]:
+    def iter_tokens(
+        self,
+    ) -> Generator[Constants.TokenType, None, None]:
         """Iterate over tokens
         Returns:(token_type, token_value)
         """
@@ -200,10 +214,16 @@ class JackTokenizer:
                     token.group().replace(" ", ""),
                 )
             else:
-                yield (token.lastgroup, token.group())   # type: ignore
+                yield (token.lastgroup, token.group())  # type: ignore
 
-    def next_token_val(self) -> Optional[str]:
+    def next_token_val(self) -> str:
         if self.has_more_tokens():
             return self.tokens_list[0][1]
+        else:
+            raise Exception("next_token_val not exists")
 
-        
+    def next_token_type(self) -> Constants.TokenKindType:
+        if self.has_more_tokens():
+            return self.tokens_list[0][0]
+        else:
+            raise Exception("next_token_type not exists")
