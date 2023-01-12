@@ -267,7 +267,7 @@ class CompilationEngine:
         pop local 0"""
         self.expect_keyword("let")
         #name var
-        self.expect_identifier()
+        
 
         varToAssignTo: str = self.tokenizer.identifier()
 
@@ -552,9 +552,12 @@ class CompilationEngine:
         self.tokenizer.advance()
         return ret
 
-    def expect_identifier(self):
+    def expect_identifier(self) -> str:
         if self.tokenizer.token_type() != Constants.IDENTIFIER:
             self.compile_error()
+        ret = self.tokenizer.identifier()
+        self.tokenizer.advance()
+        return ret
 
     def expect_symbol(self, *symbol: str)->Constants.SymbolsType:
 
