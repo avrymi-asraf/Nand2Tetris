@@ -1,8 +1,13 @@
 class Main {
 
    function void main() {
-      do Output.printString("12345678");
-      return;
+    //   do Nothing(-13);
+    //   do Nothing((13+34)-34);
+    //   do Nothing(-34-34);
+    do Output.printInt(-100);
+    do Output.printInt(#100);
+    do Output.printInt(~100);
+      return ;
    }
 
 } 
