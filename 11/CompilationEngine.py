@@ -41,24 +41,25 @@ class CompilationEngine:
 
         self.curr_type: str = ""
         self.curr_kind: Constants.CurrKindType
-        self.curr_class:str = "Main"
+        self.curr_class: str = "Main"
         self.curr_subroutineName: str = ""
-    
+
     def compile_error(self) -> None:
         raise Exception(
             "can't compile this expression, curr token type: {}, curr token : {}".format(
-                self.tokenizer.token_type(), self.tokenizer.curr_token)
+                self.tokenizer.token_type(), self.tokenizer.curr_token
+            )
         )
-            
+
     def compile_class(self) -> None:
         """Compiles a complete class."""
 
-        # self.symble_table.start_subroutine() 
+        # self.symble_table.start_subroutine()
 
         self.expect_keyword("class")
         self.tokenizer.advance()
 
-        #update class_name
+        # update class_name
         self.expect_identifier()
 
         self.curr_class = self.tokenizer.identifier()
@@ -67,13 +68,18 @@ class CompilationEngine:
         self.expect_symbol("{")
         # while thereis class variable, static or field
         while (self.tokenizer.token_type() == Constants.KEYWORD) and (
-            self.tokenizer.keyword() in {Constants.STATIC.lower(), Constants.FIELD.lower()}
+            self.tokenizer.keyword()
+            in {Constants.STATIC.lower(), Constants.FIELD.lower()}
         ):
             self.compile_class_var_dec()
-        #while there is class functions, like constructors, methods, of functions
+        # while there is class functions, like constructors, methods, of functions
         while (self.tokenizer.token_type() == Constants.KEYWORD) and (
             self.tokenizer.keyword()
-            in {Constants.FUNCTION, Constants.METHOD, Constants.CONSTRUCTOR}
+            in {
+                Constants.FUNCTION,
+                Constants.METHOD,
+                Constants.CONSTRUCTOR,
+            }
         ):
             self.compile_subroutine()
 
@@ -84,7 +90,7 @@ class CompilationEngine:
         "static" | "field" type varName ("," varName)* ";"""
 
         self.expect_keyword([Constants.STATIC, Constants.FIELD])
-        self.curr_kind = self.tokenizer.keyword() # type: ignore 
+        self.curr_kind = self.tokenizer.keyword()  # type: ignore
         self.tokenizer.advance()
 
         self.expect_keyword(Constants.BASIC_TYPES)
@@ -115,17 +121,25 @@ class CompilationEngine:
 
         self.symble_table.start_subroutine()
 
-        self.expect_keyword([Constants.CONSTRUCTOR, Constants.METHOD, Constants.FUNCTION])
+        self.expect_keyword(
+            [
+                Constants.CONSTRUCTOR,
+                Constants.METHOD,
+                Constants.FUNCTION,
+            ]
+        )
         self.tokenizer.advance()
 
         # isMethod = (self.tokenizer.keyword() == "method")
-        
+
         self.expect_keyword(Constants.BASIC_TYPES_WITH_VOID)
         self.tokenizer.advance()
 
         # update subroutine name
         self.expect_identifier()
-        self.curr_subroutineName =  self.curr_class + "." + self.tokenizer.identifier()
+        self.curr_subroutineName = (
+            self.curr_class + "." + self.tokenizer.identifier()
+        )
         self.tokenizer.advance()
 
         self.expect_symbol("(")
@@ -137,11 +151,11 @@ class CompilationEngine:
 
         self.writer.write_function(self.curr_subroutineName, argNuM)
 
-        self.expect_symbol(")") 
+        self.expect_symbol(")")
 
         # subroutine Body
-        self.compile_subroutine_body() 
-    
+        self.compile_subroutine_body()
+
     def compile_subroutine_body(self) -> None:
         self.expect_symbol("{")
         # var declartion
@@ -155,7 +169,7 @@ class CompilationEngine:
 
         self.expect_symbol("}")
 
-    #return the number of parameters
+    # return the number of parameters
     def compile_parameter_list(self) -> int:
         """Compiles a (possibly empty) parameter list, not including the
         enclosing "()".
@@ -171,7 +185,7 @@ class CompilationEngine:
             return counter
 
         # if the parameter list NOT empty
-        self.expect_keyword(Constants.BASIC_TYPES)    
+        self.expect_keyword(Constants.BASIC_TYPES)
         self.curr_kind = Constants.VAR
         self.curr_type = self.tokenizer.keyword()
         self.tokenizer.advance()
@@ -186,12 +200,12 @@ class CompilationEngine:
             self.tokenizer.token_type() == Constants.SYMBOL
             and self.tokenizer.symbol() == ","
         ):
-            #update type
+            # update type
             self.expect_symbol(",")
             self.curr_type = self.tokenizer.keyword()
             self.tokenizer.advance()
 
-            #update varName
+            # update varName
             self._write_symbol_table()
             self.tokenizer.advance()
             counter += 1
@@ -200,10 +214,10 @@ class CompilationEngine:
 
     def compile_var_dec(self) -> None:
         """Compiles a var declaration."""
-        
-        self.curr_kind = Constants.segmentsDict[Constants.VAR]      # type: ignore 
-        
-        #update current type
+
+        self.curr_kind = Constants.segmentsDict[Constants.VAR]  # type: ignore
+
+        # update current type
         self.expect_and_update_type()
         self.tokenizer.advance()
 
@@ -225,10 +239,11 @@ class CompilationEngine:
         """Compiles a sequence of statements, not including the enclosing
         "{}".
         """
-        
+
         while (
             self.tokenizer.token_type() == Constants.KEYWORD
-            and self.tokenizer.keyword() in Constants.STATEMENT_KEYWORDS
+            and self.tokenizer.keyword()
+            in Constants.STATEMENT_KEYWORDS
         ):
             if self.tokenizer.keyword() == "let":
                 self.compile_let()
@@ -249,7 +264,7 @@ class CompilationEngine:
 
         self.expect_keyword("do")
         self.tokenizer.advance()
-        
+
         self.compile_subroutineCall()
         self.expect_symbol(";")
 
@@ -260,12 +275,11 @@ class CompilationEngine:
         push local 0
         push constant 1
         add
-        pop local 0
-"""
+        pop local 0"""
 
         self.expect_identifier()
 
-        varToAssignTo  = self.tokenizer.identifier()
+        varToAssignTo = self.tokenizer.identifier()
 
         segmentToAssignTo = self.symble_table.kind_of(varToAssignTo)
         indexToAssignTo = self.symble_table.index_of(varToAssignTo)
@@ -277,20 +291,20 @@ class CompilationEngine:
             and self.tokenizer.symbol() == "["
         ):
             self.expect_symbol("[")
-            self.compile_expression() #TODO FIX
+            self.compile_expression()  # TODO FIX
             self.expect_symbol("]")
         self.expect_symbol("=")
-        self.compile_expression() #TODO FIX
+        self.compile_expression()  # TODO FIX
 
-        #pop to var
-        self.writer.write_pop(segmentToAssignTo, indexToAssignTo) # type: ignore 
+        # pop to var
+        self.writer.write_pop(segmentToAssignTo, indexToAssignTo)  # type: ignore
         self.tokenizer.advance()
 
         self.expect_symbol(";")
-        
+
     def compile_while(self) -> None:
         """Compiles a while statement."""
-        
+
         # self.write_keyword({"while"})
         # self.write_symbol({"("})
         self.compile_expression()
@@ -301,15 +315,20 @@ class CompilationEngine:
 
     def compile_return(self) -> None:
         """Compiles a return statement."""
-        
+
         if not (
             self.tokenizer.next_token_type() == Constants.SYMBOL
             and self.tokenizer.next_token_val() == ";"
         ):
+
+            self.expect_keyword("return")
+            self.tokenizer.advance()
             self.compile_expression()
-        self.expect_keyword("return")
+        else:
+            self.expect_keyword("return")
+            self.tokenizer.advance()
+
         self.writer.write_return()
-        self.tokenizer.advance()
         self.expect_symbol(";")
 
     def compile_if(self) -> None:
@@ -329,13 +348,12 @@ class CompilationEngine:
             # self.write_keyword({"else"})
             # self.write_symbol({"{"})
             self.compile_statements()
-      
 
     def compile_expression(self) -> None:
         """Compiles an expression."""
-        
-        self.compile_term() 
-        
+
+        self.compile_term()
+
         while (
             self.tokenizer.token_type() == Constants.SYMBOL
             and self.tokenizer.symbol() in Constants.OP
@@ -347,12 +365,20 @@ class CompilationEngine:
 
             self.compile_op(op)
 
-    def compile_op(self, op) -> None:
-        if (op == "*"):
+    def compile_op(self, op:Constants.OpType) -> None:
+        if op == "*":
             self.writer.write_call("Math.multiply", 2)
         else:
             self.writer.write_arithmetic(Constants.opDict[op])
-        
+    
+    def compile_unary_op(self, op:Constants.UnaryOpType) -> None:
+        '''
+        compile unary operators, some operators like '-' had different command
+
+        Args:
+            op (UnaryOpType): operator to write
+        '''
+        self.writer.write_arithmetic(Constants.un_op_dict[op])
 
     def compile_term(self) -> None:
         """Compiles a term.
@@ -365,16 +391,14 @@ class CompilationEngine:
         part of this term and should not be advanced over.
         """
         # integeConstant
-        if (
-            self.tokenizer.token_type() == Constants.INTEGER_CONSTANT
-        ):  
-            self.writer.write_push(Constants.CONST, int(self.tokenizer.int_val()))
+        if self.tokenizer.token_type() == Constants.INTEGER_CONSTANT:
+            self.writer.write_push(
+                Constants.CONST, int(self.tokenizer.int_val())
+            )
             self.tokenizer.advance()
         # stringConstant
-        elif (
-            self.tokenizer.token_type() == Constants.STRING_CONSTANT
-        ):  
-            self.writer.write_push_str(self.tokenizer.string_val()) #TODO create this method
+        elif self.tokenizer.token_type() == Constants.STRING_CONSTANT:
+            self.writer.write_push_str(self.tokenizer.string_val())
             self.tokenizer.advance()
         # varname|varname[expression]| subroutineCall
         elif self.tokenizer.token_type() == Constants.IDENTIFIER:
@@ -385,25 +409,26 @@ class CompilationEngine:
             ):
                 # varname[expression]
                 if self.tokenizer.next_token_val() == "[":
-                            #TODO:add method to write array
+                    # TODO:add method to write array
                     varName: str = self.tokenizer.identifier()
                     self.tokenizer.advance()
 
                     self.expect_symbol("[")
                     self.compile_expression()
                     self.expect_symbol("]")
-                    # subroutineCall
-                elif (
-                    self.tokenizer.next_token_val() in "(."
-                ):  
+                # subroutineCall
+                elif self.tokenizer.next_token_val() in "(.":
                     self.compile_subroutineCall()
+            # varname
             else:
-                # self.expect_identifier()
+                var_name: str = self.tokenizer.identifier()
+                self.writer.write_push(
+                    self.symble_table.kind_of_as_segment(var_name),
+                    self.symble_table.index_of(var_name),
+                )
                 self.tokenizer.advance()
         # (expression) | unaryOpTerm
-        elif (
-            self.tokenizer.token_type() == Constants.SYMBOL
-        ):  
+        elif self.tokenizer.token_type() == Constants.SYMBOL:
             if self.tokenizer.symbol() == "(":  # (expression)
                 self.expect_symbol("(")
                 self.compile_expression()
@@ -411,21 +436,20 @@ class CompilationEngine:
             elif (
                 self.tokenizer.symbol() in Constants.UNARY_OP
             ):  # unaryOpTerm
+                op: str = self.tokenizer.symbol()
                 self.expect_symbol(*Constants.UNARY_OP)
                 self.compile_term()
+                self.compile_unary_op(op)
             else:
                 self.compile_error()
         # KeywordConstant
-        elif (
-            self.tokenizer.token_type() == Constants.KEYWORD
-        ):  
+        elif self.tokenizer.token_type() == Constants.KEYWORD:
             if self.tokenizer.keyword() in Constants.KYWORD_CONSTANT:
                 self.expect_keyword(Constants.KYWORD_CONSTANT)
             else:
                 self.compile_error()
         else:
             self.compile_error()
-    
 
     def compile_expression_list(self) -> int:
         """Compiles a (possibly empty) comma-separated list of expressions."""
@@ -453,9 +477,11 @@ class CompilationEngine:
 
         return counter
 
-#  """helper methods:"""
+    #  """helper methods:"""
 
-    def expect_and_update_type(self, additional_keywords: Set[str] = set()) -> Optional[str]:
+    def expect_and_update_type(
+        self, additional_keywords: Set[str] = set()
+    ) -> Optional[str]:
         """Write the type, and update the cuur_type type can be either keyword or identifier
         we can add additional keyword (like void),
         additional_keywords must be form keyword"""
@@ -480,32 +506,31 @@ class CompilationEngine:
 
     def compile_subroutineCall(self):
 
-        #update subroutine name    
+        # update subroutine name
         self.expect_identifier()
         curr_subroutineName: str = self.tokenizer.identifier()
         self.tokenizer.advance()
 
-        if ( #check if is method call
+        if (  # check if is method call
             self.tokenizer.token_type() == Constants.SYMBOL
             and self.tokenizer.symbol() == "."
         ):
             self.expect_symbol(".")
 
-            #add the rest of the func name
+            # add the rest of the func name
             self.expect_identifier()
-            curr_subroutineName +="." + self.tokenizer.identifier()
+            curr_subroutineName += "." + self.tokenizer.identifier()
             self.tokenizer.advance()
 
         self.expect_symbol("(")
         n_args: int = self.compile_expression_list()
-        
+
         self.writer.write_call(curr_subroutineName, n_args)
 
         self.expect_symbol(")")
 
-        
     def _write_symbol_table(self) -> None:
-        #check that the token is actually an identifier
+        # check that the token is actually an identifier
         self.expect_identifier()
         self.symble_table.define(
             self.tokenizer.identifier(),
@@ -513,19 +538,20 @@ class CompilationEngine:
             self.curr_kind,
         )
 
-
     def expect_keyword(self, keyword):
-        if ((self.tokenizer.token_type() != Constants.KEYWORD)
-         or (self.tokenizer.keyword() not in keyword)):
+        if (self.tokenizer.token_type() != Constants.KEYWORD) or (
+            self.tokenizer.keyword() not in keyword
+        ):
             self.compile_error()
 
     def expect_identifier(self):
-        if (self.tokenizer.token_type() != Constants.IDENTIFIER):
+        if self.tokenizer.token_type() != Constants.IDENTIFIER:
             self.compile_error()
 
     def expect_symbol(self, *symbol: str):
-        if ((self.tokenizer.token_type() != Constants.SYMBOL)
-         or (self.tokenizer.symbol() not in symbol)):
+        if (self.tokenizer.token_type() != Constants.SYMBOL) or (
+            self.tokenizer.symbol() not in symbol
+        ):
             self.compile_error()
 
         self.tokenizer.advance()
@@ -619,7 +645,7 @@ class CompilationEngine:
     #         )
     #     )
 
-        # self.tokenizer.advance()
+    # self.tokenizer.advance()
 
     # def write_string(self) -> None:
     #     if self.tokenizer.token_type() != "stringConstant":
@@ -636,7 +662,7 @@ class CompilationEngine:
     #         )
     #     )
 
-    #     self.tokenizer.advance()   
+    #     self.tokenizer.advance()
 
     # def _write_base_token(self, token: str, flag: str):
     #     if flag == "e":
@@ -649,8 +675,3 @@ class CompilationEngine:
     #                 flag
     #             )
     #         )
-
-
-
-
-
