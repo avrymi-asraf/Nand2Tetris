@@ -59,11 +59,7 @@ class CompilationEngine:
         self.expect_keyword("class")
 
         # update class_name
-        self.expect_identifier()
-
-        self.curr_class = self.tokenizer.identifier()
-        self.tokenizer.advance()
-
+        self.curr_class = self.expect_identifier()
         self.expect_symbol("{")
         # while thereis class variable, static or field
         while (self.tokenizer.token_type() == Constants.KEYWORD) and (
@@ -126,11 +122,10 @@ class CompilationEngine:
         self.expect_keyword(*Constants.BASIC_TYPES_WITH_VOID)
 
         # update subroutine name
-        self.expect_identifier()
+        
         self.curr_subroutineName = (
-            self.curr_class + "." + self.tokenizer.identifier()
+            self.curr_class + "." + self.expect_identifier()
         )
-        self.tokenizer.advance()
 
         self.expect_symbol("(")
 
@@ -180,9 +175,7 @@ class CompilationEngine:
         self.curr_type = self.expect_keyword(Constants.BASIC_TYPES)
 
         # varName
-        self.expect_identifier()
         self._write_symbol_table()
-        self.tokenizer.advance()
         counter += 1
 
         # aditional parameters
@@ -197,7 +190,6 @@ class CompilationEngine:
 
             # update varName
             self._write_symbol_table()
-            self.tokenizer.advance()
             counter += 1
 
         return counter
@@ -213,7 +205,6 @@ class CompilationEngine:
 
         # varName
         self._write_symbol_table()
-        self.tokenizer.advance()
 
         while (
             self.tokenizer.token_type() == Constants.SYMBOL
@@ -221,7 +212,6 @@ class CompilationEngine:
         ):
             self.expect_symbol(",")
             self._write_symbol_table()
-            self.tokenizer.advance()
 
         self.expect_symbol(";")
 
@@ -505,9 +495,8 @@ class CompilationEngine:
     def compile_subroutineCall(self):
 
         # update subroutine name
-        self.expect_identifier()
-        curr_subroutineName: str = self.tokenizer.identifier()
-        self.tokenizer.advance()
+        
+        curr_subroutineName: str = self.expect_identifier()
 
         if (  # check if is method call
             self.tokenizer.token_type() == Constants.SYMBOL
@@ -516,9 +505,7 @@ class CompilationEngine:
             self.expect_symbol(".")
 
             # add the rest of the func name
-            self.expect_identifier()
-            curr_subroutineName += "." + self.tokenizer.identifier()
-            self.tokenizer.advance()
+            curr_subroutineName += "." + self.expect_identifier()
 
         self.expect_symbol("(")
         n_args: int = self.compile_expression_list()
@@ -528,10 +515,13 @@ class CompilationEngine:
         self.expect_symbol(")")
 
     def _write_symbol_table(self) -> None:
-        # check that the token is actually an identifier
-        self.expect_identifier()
+        '''
+        write the current identifier to symbol table
+        ane **advance** the tokenizer
+        '''
+        
         self.symble_table.define(
-            self.tokenizer.identifier(),
+            self.expect_identifier(),
             self.curr_type,
             self.curr_kind,
         )
