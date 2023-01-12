@@ -57,7 +57,6 @@ class CompilationEngine:
         # self.symble_table.start_subroutine()
 
         self.expect_keyword("class")
-        self.tokenizer.advance()
 
         # update class_name
         self.expect_identifier()
@@ -89,13 +88,8 @@ class CompilationEngine:
         """Compiles a static declaration or a field declaration.
         "static" | "field" type varName ("," varName)* ";"""
 
-        self.expect_keyword(Constants.STATIC, Constants.FIELD)
-        self.curr_kind = self.tokenizer.keyword()  # type: ignore
-        self.tokenizer.advance()
-
-        self.expect_keyword(*Constants.BASIC_TYPES)
-        self.curr_type = self.tokenizer.keyword()
-        self.tokenizer.advance()
+        self.curr_kind = self.expect_keyword(Constants.STATIC, Constants.FIELD)  # type: ignore
+        self.curr_type = self.expect_keyword(*Constants.BASIC_TYPES)
 
         # varName
         self._write_symbol_table()
@@ -122,18 +116,14 @@ class CompilationEngine:
         self.symble_table.start_subroutine()
 
         self.expect_keyword(
-            
-                Constants.CONSTRUCTOR,
-                Constants.METHOD,
-                Constants.FUNCTION,
-            
+            Constants.CONSTRUCTOR,
+            Constants.METHOD,
+            Constants.FUNCTION,
         )
-        self.tokenizer.advance()
 
         # isMethod = (self.tokenizer.keyword() == "method")
 
         self.expect_keyword(*Constants.BASIC_TYPES_WITH_VOID)
-        self.tokenizer.advance()
 
         # update subroutine name
         self.expect_identifier()
@@ -185,12 +175,12 @@ class CompilationEngine:
             return counter
 
         # if the parameter list NOT empty
-        self.expect_keyword(Constants.BASIC_TYPES)
+
         self.curr_kind = Constants.VAR
-        self.curr_type = self.tokenizer.keyword()
-        self.tokenizer.advance()
+        self.curr_type = self.expect_keyword(Constants.BASIC_TYPES)
 
         # varName
+        self.expect_identifier()
         self._write_symbol_table()
         self.tokenizer.advance()
         counter += 1
@@ -263,7 +253,6 @@ class CompilationEngine:
         # we calld the do statements sometimes insted call subroutines, so only
 
         self.expect_keyword("do")
-        self.tokenizer.advance()
 
         self.compile_subroutineCall()
         self.expect_symbol(";")
@@ -322,11 +311,9 @@ class CompilationEngine:
         ):
 
             self.expect_keyword("return")
-            self.tokenizer.advance()
             self.compile_expression()
         else:
             self.expect_keyword("return")
-            self.tokenizer.advance()
 
         self.writer.write_return()
         self.expect_symbol(";")
@@ -446,16 +433,17 @@ class CompilationEngine:
         elif (
             self.tokenizer.token_type() == Constants.KEYWORD
         ):  # TODO what about this
-            self.expect_keyword(*Constants.KYWORD_CONSTANT)
+            constant_keyword = self.expect_keyword(*Constants.KYWORD_CONSTANT)
             self.writer.write_push(
+                # for false and null it 0
                 Constants.CONST,
                 0,
             )
-            if self.tokenizer.keyword() == "true":
-                #the way to write true
+            if constant_keyword == "true":
+                # for true in like thie:
                 # push constant 0
                 # not
-            
+
                 self.compile_unary_op("~")
         else:
             self.compile_error()
@@ -547,17 +535,21 @@ class CompilationEngine:
             self.curr_kind,
         )
 
-    def expect_keyword(self, *keyword):
-        '''
-        check that if current token is keybort
+    def expect_keyword(self, *keyword) -> Constants.KeywordType:
+        """
+        check that if current token is keyword
+        **advance** token and return the keyword
 
         Args:
             keyword (_type_): *arg that can be the keyword
-        '''
+        """
         if (self.tokenizer.token_type() != Constants.KEYWORD) or (
             self.tokenizer.keyword() not in keyword
         ):
             self.compile_error()
+        ret: Constants.KeywordType = self.tokenizer.keyword()
+        self.tokenizer.advance()
+        return ret
 
     def expect_identifier(self):
         if self.tokenizer.token_type() != Constants.IDENTIFIER:
