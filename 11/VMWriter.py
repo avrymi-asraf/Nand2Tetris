@@ -95,7 +95,7 @@ class VMWriter:
         }:
             self.write_error(command)
 
-        self.output_stream.write(f'{command.lower()}\n')
+        self.output_stream.write(f'{command}\n')
 
     def write_label(self, label: str) -> None:
         """Writes a VM label command.
@@ -149,9 +149,13 @@ class VMWriter:
         """Writes a VM return command."""
         raise Exception("can't write this expression: {}".format(val))
 
-    # TODO implement?
     def write_push_str(self, val: str) -> None:
-        """Writes a VM return command."""
+        '''
+        write string object 
+
+        Args:
+            val (str): string to write
+        '''        
         self.write_push(Constants.CONST,len(val))
         self.write_call("String.new",1)
         for char in val:

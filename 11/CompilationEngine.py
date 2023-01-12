@@ -358,26 +358,26 @@ class CompilationEngine:
             self.tokenizer.token_type() == Constants.SYMBOL
             and self.tokenizer.symbol() in Constants.OP
         ):
-            op = self.tokenizer.symbol()
+            op: Constants.OpType = self.tokenizer.symbol()  # type: ignore
             self.tokenizer.advance()
 
             self.compile_term()
 
             self.compile_op(op)
 
-    def compile_op(self, op:Constants.OpType) -> None:
+    def compile_op(self, op: Constants.OpType) -> None:
         if op == "*":
             self.writer.write_call("Math.multiply", 2)
         else:
             self.writer.write_arithmetic(Constants.opDict[op])
-    
-    def compile_unary_op(self, op:Constants.UnaryOpType) -> None:
-        '''
+
+    def compile_unary_op(self, op: Constants.UnaryOpType) -> None:
+        """
         compile unary operators, some operators like '-' had different command
 
         Args:
             op (UnaryOpType): operator to write
-        '''
+        """
         self.writer.write_arithmetic(Constants.un_op_dict[op])
 
     def compile_term(self) -> None:
@@ -436,18 +436,27 @@ class CompilationEngine:
             elif (
                 self.tokenizer.symbol() in Constants.UNARY_OP
             ):  # unaryOpTerm
-                op: str = self.tokenizer.symbol()
+                op: Constants.UnaryOpType = self.tokenizer.symbol()  # type: ignore
                 self.expect_symbol(*Constants.UNARY_OP)
                 self.compile_term()
                 self.compile_unary_op(op)
             else:
                 self.compile_error()
         # KeywordConstant
-        elif self.tokenizer.token_type() == Constants.KEYWORD:
-            if self.tokenizer.keyword() in Constants.KYWORD_CONSTANT:
-                self.expect_keyword(Constants.KYWORD_CONSTANT)
-            else:
-                self.compile_error()
+        elif (
+            self.tokenizer.token_type() == Constants.KEYWORD
+        ):  # TODO what about this
+            self.expect_keyword(Constants.KYWORD_CONSTANT)
+            self.writer.write_push(
+                Constants.CONST,
+                0,
+            )
+            if self.tokenizer.keyword() == "true":
+                #the way to write true
+                # push constant 0
+                # not
+            
+                self.compile_unary_op("~")
         else:
             self.compile_error()
 
