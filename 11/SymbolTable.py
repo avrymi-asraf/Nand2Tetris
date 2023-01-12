@@ -19,15 +19,13 @@ class SymbolTable:
     scopes (class/subroutine).
     """
     
-    subroutineStable:Constants.SymbolTableType = {}
-    classStable:Constants.SymbolTableType = {}
 
     def __init__(self) -> None:
         """Creates a new empty symbol table."""
 
         #name, type, kind, ind
-        self.subroutineStable = {}
-        self.classStable = {}
+        self.subroutineStable:Constants.SymbolTableType = {}
+        self.classStable:Constants.SymbolTableType = {}
 
     def start_subroutine(self) -> None:
         """Starts a new subroutine scope (i.e., resets the subroutine's 
@@ -80,7 +78,7 @@ class SymbolTable:
         
         return counter
 
-    def kind_of(self, name: str) -> Optional[str]:
+    def kind_of(self, name: str) -> Constants.VarKindType:
         """
         Args:
             name (str): name of an identifier.
@@ -95,7 +93,7 @@ class SymbolTable:
         if (name in self.classStable):
             return self.classStable[name][KINDIND]
 
-        return None
+        raise Exception("unknown variable {}".format(name))
 
     def type_of(self, name: str) ->  Optional[str]:
         """
@@ -111,10 +109,10 @@ class SymbolTable:
         if (name in self.classStable):
             return self.classStable[name][TYPEIND]
             
-        return None
+        raise Exception("unknown variable {}".format(name))
 
 
-    def index_of(self, name: str) ->  Optional[int]:
+    def index_of(self, name: str) ->  int:
         """
         Args:
             name (str):  name of an identifier.
@@ -128,7 +126,7 @@ class SymbolTable:
         if (name in self.classStable):
             return self.classStable[name][INDEXIND]
             
-        return None
+        raise Exception("unknown variable {}".format(name))
 
 
 
