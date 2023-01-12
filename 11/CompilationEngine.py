@@ -89,11 +89,11 @@ class CompilationEngine:
         """Compiles a static declaration or a field declaration.
         "static" | "field" type varName ("," varName)* ";"""
 
-        self.expect_keyword([Constants.STATIC, Constants.FIELD])
+        self.expect_keyword(Constants.STATIC, Constants.FIELD)
         self.curr_kind = self.tokenizer.keyword()  # type: ignore
         self.tokenizer.advance()
 
-        self.expect_keyword(Constants.BASIC_TYPES)
+        self.expect_keyword(*Constants.BASIC_TYPES)
         self.curr_type = self.tokenizer.keyword()
         self.tokenizer.advance()
 
@@ -122,17 +122,17 @@ class CompilationEngine:
         self.symble_table.start_subroutine()
 
         self.expect_keyword(
-            [
+            
                 Constants.CONSTRUCTOR,
                 Constants.METHOD,
                 Constants.FUNCTION,
-            ]
+            
         )
         self.tokenizer.advance()
 
         # isMethod = (self.tokenizer.keyword() == "method")
 
-        self.expect_keyword(Constants.BASIC_TYPES_WITH_VOID)
+        self.expect_keyword(*Constants.BASIC_TYPES_WITH_VOID)
         self.tokenizer.advance()
 
         # update subroutine name
@@ -276,10 +276,10 @@ class CompilationEngine:
         push constant 1
         add
         pop local 0"""
-
+        self.expect_keyword("let")
         self.expect_identifier()
 
-        varToAssignTo = self.tokenizer.identifier()
+        varToAssignTo: str = self.tokenizer.identifier()
 
         segmentToAssignTo = self.symble_table.kind_of(varToAssignTo)
         indexToAssignTo = self.symble_table.index_of(varToAssignTo)
@@ -446,7 +446,7 @@ class CompilationEngine:
         elif (
             self.tokenizer.token_type() == Constants.KEYWORD
         ):  # TODO what about this
-            self.expect_keyword(Constants.KYWORD_CONSTANT)
+            self.expect_keyword(*Constants.KYWORD_CONSTANT)
             self.writer.write_push(
                 Constants.CONST,
                 0,
@@ -547,7 +547,13 @@ class CompilationEngine:
             self.curr_kind,
         )
 
-    def expect_keyword(self, keyword):
+    def expect_keyword(self, *keyword):
+        '''
+        check that if current token is keybort
+
+        Args:
+            keyword (_type_): *arg that can be the keyword
+        '''
         if (self.tokenizer.token_type() != Constants.KEYWORD) or (
             self.tokenizer.keyword() not in keyword
         ):
@@ -564,123 +570,3 @@ class CompilationEngine:
             self.compile_error()
 
         self.tokenizer.advance()
-
-    # def write_symbol(
-    #     self, option_symbol: Union[Set[str], str, None] = None
-    # ) -> None:
-    #     # check validity
-    #     if self.tokenizer.token_type() != SYMBOL:
-    #         raise self.compile_error()
-    #     if (
-    #         option_symbol
-    #         and self.tokenizer.symbol() not in option_symbol
-    #     ):
-    #         raise self.compile_error()
-
-    #     # <symbol>  symbol </symbol>
-    #     self.output_stream.write(
-    #         output_format.format(
-    #             token_type=self.tokenizer.token_type(),
-    #             token=self.tokenizer.symbol(),
-    #         )
-    #     )
-
-    #     self.tokenizer.advance()
-
-    # def write_static_or_field(self) -> None:
-
-    #     # write <keyword> "static" or "field" </keyword>
-    #     self.output_stream.write(
-    #         output_format.format(
-    #             token_type=self.tokenizer.token_type(),
-    #             token=self.tokenizer.keyword(),
-    #         )
-    #     )
-
-    #     self.tokenizer.advance()
-
-    # def write_identifier(self) -> None:
-    #     # check validity of type
-    #     if self.tokenizer.token_type() != IDENTIFIER:
-    #         raise self.compile_error()
-    #     self.output_stream.write(
-    #         output_format.format(
-    #             token_type=self.tokenizer.token_type(),
-    #             token=self.tokenizer.identifier(),
-    #         )
-    #     )
-
-    #     self.tokenizer.advance()
-
-    # def write_keyword(
-    #     self, option_keywards: Optional[Set[str]] = None
-    # ) -> None:
-    #     # check validity of type
-    #     if self.tokenizer.token_type() != KEYWORD:
-    #         raise Exception(
-    #             "Invalid input: in write_keyword method. current type: {} ".format(
-    #                 self.tokenizer.token_type()
-    #             )
-    #         )
-    #     if option_keywards:
-    #         if self.tokenizer.keyword() not in option_keywards:
-    #             raise Exception(
-    #                 "Invalid input: in write_keyword method. token not in lst, current token: {} ".format(
-    #                     self.tokenizer.keyword()
-    #                 )
-    #             )
-
-    #     self.output_stream.write(
-    #         output_format.format(
-    #             token_type=self.tokenizer.token_type(),
-    #             token=self.tokenizer.keyword(),
-    #         )
-    #     )
-
-    #     self.tokenizer.advance()
-
-    # def write_integer(self) -> None:
-    #     if self.tokenizer.token_type() != "integerConstant":
-    #         raise Exception(
-    #             "Invalid input: in write_keyword method. current type: {} ".format(
-    #                 self.tokenizer.token_type()
-    #             )
-    #         )
-
-    #     self.output_stream.write(
-    #         output_format.format(
-    #             token_type=self.tokenizer.token_type(),
-    #             token=self.tokenizer.int_val(),
-    #         )
-    #     )
-
-    # self.tokenizer.advance()
-
-    # def write_string(self) -> None:
-    #     if self.tokenizer.token_type() != "stringConstant":
-    #         raise Exception(
-    #             "Invalid input: in write_string method. current type: {} ".format(
-    #                 self.tokenizer.token_type()
-    #             )
-    #         )
-
-    #     self.output_stream.write(
-    #         output_format.format(
-    #             token_type=self.tokenizer.token_type(),
-    #             token=self.tokenizer.string_val(),
-    #         )
-    #     )
-
-    #     self.tokenizer.advance()
-
-    # def _write_base_token(self, token: str, flag: str):
-    #     if flag == "e":
-    #         self.output_stream.write("</{}>\n".format(token))
-    #     elif flag == "s":
-    #         self.output_stream.write("<{}>\n".format(token))
-    #     else:
-    #         raise ValueError(
-    #             "end must be a string 's' or 'e' it was{}".format(
-    #                 flag
-    #             )
-    #         )
