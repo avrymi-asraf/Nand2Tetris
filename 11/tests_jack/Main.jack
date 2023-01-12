@@ -1,12 +1,14 @@
 class Main {
-
+   static int a; // the singelton, a Pong game instance     
+   static int d; // the singelton, a Pong game instance     
+   field int b;
+   
    function void main() {
-    //   do Nothing(-13);
-    //   do Nothing((13+34)-34);
-    //   do Nothing(-34-34);
-    do Output.printInt(-100);
-    do Output.printInt(#100);
-    do Output.printInt(~100);
+      var int c;
+      let a = 100;
+      let d = 100;
+      // let b = 200;
+      let c = 300;
       return ;
    }
 
