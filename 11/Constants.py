@@ -36,8 +36,29 @@ VARNAME = IDENTIFIER
 INTEGER_CONSTANT = "integerConstant"
 STRING_CONSTANT = "stringConstant"
 KYWORD_CONSTANT = {"true", "false", "null", "this"}
-
-SYMBOLS = {
+SymbolsType = Literal["{",
+    "}",
+    "(",
+    ")",
+    "[",
+    "]",
+    ".",
+    ",",
+    ";",
+    "+",
+    "-",
+    "*",
+    "/",
+    "&",
+    "|",
+    "<",
+    ">",
+    "=",
+    "~",
+    "&lt;",
+    "&gt;",
+    "&amp;",]
+SYMBOLS: set[SymbolsType] = {
     "{",
     "}",
     "(",
