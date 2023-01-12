@@ -1,3 +1,4 @@
+from ast import UnaryOp
 from typing import (
     Callable,
     Dict,
@@ -35,6 +36,7 @@ VARNAME = IDENTIFIER
 INTEGER_CONSTANT = "integerConstant"
 STRING_CONSTANT = "stringConstant"
 KYWORD_CONSTANT = {"true", "false", "null", "this"}
+
 SYMBOLS = {
     "{",
     "}",
@@ -59,8 +61,21 @@ SYMBOLS = {
     "&gt;",
     "&amp;",
 }
-UNARY_OP = {"-", "~", "#", "-"}  # TODO WHY - TWICE?
-OP = {
+OpType = Literal[
+    "+",
+    "-",
+    "*",
+    "/",
+    "<",
+    ">",
+    "|",
+    "&",
+    "=",
+    "&lt;",
+    "&gt;",
+    "&amp;",
+]
+OP: set[OpType] = {
     "+",
     "-",
     "*",
@@ -74,14 +89,23 @@ OP = {
     "&gt;",
     "&amp;",
 }
+UnaryOpType = Literal["-", "~", "#", "-"]
+UNARY_OP: set[UnaryOpType] = {"-", "~", "#"}  # TODO WHY - TWICE?
+un_op_dict: dict[UnaryOpType, str]={
+    "-":"neg",
+    "~":"not",
+    "#":"shiftright"
+}
 STATEMENT_KEYWORDS = ["let", "if", "while", "do", "return"]
+VarKindType = Literal["static", "field", "arg", "var"]
+VARKINDS: set[VarKindType] = {"static", "field", "arg", "var"}
 KeywordType = Literal[
     "calss",
     "method",
     "function",
     "constructor",
     "int",
-    "BOOLEAN",
+    "boolean",
     "char",
     "void",
     "var",
@@ -98,13 +122,13 @@ KeywordType = Literal[
     "null",
     "this",
 ]
-KEYWORDS:set[KeywordType] = {
+KEYWORDS: set[KeywordType] = {
     "calss",
     "method",
     "function",
     "constructor",
     "int",
-    "BOOLEAN",
+    "boolean",
     "char",
     "void",
     "var",
@@ -147,8 +171,9 @@ BASIC_TYPES = {"int", "char", "boolean"}
 BASIC_TYPES_WITH_VOID = ["int", "char", "boolean", "void"]
 
 opDict = {
-    "+": "ADD",
-    "-": "SUB",
+    "+": "add",
+    "-": "sub",
+    "un-": "neg",
     "/": "/",  # TODO
     "|": "OR",
     "&": "&",  # TODO
@@ -166,7 +191,7 @@ segmentsDict: dict[str, str] = {
 
 
 # Typing
-CurrKindType = Literal["argunemt", "var", "static", "FIELD"]
+CurrKindType = Literal["argunemt", "var", "static", "field"]
 
 
 TokenKindType = Literal[
@@ -178,4 +203,4 @@ TokenKindType = Literal[
     "op",
 ]
 TokenType = Tuple[TokenKindType, str]
-SymbolTableType = Dict[str, Tuple[str, str, int]]
+SymbolTableType = Dict[str, Tuple[str, VarKindType, int]]
