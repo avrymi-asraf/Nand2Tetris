@@ -196,7 +196,7 @@ class CompilationEngine:
         self.curr_kind = Constants.segmentsDict[self.expect_keyword(Constants.VAR)]  # type: ignore
 
         # update current type
-        self.expect_type()
+        self.curr_type = self.expect_type()
 
         # varName
         self._write_symbol_table()
@@ -461,22 +461,20 @@ class CompilationEngine:
     #  """helper methods:"""
 
     def expect_type(
-        self, additional_keywords: Set[str] = set()
-    ) -> Optional[str]:
-        """Write the type, and update the cuur_type type can be either keyword or identifier
+        self, *additional_keywords
+    ) -> str:
+        """return the type, and advence the tokenizer 
+        type can be either keyword or identifier
         we can add additional keyword (like void),
         additional_keywords must be form keyword"""
         # type is keyword int , boolean or char
-        types = Constants.BASIC_TYPES.union(additional_keywords)
-        if (
-            self.tokenizer.token_type() == Constants.KEYWORD
-            and self.tokenizer.keyword() in types
-        ):
-            self.curr_type = self.expect_keyword(*Constants.KEYWORDS)
+        if self.tokenizer.token_type() == Constants.KEYWORD:
+            return self.expect_keyword(*additional_keywords,*Constants.BASIC_TYPES)
         # if type is a class
+        elif self.tokenizer.token_type() == Constants.IDENTIFIER:
+            return self.expect_identifier()
         else:
-            self.curr_type = self.expect_identifier()
-        return self.curr_kind
+            raise ValueError("expecte type (kyword or identifier) but is not")
 
     def compile_subroutineCall(self):
 
