@@ -97,6 +97,9 @@ OpType = Literal[
     "&lt;",
     "&gt;",
     "&amp;",
+    "un-",
+    "un~",
+    "un#",
 ]
 OP: set[OpType] = {
     "+",
@@ -111,7 +114,27 @@ OP: set[OpType] = {
     "&lt;",
     "&gt;",
     "&amp;",
+    "un-",
+    "un~",
+    "un#",
 }
+opDict = {
+    "+": "add",
+    "-": "sub",
+    "/": "/",  # TODO
+    "|": "OR",
+    "&": "&",  # TODO
+    "=": "EQ",
+    "<": "lt",
+    ">": "gt",
+    "&amp;": "&amp;",  # TODO
+    ">>": "SHIFTLEFT",
+    "<<": "SHIFRIGHT",
+    "un-": "neg",
+    "un~": "not",
+    "un#": "shiftright",
+}
+
 UnaryOpType = Literal["-", "~", "#", "-"]
 UNARY_OP: set[UnaryOpType] = {"-", "~", "#"}  # TODO WHY - TWICE?
 un_op_dict: dict[UnaryOpType, str] = {
@@ -201,22 +224,8 @@ SEGMENTS: set[SegmentType] = {
 }
 BASIC_TYPES = {"int", "char", "boolean"}
 
-BASIC_TYPES_WITH_VOID = ["int", "char", "boolean", "void"]
+BASIC_TYPES_WITH_VOID = {"int", "char", "boolean", "void"}
 
-opDict = {
-    "+": "add",
-    "-": "sub",
-    "un-": "neg",
-    "/": "/",  # TODO
-    "|": "OR",
-    "&": "&",  # TODO
-    "=": "EQ",
-    "<": "LT",
-    ">": "GT",
-    "&amp;": "&amp;",  # TODO
-    ">>": "SHIFTLEFT",
-    "<<": "SHIFRIGHT",
-}
 segmentsDict: dict[str, str] = {
     VAR: "var",
 }
