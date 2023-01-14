@@ -38,7 +38,7 @@ class VMWriter:
             "push {} {}\n".format(segment.lower(), index)
         )
 
-    def write_pop(self, segment: str, index: int) -> None:
+    def write_pop(self, segment: Constants.SegmentType, index: int) -> None:
         """Writes a VM pop command.
 
         Args:
