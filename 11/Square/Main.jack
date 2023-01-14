@@ -12,6 +12,7 @@ class Main {
         let game = SquareGame.new();
         do game.run();
         do game.dispose();
+        do Output.printInt(1);
         return;
     }
 }

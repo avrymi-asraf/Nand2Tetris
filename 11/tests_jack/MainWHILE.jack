@@ -1,0 +1,14 @@
+class MainWHILE {
+
+   function void main() {
+      var int counter;
+      let counter = 100;
+      while (counter> 0){
+         let counter = counter-1;
+      }
+      do Output.printInt(1 + (2 * 3));
+     
+      return;
+   }
+
+}  

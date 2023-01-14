@@ -1,0 +1,13 @@
+class MainIF {
+
+   function void main() {
+      if (3*4 < 0){
+      do Output.printInt(1 + (2 * 3));
+      }else{
+      if (3*4 > 0){
+      do Output.printInt(1 + (2 * 3));
+      }}
+      return;
+   }
+
+}  

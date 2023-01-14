@@ -39,7 +39,9 @@ class SymbolTable:
         """
         self.subroutineStable.clear()
 
-    def define(self, name: str, type: str, kind: Constants.VarKindType) -> None:
+    def define(
+        self, name: str, type: str, kind: Constants.VarKindType
+    ) -> None:
         """Defines a new identifier of a given name, type and kind and assigns
         it a running index. "STATIC" and "FIELD" identifiers have a class scope,
         while "ARG" and "VAR" identifiers have a subroutine scope.
@@ -53,14 +55,18 @@ class SymbolTable:
         if kind in {Constants.STATIC, Constants.FIELD}:
             # class scope
             self.classStable[name] = (
-                type, kind, self.var_count(kind) 
+                type,
+                kind,
+                self.var_count(kind),
             )
 
             # type: ignore
         elif kind in {Constants.ARG, Constants.VAR}:
             # subroutine scope
             self.subroutineStable[name] = (
-                type, kind, self.var_count(kind) 
+                type,
+                kind,
+                self.var_count(kind),
             )
         else:
             raise ValueError("unknown variable {}".format(name))
@@ -92,7 +98,7 @@ class SymbolTable:
 
         return counter
 
-    def kind_of(self, name: str) -> Constants.VarKindType:
+    def kind_of(self, name: str) -> Optional[Constants.VarKindType]:
         """
         Args:
             name (str): name of an identifier.
@@ -104,12 +110,12 @@ class SymbolTable:
         if name in self.subroutineStable:
             return self.subroutineStable[name][KINDIND]
 
-        if name in self.classStable:
+        elif name in self.classStable:
             return self.classStable[name][KINDIND]
 
-        raise ValueError("unknown variable {}".format(name))
-
-    def type_of(self, name: str) -> Optional[str]:
+        else:
+            return None
+    def type_of(self, name: str) -> str:
         """
         Args:
             name (str):  name of an identifier.
@@ -119,11 +125,10 @@ class SymbolTable:
         """
         if name in self.subroutineStable:
             return self.subroutineStable[name][TYPEIND]
-
-        if name in self.classStable:
+        elif name in self.classStable:
             return self.classStable[name][TYPEIND]
-
-        raise ValueError("unknown variable {}".format(name))
+        else:
+            raise ValueError("unknown variable {}".format(name))
 
     def index_of(self, name: str) -> int:
         """

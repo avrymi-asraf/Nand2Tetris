@@ -1,0 +1,24 @@
+function MainWHILE.main 0
+push constant 100
+pop local 0
+label START_WHILE_1
+push local 0
+push constant 0
+gt
+if-goto IF_WHILE_1
+goto END_WHILE_1
+label IF_WHILE_1
+push local 0
+push constant 1
+sub
+pop local 0
+goto START_WHILE_1
+label END_WHILE_1
+push constant 1
+push constant 2
+push constant 3
+call Math.multiply 2
+add
+call Output.printInt 1
+pop temp 0
+return

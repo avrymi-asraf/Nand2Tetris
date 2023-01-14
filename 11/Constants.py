@@ -13,7 +13,7 @@ from typing import (
 
 from sympy import Segment
 
-ARG = "argunemt"
+ARG = "argument"
 VAR = "var"
 STATIC = "static"
 FIELD = "field"
@@ -124,10 +124,10 @@ opDict = {
     "/": "/",  # TODO
     "|": "OR",
     "&": "&",  # TODO
-    "=": "EQ",
+    "=": "eq",
     "&lt;": "lt",
     "&gt;": "gt",
-    "&amp;": "&amp;",  # TODO
+    "&amp;": "and",  # TODO
     ">>": "SHIFTLEFT",
     "<<": "SHIFRIGHT",
     "un-": "neg",
