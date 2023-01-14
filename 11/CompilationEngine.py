@@ -180,8 +180,8 @@ class CompilationEngine:
 
         # if the parameter list NOT empty
 
-        self.curr_kind = Constants.VAR
-        self.curr_type = self.expect_keyword(*Constants.BASIC_TYPES)
+        self.curr_kind = Constants.ARG
+        self.curr_type = self.expect_type()
 
         # varName
         self._write_symbol_table()
@@ -194,9 +194,7 @@ class CompilationEngine:
         ):
             # update type
             self.expect_symbol(",")
-            self.curr_type = self.tokenizer.keyword()
-            self.tokenizer.advance()
-
+            self.curr_type = self.expect_type()
             # update varName
             self._write_symbol_table()
             counter += 1
@@ -300,7 +298,7 @@ class CompilationEngine:
         self.expect_keyword("while")
         self.writer.write_label(start_label)
         self.expect_symbol("(")
-        self.compile_expression()   
+        self.compile_expression()
         self.expect_symbol(")")
         self.writer.write_if(if_label)
         self.writer.write_goto(end_label)
@@ -519,25 +517,52 @@ class CompilationEngine:
 
     def compile_subroutineCall(self):
 
-        # update subroutine name
+        # subroutineCall(): is mhetod in class
+        # ClassName.function(): is function of class
+        # varName.method(): is method of object
 
-        call_subroutineName: str = self.expect_identifier()
+        base_name: str = self.expect_identifier()
 
+        n_args: int = 0
         if (  # check if is method call
             self.tokenizer.token_type() == Constants.SYMBOL
             and self.tokenizer.symbol() == "."
         ):
             self.expect_symbol(".")
-
-            # add the rest of the func name
-            call_subroutineName += "." + self.expect_identifier()
-
+            # ClassName.function() | varName.method()
+            if self.symble_table.kind_of(base_name):
+                # varName.method()
+                # if is method call
+                # 1. change function name to ClassName.function
+                # 2. push object onto stack
+                # 3. add 1 to counter arguments
+                object_name = base_name
+                func_name = (
+                    self.symble_table.type_of(object_name)
+                    + "."
+                    + self.expect_identifier()
+                )
+                self.writer.write_push(
+                    self.symble_table.kind_of_as_segment(object_name),
+                    self.symble_table.index_of(object_name),
+                )
+                n_args += 1
+            else:  # ClassName.function()
+                func_name = base_name + "." + self.expect_identifier()
+        else:
+            # subroutineCall()
+            func_name = base_name
+            n_args += 1
+            self.writer.write_push(
+                Constants.THIS,
+                0,
+            )
         self.expect_symbol("(")
-        n_args: int = self.compile_expression_list()
-
-        self.writer.write_call(call_subroutineName, n_args)
-
+        n_args += self.compile_expression_list()
         self.expect_symbol(")")
+
+        # write the function
+        self.writer.write_call(func_name, n_args)
 
     def _write_symbol_table(self) -> None:
         """
