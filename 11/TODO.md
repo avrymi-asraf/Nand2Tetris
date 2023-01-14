@@ -5,7 +5,7 @@
 - [X] compile_let
 - [X] compile_do
 - [x] compile_if
-- [ ] compile_while
+- [X] compile_while
 - [ ] compile_class
 - [ ] compile_class_var_dec
 - [ ] compile_subroutine

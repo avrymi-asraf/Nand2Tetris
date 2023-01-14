@@ -47,15 +47,15 @@ class CompilationEngine:
         self.counter: Counter[str] = Counter()
 
     def label_counter(self, label: str) -> str:
-        '''
-        return label as string with number 
+        """
+        return label as string with number
 
         Args:
             label (str): label
 
         Returns:
             str: string name name of label with number
-        '''
+        """
         self.counter[label] += 1
         return label + str(self.counter[label])
 
@@ -293,14 +293,23 @@ class CompilationEngine:
 
     def compile_while(self) -> None:
         """Compiles a while statement."""
+        start_label = self.label_counter("START_WHILE_")
+        if_label = self.label_counter("IF_WHILE_")
+        end_label = self.label_counter("END_WHILE_")
 
-        # self.write_keyword({"while"})
-        # self.write_symbol({"("})
-        self.compile_expression()
-        # self.write_symbol({")"})
-        # self.write_symbol({"{"})
+        self.expect_keyword("while")
+        self.writer.write_label(start_label)
+        self.expect_symbol("(")
+        self.compile_expression()   
+        self.expect_symbol(")")
+        self.writer.write_if(if_label)
+        self.writer.write_goto(end_label)
+        self.writer.write_label(if_label)
+        self.expect_symbol("{")
         self.compile_statements()
-        # self._write_base_token("whileStatement", "e")
+        self.expect_symbol("}")
+        self.writer.write_goto(start_label)
+        self.writer.write_label(end_label)
 
     def compile_return(self) -> None:
         """Compiles a return statement."""
@@ -325,13 +334,12 @@ class CompilationEngine:
         label_if_false = self.label_counter("IF_FALSE_")
         label_if_end = self.label_counter("IF_END_")
 
-
         self.expect_keyword("if")
         self.expect_symbol("(")
         self.compile_expression()
         self.writer.write_if(label_if_true)
         self.writer.write_goto(label_if_false)
-        self.writer.write_label(label_if_true)     
+        self.writer.write_label(label_if_true)
         self.expect_symbol(")")
         self.expect_symbol("{")
         self.compile_statements()
@@ -350,7 +358,6 @@ class CompilationEngine:
             self.writer.write_label(label_if_end)
         else:
             self.writer.write_label(label_if_false)
-            
 
     def compile_expression(self) -> None:
         """Compiles an expression."""
