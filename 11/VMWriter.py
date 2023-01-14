@@ -21,7 +21,6 @@ class VMWriter:
         # output_stream.write("Hello world! \n")
 
         self.output_stream: TextIO = output_stream
-
     def write_push(self, segment: Constants.SegmentType, index: int) -> None:
         """Writes a VM push command.
 
@@ -54,28 +53,17 @@ class VMWriter:
             "pop {} {}\n".format(segment.lower(), index)
         )
 
-    def write_arithmetic(self, command: str) -> None:
+    def write_arithmetic(self, op:Constants.OpType) -> None:
         """Writes a VM arithmetic command.
 
         Args:
-            command (str): the command to write, can be "ADD", "SUB", "NEG",
+            op symbol (str): the command to write, can be "ADD", "SUB", "NEG",
             "EQ", "GT", "LT", "AND", "OR", "NOT", "SHIFTLEFT", "SHIFTRIGHT".
         """
         # check validity
-        if command.upper() not in {
-            "ADD",
-            "SUB",
-            "NEG",
-            "EQ",
-            "GT",
-            "LT",
-            "AND",
-            "OR",
-            "NOT",
-            "SHIFTLEFT",
-            "SHIFTRIGHT",
-        }:
-            self.write_error(command)
+        if op not in Constants.OP:
+            self.write_error(op)
+        command = Constants.opDict[op]
 
         self.output_stream.write(f'{command}\n')
 
