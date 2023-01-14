@@ -5,6 +5,7 @@ was written by Aviv Yaish. It is an extension to the specifications given
 as allowed by the Creative Common Attribution-NonCommercial-ShareAlike 3.0
 Unported [License](https://creativecommons.org/licenses/by-nc-sa/3.0/).
 """
+from collections import Counter
 from typing import (
     Callable,
     Literal,
@@ -42,7 +43,21 @@ class CompilationEngine:
         self.curr_type: str = ""
         self.curr_kind: Constants.CurrKindType
         self.curr_class: str = "Main"
-        self.curr_subroutineName: str = ""
+        self.curr_subroutine_name: str = ""
+        self.counter: Counter[str] = Counter()
+
+    def label_counter(self, label: str) -> str:
+        '''
+        return label as string with number 
+
+        Args:
+            label (str): label
+
+        Returns:
+            str: string name name of label with number
+        '''
+        self.counter[label] += 1
+        return label + str(self.counter[label])
 
     def compile_error(self) -> None:
         raise Exception(
@@ -118,10 +133,9 @@ class CompilationEngine:
 
         # update subroutine name
 
-        self.curr_subroutineName = (
+        self.curr_subroutine_name = (
             self.curr_class + "." + self.expect_identifier()
         )
-
         self.expect_symbol("(")
 
         argNuM = self.compile_parameter_list()
@@ -129,7 +143,7 @@ class CompilationEngine:
         # if isMethod:
         #     self.symble_table.define("this", self.curr_class + self.curr_subroutineName, "arg", 0)
 
-        self.writer.write_function(self.curr_subroutineName, argNuM)
+        self.writer.write_function(self.curr_subroutine_name, argNuM)
 
         self.expect_symbol(")")
 
@@ -239,7 +253,7 @@ class CompilationEngine:
         self.expect_keyword("do")
 
         self.compile_expression()
-        self.writer.write_pop(Constants.TEMP,0)
+        self.writer.write_pop(Constants.TEMP, 0)
         self.expect_symbol(";")
 
     def compile_let(self) -> None:
@@ -255,7 +269,9 @@ class CompilationEngine:
 
         varToAssignTo: str = self.expect_identifier()
 
-        segmentToAssignTo = self.symble_table.kind_of_as_segment(varToAssignTo)
+        segmentToAssignTo = self.symble_table.kind_of_as_segment(
+            varToAssignTo
+        )
         indexToAssignTo: int = self.symble_table.index_of(
             varToAssignTo
         )
@@ -304,21 +320,37 @@ class CompilationEngine:
 
     def compile_if(self) -> None:
         """Compiles a if statement, possibly with a trailing else clause."""
-        # self._write_base_token("ifStatement", "s")
-        # self.write_keyword({"if"})
-        # self.write_symbol({"("})
+        # if (expression) {statements}
+        label_if_true = self.label_counter("IF_TRUE_")
+        label_if_false = self.label_counter("IF_FALSE_")
+        label_if_end = self.label_counter("IF_END_")
+
+
+        self.expect_keyword("if")
+        self.expect_symbol("(")
         self.compile_expression()
-        # self.write_symbol({")"})
-        # self.write_symbol({"{"})
+        self.writer.write_if(label_if_true)
+        self.writer.write_goto(label_if_false)
+        self.writer.write_label(label_if_true)     
+        self.expect_symbol(")")
+        self.expect_symbol("{")
         self.compile_statements()
-        # self.write_symbol({"}"})
+        self.expect_symbol("}")
+
         if (
             self.tokenizer.token_type() == Constants.KEYWORD
             and self.tokenizer.keyword() == "else"
         ):
-            # self.write_keyword({"else"})
-            # self.write_symbol({"{"})
+            self.writer.write_goto(label_if_end)
+            self.writer.write_label(label_if_false)
+            self.expect_keyword("else")
+            self.expect_symbol("{")
             self.compile_statements()
+            self.expect_symbol("}")
+            self.writer.write_label(label_if_end)
+        else:
+            self.writer.write_label(label_if_false)
+            
 
     def compile_expression(self) -> None:
         """Compiles an expression."""
@@ -340,7 +372,7 @@ class CompilationEngine:
         if op == "*":
             self.writer.write_call("Math.multiply", 2)
         else:
-            self.writer.write_arithmetic(Constants.opDict[op])
+            self.writer.write_arithmetic(op)
 
     def compile_unary_op(self, op: Constants.UnaryOpType) -> None:
         """
@@ -349,7 +381,7 @@ class CompilationEngine:
         Args:
             op (UnaryOpType): operator to write
         """
-        self.writer.write_arithmetic(Constants.un_op_dict[op])
+        self.writer.write_arithmetic("un" + op)
 
     def compile_term(self) -> None:
         """Compiles a term.
@@ -460,27 +492,29 @@ class CompilationEngine:
 
     #  """helper methods:"""
 
-    def expect_type(
-        self, *additional_keywords
-    ) -> str:
-        """return the type, and advence the tokenizer 
+    def expect_type(self, *additional_keywords) -> str:
+        """return the type, and advence the tokenizer
         type can be either keyword or identifier
         we can add additional keyword (like void),
         additional_keywords must be form keyword"""
         # type is keyword int , boolean or char
         if self.tokenizer.token_type() == Constants.KEYWORD:
-            return self.expect_keyword(*additional_keywords,*Constants.BASIC_TYPES_WITH_VOID)
+            return self.expect_keyword(
+                *additional_keywords, *Constants.BASIC_TYPES_WITH_VOID
+            )
         # if type is a class
         elif self.tokenizer.token_type() == Constants.IDENTIFIER:
             return self.expect_identifier()
         else:
-            raise ValueError("expecte type (kyword or identifier) but is not")
+            raise ValueError(
+                "expecte type (kyword or identifier) but is not"
+            )
 
     def compile_subroutineCall(self):
 
         # update subroutine name
 
-        curr_subroutineName: str = self.expect_identifier()
+        call_subroutineName: str = self.expect_identifier()
 
         if (  # check if is method call
             self.tokenizer.token_type() == Constants.SYMBOL
@@ -489,12 +523,12 @@ class CompilationEngine:
             self.expect_symbol(".")
 
             # add the rest of the func name
-            curr_subroutineName += "." + self.expect_identifier()
+            call_subroutineName += "." + self.expect_identifier()
 
         self.expect_symbol("(")
         n_args: int = self.compile_expression_list()
 
-        self.writer.write_call(curr_subroutineName, n_args)
+        self.writer.write_call(call_subroutineName, n_args)
 
         self.expect_symbol(")")
 
