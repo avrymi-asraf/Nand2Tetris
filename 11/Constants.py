@@ -125,8 +125,8 @@ opDict = {
     "|": "OR",
     "&": "&",  # TODO
     "=": "EQ",
-    "<": "lt",
-    ">": "gt",
+    "&lt;": "lt",
+    "&gt;": "gt",
     "&amp;": "&amp;",  # TODO
     ">>": "SHIFTLEFT",
     "<<": "SHIFRIGHT",
