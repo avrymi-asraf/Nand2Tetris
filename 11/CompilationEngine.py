@@ -55,7 +55,6 @@ class CompilationEngine:
         """Compiles a complete class."""
 
         # self.symble_table.start_subroutine()
-
         self.expect_keyword("class")
 
         # update class_name
@@ -115,7 +114,7 @@ class CompilationEngine:
 
         # isMethod = (self.tokenizer.keyword() == "method")
 
-        type: str = self.expect_identifier()
+        type: str = self.expect_type()
 
         # update subroutine name
 
@@ -239,7 +238,8 @@ class CompilationEngine:
 
         self.expect_keyword("do")
 
-        self.compile_subroutineCall()
+        self.compile_expression()
+        self.writer.write_pop(Constants.TEMP,0)
         self.expect_symbol(";")
 
     def compile_let(self) -> None:
@@ -469,7 +469,7 @@ class CompilationEngine:
         additional_keywords must be form keyword"""
         # type is keyword int , boolean or char
         if self.tokenizer.token_type() == Constants.KEYWORD:
-            return self.expect_keyword(*additional_keywords,*Constants.BASIC_TYPES)
+            return self.expect_keyword(*additional_keywords,*Constants.BASIC_TYPES_WITH_VOID)
         # if type is a class
         elif self.tokenizer.token_type() == Constants.IDENTIFIER:
             return self.expect_identifier()
