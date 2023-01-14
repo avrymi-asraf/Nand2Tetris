@@ -26,7 +26,7 @@ class SymbolTable:
         # name, type, kind, ind
         self.subroutineStable: Constants.SymbolTableType = {}
         self.classStable: Constants.SymbolTableType = {}
-        kind_to_segment: dict[str, Constants.SegmentType] = {
+        self.kind_to_segment: dict[str, Constants.SegmentType] = {
             "argument": "argument",
             "var": "local",
             "static": "static",
@@ -39,7 +39,7 @@ class SymbolTable:
         """
         self.subroutineStable.clear()
 
-    def define(self, name: str, type: str, kind: str) -> None:
+    def define(self, name: str, type: str, kind: Constants.VarKindType) -> None:
         """Defines a new identifier of a given name, type and kind and assigns
         it a running index. "STATIC" and "FIELD" identifiers have a class scope,
         while "ARG" and "VAR" identifiers have a subroutine scope.
@@ -50,18 +50,20 @@ class SymbolTable:
             kind (str): the kind of the new identifier, can be:
             "STATIC", "FIELD", "ARG", "VAR".
         """
-        if kind in {"STATIC", "FIELD"}:
+        if kind in {Constants.STATIC, Constants.FIELD}:
             # class scope
-            self.classStable[name] = tuple(
-                type, kind, self.var_count(kind) + 1
+            self.classStable[name] = (
+                type, kind, self.var_count(kind) 
             )
 
             # type: ignore
-        elif kind in {"ARG", "VAR"}:
+        elif kind in {Constants.ARG, Constants.VAR}:
             # subroutine scope
-            self.subroutineStable[name] = tuple(
-                type, kind, self.var_count(kind) + 1
+            self.subroutineStable[name] = (
+                type, kind, self.var_count(kind) 
             )
+        else:
+            raise ValueError("unknown variable {}".format(name))
 
     def var_count(self, kind: str) -> int:
         """
@@ -74,17 +76,19 @@ class SymbolTable:
         """
         counter = 0
 
-        if kind in {"STATIC", "FIELD"}:
+        if kind in {Constants.STATIC, Constants.FIELD}:
             # class scope
             for val in self.classStable.values():
                 if val[KINDIND] == kind:
                     counter += 1
 
-        elif kind in {"ARG", "VAR"}:
+        elif kind in {Constants.ARG, Constants.VAR}:
             # subroutine scope
             for val in self.subroutineStable.values():
                 if val[KINDIND] == kind:
                     counter += 1
+        else:
+            raise ValueError("unknown kind {}".format(kind))
 
         return counter
 
@@ -103,7 +107,7 @@ class SymbolTable:
         if name in self.classStable:
             return self.classStable[name][KINDIND]
 
-        raise Exception("unknown variable {}".format(name))
+        raise ValueError("unknown variable {}".format(name))
 
     def type_of(self, name: str) -> Optional[str]:
         """
@@ -119,7 +123,7 @@ class SymbolTable:
         if name in self.classStable:
             return self.classStable[name][TYPEIND]
 
-        raise Exception("unknown variable {}".format(name))
+        raise ValueError("unknown variable {}".format(name))
 
     def index_of(self, name: str) -> int:
         """
@@ -135,7 +139,7 @@ class SymbolTable:
         if name in self.classStable:
             return self.classStable[name][INDEXIND]
 
-        raise Exception("unknown variable {}".format(name))
+        raise ValueError("unknown variable {}".format(name))
 
     def kind_of_as_segment(self, name: str) -> Constants.SegmentType:
         """
@@ -147,12 +151,12 @@ class SymbolTable:
             if the identifier is unknown in the current scope.
         """
         if name in self.subroutineStable:
-            return self.kind_of_as_segment(
+            return self.kind_to_segment[
                 self.subroutineStable[name][KINDIND]
-            )
+            ]
 
         if name in self.classStable:
-            return self.kind_of_as_segment(
+            return self.kind_to_segment[
                 self.classStable[name][KINDIND]
-            )
-        raise Exception("unknown variable {}".format(name))
+            ]
+        raise ValueError("unknown variable {}".format(name))
