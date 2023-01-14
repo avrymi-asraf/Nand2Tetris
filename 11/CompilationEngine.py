@@ -111,18 +111,14 @@ class CompilationEngine:
 
         self.symble_table.start_subroutine()
 
-        self.expect_keyword(
-            Constants.CONSTRUCTOR,
-            Constants.METHOD,
-            Constants.FUNCTION,
-        )
+        self.expect_keyword(*Constants.FUNCTIONS)
 
         # isMethod = (self.tokenizer.keyword() == "method")
 
-        self.expect_keyword(*Constants.BASIC_TYPES_WITH_VOID)
+        type: str = self.expect_identifier()
 
         # update subroutine name
-        
+
         self.curr_subroutineName = (
             self.curr_class + "." + self.expect_identifier()
         )
@@ -172,7 +168,7 @@ class CompilationEngine:
         # if the parameter list NOT empty
 
         self.curr_kind = Constants.VAR
-        self.curr_type = self.expect_keyword(Constants.BASIC_TYPES)
+        self.curr_type = self.expect_keyword(*Constants.BASIC_TYPES)
 
         # varName
         self._write_symbol_table()
@@ -197,11 +193,10 @@ class CompilationEngine:
     def compile_var_dec(self) -> None:
         """Compiles a var declaration."""
 
-        self.curr_kind = Constants.segmentsDict[Constants.VAR]  # type: ignore
+        self.curr_kind = Constants.segmentsDict[self.expect_keyword(Constants.VAR)]  # type: ignore
 
         # update current type
-        self.expect_and_update_type()
-        self.tokenizer.advance()
+        self.expect_type()
 
         # varName
         self._write_symbol_table()
@@ -256,15 +251,14 @@ class CompilationEngine:
         add
         pop local 0"""
         self.expect_keyword("let")
-        #name var
-        
+        # name var
 
-        varToAssignTo: str = self.tokenizer.identifier()
+        varToAssignTo: str = self.expect_identifier()
 
-        segmentToAssignTo = self.symble_table.kind_of(varToAssignTo)
-        indexToAssignTo = self.symble_table.index_of(varToAssignTo)
-
-        self.tokenizer.advance()
+        segmentToAssignTo = self.symble_table.kind_of_as_segment(varToAssignTo)
+        indexToAssignTo: int = self.symble_table.index_of(
+            varToAssignTo
+        )
 
         if (
             self.tokenizer.token_type() == Constants.SYMBOL
@@ -274,11 +268,10 @@ class CompilationEngine:
             self.compile_expression()  # TODO FIX
             self.expect_symbol("]")
         self.expect_symbol("=")
-        self.compile_expression()  # TODO FIX
+        self.compile_expression()
 
         # pop to var
         self.writer.write_pop(segmentToAssignTo, indexToAssignTo)  # type: ignore
-        self.tokenizer.advance()
 
         self.expect_symbol(";")
 
@@ -399,12 +392,11 @@ class CompilationEngine:
                     self.compile_subroutineCall()
             # varname
             else:
-                var_name: str = self.tokenizer.identifier()
+                var_name: str = self.expect_identifier()
                 self.writer.write_push(
                     self.symble_table.kind_of_as_segment(var_name),
                     self.symble_table.index_of(var_name),
                 )
-                self.tokenizer.advance()
         # (expression) | unaryOpTerm
         elif self.tokenizer.token_type() == Constants.SYMBOL:
             if self.tokenizer.symbol() == "(":  # (expression)
@@ -414,8 +406,7 @@ class CompilationEngine:
             elif (
                 self.tokenizer.symbol() in Constants.UNARY_OP
             ):  # unaryOpTerm
-                op: Constants.UnaryOpType = self.tokenizer.symbol()  # type: ignore
-                self.expect_symbol(*Constants.UNARY_OP)
+                op: Constants.UnaryOpType = self.expect_symbol(*Constants.UNARY_OP)  # type: ignore
                 self.compile_term()
                 self.compile_unary_op(op)
             else:
@@ -424,7 +415,9 @@ class CompilationEngine:
         elif (
             self.tokenizer.token_type() == Constants.KEYWORD
         ):  # TODO what about this
-            constant_keyword = self.expect_keyword(*Constants.KYWORD_CONSTANT)
+            constant_keyword = self.expect_keyword(
+                *Constants.KYWORDS_CONSTANT
+            )
             self.writer.write_push(
                 # for false and null it 0
                 Constants.CONST,
@@ -467,35 +460,28 @@ class CompilationEngine:
 
     #  """helper methods:"""
 
-    def expect_and_update_type(
+    def expect_type(
         self, additional_keywords: Set[str] = set()
     ) -> Optional[str]:
         """Write the type, and update the cuur_type type can be either keyword or identifier
         we can add additional keyword (like void),
         additional_keywords must be form keyword"""
-        # is type is keyword int , boolean or char
+        # type is keyword int , boolean or char
         types = Constants.BASIC_TYPES.union(additional_keywords)
         if (
             self.tokenizer.token_type() == Constants.KEYWORD
             and self.tokenizer.keyword() in types
         ):
-
-            self.curr_type = self.tokenizer.keyword()
-            return self.tokenizer.keyword()
-
+            self.curr_type = self.expect_keyword(*Constants.KEYWORDS)
         # if type is a class
-        elif self.tokenizer.token_type() == Constants.IDENTIFIER:
-
-            self.curr_type = self.tokenizer.identifier()
-            return self.tokenizer.identifier()
-
         else:
-            self.compile_error()
+            self.curr_type = self.expect_identifier()
+        return self.curr_kind
 
     def compile_subroutineCall(self):
 
         # update subroutine name
-        
+
         curr_subroutineName: str = self.expect_identifier()
 
         if (  # check if is method call
@@ -515,11 +501,11 @@ class CompilationEngine:
         self.expect_symbol(")")
 
     def _write_symbol_table(self) -> None:
-        '''
+        """
         write the current identifier to symbol table
         ane **advance** the tokenizer
-        '''
-        
+        """
+
         self.symble_table.define(
             self.expect_identifier(),
             self.curr_type,
@@ -549,12 +535,12 @@ class CompilationEngine:
         self.tokenizer.advance()
         return ret
 
-    def expect_symbol(self, *symbol: str)->Constants.SymbolsType:
+    def expect_symbol(self, *symbol: str) -> Constants.SymbolsType:
 
         if (self.tokenizer.token_type() != Constants.SYMBOL) or (
             self.tokenizer.symbol() not in symbol
         ):
             self.compile_error()
-        ret: Constants.SymbolsType = self.tokenizer.symbol()  # type: ignore 
+        ret: Constants.SymbolsType = self.tokenizer.symbol()  # type: ignore
         self.tokenizer.advance()
         return ret
