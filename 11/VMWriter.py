@@ -31,16 +31,7 @@ class VMWriter:
             index (int): the index to push to.
         """
         # check validity
-        if segment not in {
-            Constants.CONST,
-            Constants.ARG,
-            Constants.LOCAL,
-            Constants.STATIC,
-            Constants.THIS,
-            Constants.THAT,
-            Constants.POINTER,
-            Constants.TEMP,
-        }:
+        if segment not in Constants.SEGMENTS:
             self.write_error(segment + " " + str(index))
 
         self.output_stream.write(
@@ -56,16 +47,7 @@ class VMWriter:
             index (int): the index to pop from.
         """
         # check validity
-        if segment not in {
-            "CONST",
-            "ARG",
-            "LOCAL",
-            "STATIC",
-            "THIS",
-            "THAT",
-            "POINTER",
-            "TEMP",
-        }:
+        if segment not in Constants.SEGMENTS:
             self.write_error(segment + " " + str(index))
 
         self.output_stream.write(

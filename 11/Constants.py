@@ -13,16 +13,16 @@ from typing import (
 
 from sympy import Segment
 
-ARG: Literal["argunemt"] = "argunemt"
-VAR: Literal["var"] = "var"
-STATIC: Literal["static"] = "static"
-FIELD: Literal["FIELD"] = "FIELD"
-CONST: Literal["constant"] = "constant"
-LOCAL: Literal["local"] = "local"
-THIS: Literal["this"] = "this"
-THAT: Literal["that"] = "that"
-POINTER: Literal["pointer"] = "pointer"
-TEMP: Literal["temp"] = "temp"
+ARG = "argunemt"
+VAR = "var"
+STATIC = "static"
+FIELD = "field"
+CONST = "constant"
+LOCAL = "local"
+THIS = "this"
+THAT = "that"
+POINTER = "pointer"
+TEMP = "temp"
 
 
 CONSTRUCTOR = "constructor"
@@ -35,8 +35,9 @@ IDENTIFIER = "identifier"
 VARNAME = IDENTIFIER
 INTEGER_CONSTANT = "integerConstant"
 STRING_CONSTANT = "stringConstant"
-KYWORD_CONSTANT = {"true", "false", "null", "this"}
-SymbolsType = Literal["{",
+KYWORDS_CONSTANT = {"true", "false", "null", "this"}
+SymbolsType = Literal[
+    "{",
     "}",
     "(",
     ")",
@@ -57,7 +58,8 @@ SymbolsType = Literal["{",
     "~",
     "&lt;",
     "&gt;",
-    "&amp;",]
+    "&amp;",
+]
 SYMBOLS: set[SymbolsType] = {
     "{",
     "}",
@@ -112,10 +114,10 @@ OP: set[OpType] = {
 }
 UnaryOpType = Literal["-", "~", "#", "-"]
 UNARY_OP: set[UnaryOpType] = {"-", "~", "#"}  # TODO WHY - TWICE?
-un_op_dict: dict[UnaryOpType, str]={
-    "-":"neg",
-    "~":"not",
-    "#":"shiftright"
+un_op_dict: dict[UnaryOpType, str] = {
+    "-": "neg",
+    "~": "not",
+    "#": "shiftright",
 }
 STATEMENT_KEYWORDS = ["let", "if", "while", "do", "return"]
 VarKindType = Literal["static", "field", "arg", "var"]
@@ -165,6 +167,16 @@ KEYWORDS: set[KeywordType] = {
     "false",
     "null",
     "this",
+}
+FunctionType = Literal[
+    "method",
+    "function",
+    "constructor",
+]
+FUNCTIONS: set[FunctionType] = {
+    "method",
+    "function",
+    "constructor",
 }
 
 SegmentType = Literal[

@@ -1,15 +1,14 @@
 class Main {
-   static int a; // the singelton, a Pong game instance     
-   static int d; // the singelton, a Pong game instance     
-   field int b;
-   
-   function void main() {
-      var int c;
-      let a = 100;
-      let d = 100;
-      // let b = 200;
-      let c = 300;
-      return ;
+   field int x, y; // screen location of the square's top-left corner
+   field int size; // length of this square, in pixels
+
+   /** Constructs a new square with a given location and size. */
+   constructor Square new(int Ax, int Ay, int Asize) {
+      let x = Ax;
+      let y = Ay;
+      let size = Asize;
+      do do Output.printInt(133);
+      return this;
    }
 
 } 
