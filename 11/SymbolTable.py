@@ -26,12 +26,6 @@ class SymbolTable:
         # name, type, kind, ind
         self.subroutineStable: Constants.SymbolTableType = {}
         self.classStable: Constants.SymbolTableType = {}
-        self.kind_to_segment: dict[str, Constants.SegmentType] = {
-            "argument": "argument",
-            "var": "local",
-            "static": "static",
-            "field": "this",
-        }
 
     def start_subroutine(self) -> None:
         """Starts a new subroutine scope (i.e., resets the subroutine's
@@ -156,12 +150,12 @@ class SymbolTable:
             if the identifier is unknown in the current scope.
         """
         if name in self.subroutineStable:
-            return self.kind_to_segment[
+            return Constants.kind_to_segment[
                 self.subroutineStable[name][KINDIND]
             ]
 
         if name in self.classStable:
-            return self.kind_to_segment[
+            return Constants.kind_to_segment[
                 self.classStable[name][KINDIND]
             ]
         raise ValueError("unknown variable {}".format(name))

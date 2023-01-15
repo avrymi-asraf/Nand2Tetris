@@ -41,14 +41,14 @@ class CompilationEngine:
         self.symble_table: SymbolTable = SymbolTable()
 
         self.curr_type: str = ""
-        self.curr_kind: Constants.CurrKindType
+        self.curr_kind: Constants.VarKindType
         self.curr_class: str = "Main"
         self.curr_subroutine_name: str = ""
         self.counter: Counter[str] = Counter()
 
     def label_counter(self, label: str) -> str:
         """
-        return label as string with number
+        return label as string with number 
 
         Args:
             label (str): label
@@ -129,10 +129,9 @@ class CompilationEngine:
 
         # isMethod = (self.tokenizer.keyword() == "method")
 
-        type: str = self.expect_type()
+        self.expect_type()
 
         # update subroutine name
-
         self.curr_subroutine_name = (
             self.curr_class + "." + self.expect_identifier()
         )
@@ -140,36 +139,38 @@ class CompilationEngine:
 
         argNuM = self.compile_parameter_list()
 
-        # if isMethod:
-        #     self.symble_table.define("this", self.curr_class + self.curr_subroutineName, "arg", 0)
-
-        self.writer.write_function(self.curr_subroutine_name, argNuM)
-
         self.expect_symbol(")")
-
         # subroutine Body
-        self.compile_subroutine_body()
-
-    def compile_subroutine_body(self) -> None:
         self.expect_symbol("{")
         # var declartion
+        var_counter: int = 0
         while (
             self.tokenizer.token_type() == Constants.KEYWORD
             and self.tokenizer.keyword() == Constants.VAR
         ):
-            self.compile_var_dec()
+            var_counter += self.compile_var_dec()
 
+        #write furnction with number of locals variables
+        self.writer.write_function(
+            self.curr_subroutine_name, var_counter
+        )
+        self.compile_subroutine_body()
+
+    def compile_subroutine_body(self) -> None:
+        '''
+        compile the subroutine body
+        without var declarations that compile in compile_subroutine function
+        '''        
         self.compile_statements()
-
         self.expect_symbol("}")
 
-    # return the number of parameters
     def compile_parameter_list(self) -> int:
-        """Compiles a (possibly empty) parameter list, not including the
-        enclosing "()".
+        """
+            compile a parameter list
+            add arguments to symbol table and return number of arguments
         """
 
-        counter = 0
+        counter:int = 0
 
         # if the parameter list is empty
         if (
@@ -201,16 +202,20 @@ class CompilationEngine:
 
         return counter
 
-    def compile_var_dec(self) -> None:
-        """Compiles a var declaration."""
-
-        self.curr_kind = Constants.segmentsDict[self.expect_keyword(Constants.VAR)]  # type: ignore
+    def compile_var_dec(self) -> int:
+        """
+        Compiles a var declaration 
+        for seme type and return number variables
+         """
+        counter: int = 0
+        self.curr_kind = self.expect_keyword(Constants.VAR) #type: ignore keyword most be in VarKindType
 
         # update current type
         self.curr_type = self.expect_type()
 
         # varName
         self._write_symbol_table()
+        counter += 1
 
         while (
             self.tokenizer.token_type() == Constants.SYMBOL
@@ -218,8 +223,10 @@ class CompilationEngine:
         ):
             self.expect_symbol(",")
             self._write_symbol_table()
+            counter += 1
 
         self.expect_symbol(";")
+        return counter
 
     def compile_statements(self) -> None:
         """Compiles a sequence of statements, not including the enclosing
@@ -321,6 +328,7 @@ class CompilationEngine:
             self.compile_expression()
         else:
             self.expect_keyword("return")
+            self.writer.write_push(Constants.CONST, 0)
 
         self.writer.write_return()
         self.expect_symbol(";")
