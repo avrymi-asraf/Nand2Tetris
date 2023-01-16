@@ -5,9 +5,8 @@ was written by Aviv Yaish. It is an extension to the specifications given
 as allowed by the Creative Common Attribution-NonCommercial-ShareAlike 3.0
 Unported [License](https://creativecommons.org/licenses/by-nc-sa/3.0/).
 """
-from turtle import st
-import Constants
-from typing import Dict, Optional, Tuple
+from typing import Optional
+import cons
 
 TYPEIND = 0
 KINDIND = 1
@@ -15,7 +14,7 @@ INDEXIND = 2
 
 
 class SymbolTable:
-    """A symbol table that associates names with information needed for Jack
+    """A symbol table that associates names with information ne eded for Jack
     compilation: type, kind and running index. The symbol table has two nested
     scopes (class/subroutine).
     """
@@ -24,8 +23,8 @@ class SymbolTable:
         """Creates a new empty symbol table."""
 
         # name, type, kind, ind
-        self.subroutineStable: Constants.SymbolTableType = {}
-        self.classStable: Constants.SymbolTableType = {}
+        self.subroutineStable: cons.SymbolTableType = {}
+        self.classStable: cons.SymbolTableType = {}
 
     def start_subroutine(self) -> None:
         """Starts a new subroutine scope (i.e., resets the subroutine's
@@ -34,7 +33,7 @@ class SymbolTable:
         self.subroutineStable.clear()
 
     def define(
-        self, name: str, type: str, kind: Constants.VarKindType
+        self, name: str, var_type: str, kind: cons.VarKindType
     ) -> None:
         """Defines a new identifier of a given name, type and kind and assigns
         it a running index. "STATIC" and "FIELD" identifiers have a class scope,
@@ -46,19 +45,19 @@ class SymbolTable:
             kind (str): the kind of the new identifier, can be:
             "STATIC", "FIELD", "ARG", "VAR".
         """
-        if kind in {Constants.STATIC, Constants.FIELD}:
+        if kind in {cons.STATIC, cons.FIELD}:
             # class scope
             self.classStable[name] = (
-                type,
+                var_type,
                 kind,
                 self.var_count(kind),
             )
 
             # type: ignore
-        elif kind in {Constants.ARG, Constants.VAR}:
+        elif kind in {cons.ARG, cons.VAR}:
             # subroutine scope
             self.subroutineStable[name] = (
-                type,
+                var_type,
                 kind,
                 self.var_count(kind),
             )
@@ -76,13 +75,13 @@ class SymbolTable:
         """
         counter = 0
 
-        if kind in {Constants.STATIC, Constants.FIELD}:
+        if kind in {cons.STATIC, cons.FIELD}:
             # class scope
             for val in self.classStable.values():
                 if val[KINDIND] == kind:
                     counter += 1
 
-        elif kind in {Constants.ARG, Constants.VAR}:
+        elif kind in {cons.ARG, cons.VAR}:
             # subroutine scope
             for val in self.subroutineStable.values():
                 if val[KINDIND] == kind:
@@ -92,7 +91,7 @@ class SymbolTable:
 
         return counter
 
-    def kind_of(self, name: str) -> Optional[Constants.VarKindType]:
+    def kind_of(self, name: str) -> Optional[cons.VarKindType]:
         """
         Args:
             name (str): name of an identifier.
@@ -109,6 +108,7 @@ class SymbolTable:
 
         else:
             return None
+
     def type_of(self, name: str) -> str:
         """
         Args:
@@ -140,7 +140,7 @@ class SymbolTable:
 
         raise ValueError("unknown variable {}".format(name))
 
-    def kind_of_as_segment(self, name: str) -> Constants.SegmentType:
+    def kind_of_as_segment(self, name: str) -> cons.SegmentType:
         """
         Args:
             name (str): name of an identifier.
@@ -150,12 +150,48 @@ class SymbolTable:
             if the identifier is unknown in the current scope.
         """
         if name in self.subroutineStable:
-            return Constants.kind_to_segment[
+            return cons.kind_to_segment[
                 self.subroutineStable[name][KINDIND]
             ]
 
         if name in self.classStable:
-            return Constants.kind_to_segment[
+            return cons.kind_to_segment[
                 self.classStable[name][KINDIND]
             ]
         raise ValueError("unknown variable {}".format(name))
+
+    def num_of_kind(self, kind: cons.VarKindType) -> int:
+        '''
+        return the number of variables in the given kind
+
+        Args:
+            kind (cons.VarKindType): kind of the variable
+
+        Raises:
+            ValueError: if the kind is not known
+
+        Returns:
+            int: number of variables in the given kind
+        '''
+        #TODO: what if symbol table is empty?
+        if kind in {cons.STATIC, cons.FIELD}:
+            # class scope
+            return len(
+                list(
+                    filter(
+                        lambda i: i[KINDIND] == kind,
+                        self.classStable.items(),
+                    )
+                )
+            )
+        elif kind in {cons.ARG, cons.VAR}:
+            # subroutine scope
+            return len(
+                list(
+                    filter(
+                        lambda i: i[KINDIND] == kind,
+                        self.subroutineStable.items(),
+                    )
+                )
+            )
+        raise ValueError("{} this is not a kind".format(kind))
