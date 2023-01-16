@@ -6,7 +6,7 @@ as allowed by the Creative Common Attribution-NonCommercial-ShareAlike 3.0
 Unported [License](https://creativecommons.org/licenses/by-nc-sa/3.0/).
 """
 from typing import TextIO
-import Constants
+import cons
 
 
 class VMWriter:
@@ -21,7 +21,7 @@ class VMWriter:
         # output_stream.write("Hello world! \n")
 
         self.output_stream: TextIO = output_stream
-    def write_push(self, segment: Constants.SegmentType, index: int) -> None:
+    def write_push(self, segment: cons.SegmentType, index: int) -> None:
         """Writes a VM push command.
 
         Args:
@@ -30,14 +30,14 @@ class VMWriter:
             index (int): the index to push to.
         """
         # check validity
-        if segment not in Constants.SEGMENTS:
+        if segment not in cons.SEGMENTS:
             self.write_error(segment + " " + str(index))
 
         self.output_stream.write(
             "push {} {}\n".format(segment.lower(), index)
         )
 
-    def write_pop(self, segment: Constants.SegmentType, index: int) -> None:
+    def write_pop(self, segment: cons.SegmentType, index: int) -> None:
         """Writes a VM pop command.
 
         Args:
@@ -46,14 +46,14 @@ class VMWriter:
             index (int): the index to pop from.
         """
         # check validity
-        if segment not in Constants.SEGMENTS:
+        if segment not in cons.SEGMENTS:
             self.write_error(segment + " " + str(index))
 
         self.output_stream.write(
-            "pop {} {}\n".format(segment.lower(), index)
+            "pop {} {}\n".format(segment, index)
         )
 
-    def write_arithmetic(self, op:Constants.OpType) -> None:
+    def write_arithmetic(self, op:cons.OpType) -> None:
         """Writes a VM arithmetic command.
 
         Args:
@@ -61,9 +61,9 @@ class VMWriter:
             "EQ", "GT", "LT", "AND", "OR", "NOT", "SHIFTLEFT", "SHIFTRIGHT".
         """
         # check validity
-        if op not in Constants.OP:
+        if op not in cons.OP:
             self.write_error(op)
-        command = Constants.opDict[op]
+        command = cons.opDict[op]
 
         self.output_stream.write(f'{command}\n')
 
@@ -126,10 +126,10 @@ class VMWriter:
         Args:
             val (str): string to write
         '''        
-        self.write_push(Constants.CONST,len(val))
+        self.write_push(cons.CONST,len(val))
         self.write_call("String.new",1)
         for char in val:
-            self.write_push(Constants.CONST,ord(char))
+            self.write_push(cons.CONST,ord(char))
             self.write_call("String.appendChar",2)
 
 

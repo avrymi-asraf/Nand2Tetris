@@ -15,7 +15,7 @@ from typing import (
     Dict,
     Union,
 )
-import Constants
+import cons
 from regex import RegxPatterns
 
 KINDS = (
@@ -59,8 +59,8 @@ class JackTokenizer:
             input_stream (typing.TextIO): input stream.
         """
         self.tokens_text: str
-        self.tokens_list: List[Constants.TokenType]
-        self.curr_token: Constants.TokenType
+        self.tokens_list: List[cons.TokenType]
+        self.curr_token: cons.TokenType
 
         self.tokens_text = input_stream.read()
         # remove comments
@@ -119,7 +119,7 @@ class JackTokenizer:
 
         return self.curr_token[0]
 
-    def keyword(self) -> Constants.KeywordType:
+    def keyword(self) -> cons.KeywordType:
         """
         Returns:
             str: the keyword which is the current token.
@@ -191,7 +191,7 @@ class JackTokenizer:
 
     def iter_tokens(
         self,
-    ) -> Generator[Constants.TokenType, None, None]:
+    ) -> Generator[cons.TokenType, None, None]:
         """Iterate over tokens
         Returns:(token_type, token_value)
         """
@@ -219,11 +219,9 @@ class JackTokenizer:
     def next_token_val(self) -> str:
         if self.has_more_tokens():
             return self.tokens_list[0][1]
-        else:
-            raise Exception("next_token_val not exists")
+        raise Exception("next_token_val not exists")
 
-    def next_token_type(self) -> Constants.TokenKindType:
+    def next_token_type(self) -> cons.TokenKindType:
         if self.has_more_tokens():
             return self.tokens_list[0][0]
-        else:
-            raise Exception("next_token_type not exists")
+        raise Exception("next_token_type not exists")

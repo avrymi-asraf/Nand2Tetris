@@ -10,7 +10,6 @@ import sys
 import typing
 from CompilationEngine import CompilationEngine
 from JackTokenizer import JackTokenizer
-from SymbolTable import SymbolTable
 from VMWriter import VMWriter
 
 def compile_file(
@@ -30,7 +29,6 @@ def compile_file(
     engine: CompilationEngine = CompilationEngine(tokenizer, vmWriter)
     while engine.tokenizer.has_more_tokens():
         engine.compile_class()
-    
 
 
 if "__main__" == __name__:
@@ -56,7 +54,6 @@ if "__main__" == __name__:
         with open(input_path, 'r') as input_file, \
                 open(output_path, 'w') as output_file:
             compile_file(input_file, output_file)
-
 
 
 #TODO check about static wich for all program, field creted for each object
