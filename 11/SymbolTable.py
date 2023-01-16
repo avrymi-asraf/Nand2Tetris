@@ -180,7 +180,7 @@ class SymbolTable:
                 list(
                     filter(
                         lambda i: i[KINDIND] == kind,
-                        self.classStable.items(),
+                        self.classStable.values(),
                     )
                 )
             )
@@ -190,7 +190,7 @@ class SymbolTable:
                 list(
                     filter(
                         lambda i: i[KINDIND] == kind,
-                        self.subroutineStable.items(),
+                        self.subroutineStable.values(),
                     )
                 )
             )
