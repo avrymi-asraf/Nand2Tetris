@@ -115,7 +115,7 @@ class CompilationEngine:
 
         self.symble_table.start_subroutine()
 
-        func_type:cons.FunctionType = self.expect_keyword(*cons.FUNCTIONS)  # type: ignore , keyword most be function
+        func_type: cons.FunctionType = self.expect_keyword(*cons.FUNCTIONS)  # type: ignore , keyword most be function
 
         if func_type == cons.METHOD:
             self.symble_table.define(
@@ -386,10 +386,7 @@ class CompilationEngine:
             self.compile_op(op)
 
     def compile_op(self, op: cons.OpType) -> None:
-        if op == "*":
-            self.writer.write_call("Math.multiply", 2)
-        else:
-            self.writer.write_arithmetic(op)
+        self.writer.write_arithmetic(op)
 
     def compile_unary_op(self, op: cons.UnaryOpType) -> None:
         """
@@ -467,8 +464,8 @@ class CompilationEngine:
             constant_keyword = self.expect_keyword(
                 *cons.KYWORDS_CONSTANT
             )
-            if constant_keyword =="this":
-                self.writer.write_push(cons.POINTER,0)
+            if constant_keyword == "this":
+                self.writer.write_push(cons.POINTER, 0)
                 return
             self.writer.write_push(
                 # for false and null it 0
@@ -566,10 +563,10 @@ class CompilationEngine:
                 func_name = base_name + "." + self.expect_identifier()
         else:
             # subroutineCall()
-            func_name = base_name
+            func_name = f"{self.curr_class}.{base_name}"
             n_args += 1
             self.writer.write_push(
-                cons.THIS,
+                cons.POINTER,
                 0,
             )
         self.expect_symbol("(")
