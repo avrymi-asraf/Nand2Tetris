@@ -14,6 +14,13 @@
 class Array {
     /** Constructs a new Array of the given size. */
     function Array new(int size) {
+        if (size <= 0)
+        {
+            call Sys.error(1) //TODO errorCode
+        }
+        
+        let arr = Memory.alloc(size);
+        return arr;
     }
 
     /** Disposes this array. */

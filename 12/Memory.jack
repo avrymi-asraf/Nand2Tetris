@@ -11,6 +11,13 @@
  * consists of 32,768 words, each holding a 16-bit binary number.
  */ 
 class Memory {
+
+
+    field Array ram;
+    field int MAXADD = //TODO
+
+
+
     /** Initializes the class. */
     function void init() {
         // Pseudocode:
@@ -21,10 +28,24 @@ class Memory {
 
     /** Returns the RAM value at the given address. */
     function int peek(int address) {
+        if (address < 0) | (address > Memory.MAXADD)
+        {
+            call Sys.error(1) //TODO FIND errorCode
+        }
+        let ram = 0;
+        return ram[address];
     }
 
     /** Sets the RAM value at the given address to the given value. */
     function void poke(int address, int value) {
+        if (address < 0) | (address > Memory.MAXADD)
+        {
+            call Sys.error(1) //TODO FIND errorCode
+        }
+
+        let ram = 0;
+        ram[address] = value;
+        return;
     }
 
     /** Finds an available RAM block of the given size and returns
