@@ -110,10 +110,6 @@ class String {
         // 4.   let val = (val*10) + d
         // 5. return val
 
-        var int val;
-        var int i;
-        var int d;
-
         let val = 0;
         let i = 0;
         while (i < len)
@@ -144,9 +140,6 @@ class String {
 
     /** Helper : Returns string represent int. */
     function String int2String(String s, int val) {
-
-        var int lastDigit;
-        var char c;
 
         let lastDigit = val - ((val / 10)*10); //val % 10
 

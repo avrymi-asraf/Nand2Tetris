@@ -21,9 +21,18 @@ class Output {
     // Character map for displaying characters
     static Array charMaps; 
 
+    int cursorLocation;
+
     /** Initializes the screen, and locates the cursor at the screen's top-left. */
     function void init() {
+
+        //init cursor Location to the left topmost corner 
+        let cursorLocation = Array.new(2);
+        let cursorLocation[0] = 0;
+        let cursorLocation[1] = 0;
     }
+
+
 
     // Initializes the character map array
     function void initMap() {
@@ -185,6 +194,11 @@ class Output {
     function void printChar(char c) {
         // Your implementation should be as efficient as possible.
         // For example, you can draw multiple pixels at once, for each row.
+
+        if (c = new lin)
+        {
+            do println;
+        }
     }
 
     /** displays the given string starting at the cursor location,
@@ -203,5 +217,10 @@ class Output {
 
     /** Moves the cursor one column back. */
     function void backSpace() {
+    }
+
+    /** Helper Method */
+    method Array getCursorLocation() {
+        return cursorLocation;
     }
 }
