@@ -168,19 +168,19 @@ OP: Set[OpType] = {
 opDict = {
     "+": "add",
     "-": "sub",
-    "/": "call Math.divide 2",  # TODO
+    "/": "call Math.divide 2", 
     "|": "or",
-    "&": "&",  # TODO
     "=": "eq",
     "&lt;": "lt",
     "&gt;": "gt",
-    "&amp;": "and",  # TODO
+    "&amp;": "and", 
     ">>": "SHIFTLEFT",
     "<<": "SHIFRIGHT",
     "un-": "neg",
     "un~": "not",
     "un#": "shiftright",
     "*": "call Math.multiply 2",
+
 }
 
 UnaryOpType = Literal["-", "~", "#", "-"]

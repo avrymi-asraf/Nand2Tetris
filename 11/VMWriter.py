@@ -21,7 +21,10 @@ class VMWriter:
         # output_stream.write("Hello world! \n")
 
         self.output_stream: TextIO = output_stream
-    def write_push(self, segment: cons.SegmentType, index: int) -> None:
+
+    def write_push(
+        self, segment: cons.SegmentType, index: int
+    ) -> None:
         """Writes a VM push command.
 
         Args:
@@ -37,7 +40,9 @@ class VMWriter:
             "push {} {}\n".format(segment.lower(), index)
         )
 
-    def write_pop(self, segment: cons.SegmentType, index: int) -> None:
+    def write_pop(
+        self, segment: cons.SegmentType, index: int
+    ) -> None:
         """Writes a VM pop command.
 
         Args:
@@ -49,11 +54,9 @@ class VMWriter:
         if segment not in cons.SEGMENTS:
             self.write_error(segment + " " + str(index))
 
-        self.output_stream.write(
-            "pop {} {}\n".format(segment, index)
-        )
+        self.output_stream.write("pop {} {}\n".format(segment, index))
 
-    def write_arithmetic(self, op:cons.OpType) -> None:
+    def write_arithmetic(self, op: cons.OpType) -> None:
         """Writes a VM arithmetic command.
 
         Args:
@@ -65,7 +68,7 @@ class VMWriter:
             self.write_error(op)
         command = cons.opDict[op]
 
-        self.output_stream.write(f'{command}\n')
+        self.output_stream.write(f"{command}\n")
 
     def write_label(self, label: str) -> None:
         """Writes a VM label command.
@@ -120,16 +123,14 @@ class VMWriter:
         raise Exception("can't write this expression: {}".format(val))
 
     def write_push_str(self, val: str) -> None:
-        '''
-        write string object 
+        """
+        write string object
 
         Args:
             val (str): string to write
-        '''        
-        self.write_push(cons.CONST,len(val))
-        self.write_call("String.new",1)
+        """
+        self.write_push(cons.CONST, len(val))
+        self.write_call("String.new", 1)
         for char in val:
-            self.write_push(cons.CONST,ord(char))
-            self.write_call("String.appendChar",2)
-
-
+            self.write_push(cons.CONST, ord(char))
+            self.write_call("String.appendChar", 2)
