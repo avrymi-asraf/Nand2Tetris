@@ -6,6 +6,7 @@ as allowed by the Creative Common Attribution-NonCommercial-ShareAlike 3.0
 Unported [License](https://creativecommons.org/licenses/by-nc-sa/3.0/).
 """
 from collections import Counter
+from re import A
 from JackTokenizer import JackTokenizer
 from SymbolTable import SymbolTable
 from VMWriter import VMWriter
@@ -17,9 +18,7 @@ class CompilationEngine:
     output stream.
     """
 
-    def __init__(
-        self, tokenizer: JackTokenizer, vmWriter: VMWriter
-    ) -> None:
+    def __init__(self, tokenizer: JackTokenizer, vmWriter: VMWriter) -> None:
         """
         Creates a new compilation engine with the given input and output. The
         next routine called must be compileClass()
@@ -67,8 +66,7 @@ class CompilationEngine:
         self.expect_symbol("{")
         # while thereis class variable, static or field
         while (self.tokenizer.token_type() == cons.KEYWORD) and (
-            self.tokenizer.keyword()
-            in {cons.STATIC.lower(), cons.FIELD.lower()}
+            self.tokenizer.keyword() in {cons.STATIC.lower(), cons.FIELD.lower()}
         ):
             self.compile_class_var_dec()
         # while there is class functions, like constructors, methods, of functions
@@ -115,19 +113,15 @@ class CompilationEngine:
 
         self.symble_table.start_subroutine()
 
-        func_type:cons.FunctionType = self.expect_keyword(*cons.FUNCTIONS)  # type: ignore , keyword most be function
+        func_type: cons.FunctionType = self.expect_keyword(*cons.FUNCTIONS)  # type: ignore , keyword most be function
 
         if func_type == cons.METHOD:
-            self.symble_table.define(
-                self.curr_class, cons.THIS, cons.ARG
-            )
+            self.symble_table.define(self.curr_class, cons.THIS, cons.ARG)
         # type of function
         self.expect_type()
 
         # update subroutine name
-        self.curr_subroutine_name = (
-            self.curr_class + "." + self.expect_identifier()
-        )
+        self.curr_subroutine_name = self.curr_class + "." + self.expect_identifier()
         self.expect_symbol("(")
 
         argNuM = self.compile_parameter_list()
@@ -144,14 +138,10 @@ class CompilationEngine:
             var_counter += self.compile_var_dec()
 
         # write furnction with number of locals variables
-        self.writer.write_function(
-            self.curr_subroutine_name, var_counter
-        )
+        self.writer.write_function(self.curr_subroutine_name, var_counter)
         if func_type == cons.METHOD:
             self.writer.write_push(cons.kind_to_segment[cons.ARG], 0)
-            self.writer.write_pop(
-                cons.kind_to_segment[cons.POINTER], 0
-            )
+            self.writer.write_pop(cons.kind_to_segment[cons.POINTER], 0)
         elif func_type == cons.CONSTRUCTOR:
             self.writer.write_push(
                 cons.CONST, self.symble_table.num_of_kind(cons.FIELD)
@@ -278,25 +268,43 @@ class CompilationEngine:
 
         varToAssignTo: str = self.expect_identifier()
 
-        segmentToAssignTo = self.symble_table.kind_of_as_segment(
+        segmentToAssignTo: cons.SegmentType = self.symble_table.kind_of_as_segment(
             varToAssignTo
         )
-        indexToAssignTo: int = self.symble_table.index_of(
-            varToAssignTo
-        )
+        indexToAssignTo: int = self.symble_table.index_of(varToAssignTo)
 
         if (
             self.tokenizer.token_type() == cons.SYMBOL
             and self.tokenizer.symbol() == "["
         ):
-            self.expect_symbol("[")
-            self.compile_expression()  # TODO FIX
-            self.expect_symbol("]")
-        self.expect_symbol("=")
-        self.compile_expression()
+            arr_segment: cons.SegmentType = segmentToAssignTo
+            arr_index: int = indexToAssignTo
 
-        # pop to var
-        self.writer.write_pop(segmentToAssignTo, indexToAssignTo)  # type: ignore
+            # arr[i] = expression
+            # 1.
+            # 2. push arr
+            # 3. compile_expression
+            # 4. add
+            # 5. compile_expression
+            # 6. compile_expression (to put in arr)
+            # 8. pop to temp
+            # 9.
+            self.expect_symbol("[")
+            self.compile_expression()
+            self.expect_symbol("]")
+            self.writer.write_push(arr_segment, arr_index)
+            self.writer.write_arithmetic("+")
+            self.expect_symbol("=")
+            self.compile_expression()
+            self.writer.write_pop(cons.TEMP, 0)
+            self.writer.write_pop(cons.POINTER, 1)
+            self.writer.write_push(cons.TEMP, 0)
+            self.writer.write_pop(cons.THAT, 0)
+        else:
+            self.expect_symbol("=")
+            self.compile_expression()
+            # pop to var
+            self.writer.write_pop(segmentToAssignTo, indexToAssignTo)  # type: ignore
 
         self.expect_symbol(";")
 
@@ -386,10 +394,7 @@ class CompilationEngine:
             self.compile_op(op)
 
     def compile_op(self, op: cons.OpType) -> None:
-        if op == "*":
-            self.writer.write_call("Math.multiply", 2)
-        else:
-            self.writer.write_arithmetic(op)
+        self.writer.write_arithmetic(op)
 
     def compile_unary_op(self, op: cons.UnaryOpType) -> None:
         """
@@ -412,9 +417,7 @@ class CompilationEngine:
         """
         # integeConstant
         if self.tokenizer.token_type() == cons.INTEGER_CONSTANT:
-            self.writer.write_push(
-                cons.CONST, int(self.tokenizer.int_val())
-            )
+            self.writer.write_push(cons.CONST, int(self.tokenizer.int_val()))
             self.tokenizer.advance()
         # stringConstant
         elif self.tokenizer.token_type() == cons.STRING_CONSTANT:
@@ -430,12 +433,17 @@ class CompilationEngine:
                 # varname[expression]
                 if self.tokenizer.next_token_val() == "[":
                     # TODO:add method to write array
-                    varName: str = self.tokenizer.identifier()
-                    self.tokenizer.advance()
+                    arr_naem = self.expect_identifier()
+                    arr_segment = self.symble_table.kind_of_as_segment(arr_naem)
+                    arr_index = self.symble_table.index_of(arr_naem)
 
                     self.expect_symbol("[")
                     self.compile_expression()
                     self.expect_symbol("]")
+                    self.writer.write_push(arr_segment, arr_index)
+                    self.writer.write_arithmetic("+")
+                    self.writer.write_pop(cons.POINTER, 1)
+                    self.writer.write_push(cons.THAT, 0)
                 # subroutineCall
                 elif self.tokenizer.next_token_val() in "(.":
                     self.compile_subroutineCall()
@@ -452,23 +460,17 @@ class CompilationEngine:
                 self.expect_symbol("(")
                 self.compile_expression()
                 self.expect_symbol(")")
-            elif (
-                self.tokenizer.symbol() in cons.UNARY_OP
-            ):  # unaryOpTerm
+            elif self.tokenizer.symbol() in cons.UNARY_OP:  # unaryOpTerm
                 op: cons.UnaryOpType = self.expect_symbol(*cons.UNARY_OP)  # type: ignore
                 self.compile_term()
                 self.compile_unary_op(op)
             else:
                 self.compile_error()
         # KeywordConstant
-        elif (
-            self.tokenizer.token_type() == cons.KEYWORD
-        ):  # TODO what about this
-            constant_keyword = self.expect_keyword(
-                *cons.KYWORDS_CONSTANT
-            )
-            if constant_keyword =="this":
-                self.writer.write_push(cons.POINTER,0)
+        elif self.tokenizer.token_type() == cons.KEYWORD:
+            constant_keyword = self.expect_keyword(*cons.KYWORDS_CONSTANT)  # type: ignore
+            if constant_keyword == "this":
+                self.writer.write_push(cons.POINTER, 0)
                 return
             self.writer.write_push(
                 # for false and null it 0
@@ -512,7 +514,7 @@ class CompilationEngine:
 
     #  """helper methods:"""
 
-    def expect_type(self, *additional_keywords) -> str:
+    def expect_type(self, *additional_keywords: str) -> str:
         """return the type, and advence the tokenizer
         type can be either keyword or identifier
         we can add additional keyword (like void),
@@ -526,9 +528,7 @@ class CompilationEngine:
         elif self.tokenizer.token_type() == cons.IDENTIFIER:
             return self.expect_identifier()
         else:
-            raise ValueError(
-                "expecte type (kyword or identifier) but is not"
-            )
+            raise ValueError("expecte type (kyword or identifier) but is not")
 
     def compile_subroutineCall(self):
 
@@ -566,10 +566,10 @@ class CompilationEngine:
                 func_name = base_name + "." + self.expect_identifier()
         else:
             # subroutineCall()
-            func_name = base_name
+            func_name = f"{self.curr_class}.{base_name}"
             n_args += 1
             self.writer.write_push(
-                cons.THIS,
+                cons.POINTER,
                 0,
             )
         self.expect_symbol("(")
@@ -591,7 +591,7 @@ class CompilationEngine:
             self.curr_kind,
         )
 
-    def expect_keyword(self, *keyword) -> cons.KeywordType:
+    def expect_keyword(self, *keyword: str) -> cons.KeywordType:
         """
         check that if current token is keyword
         **advance** token and return the keyword
