@@ -9,12 +9,40 @@
  * Note: Jack compilers implement multiplication and division using OS method calls.
  */
 class Math {
+
+    static int bitArr = new Array(16);
+
         /** Initializes the library. */
         function void init() {
+            call initBitArr();
+            return;
+        }
+
+        function void initBitArr()
+        {
+            let i = 0;
+            let sum = 1;
+            while (i < 16)
+            {
+                let bitArr[i] = sum;
+                let sum = sum+sum; //sum * 2
+
+                let i = i+1;
+            }
+            return;
         }
 
         /** Returns the absolute value of x. */
         function int abs(int x) {
+            if (x >= 0)
+            {
+                return x;
+            }
+            else
+            {
+                return Math.multiply(-1);
+            }
+            return;
         }
 
         /** 
@@ -32,6 +60,53 @@ class Math {
             // 5.      let sum = sum + shiftedx
             // 6.   let shiftedx = 2*shiftedx
             // 7. return sum
+
+            let sum = 0;
+            let shiftedx = x;
+            let ind = 0;
+            let n = 16; //TODO
+
+            while (ind < n)
+            {
+                if (Math.bit(y, i) = true)
+                {
+                    let sum = sum + shiftedx;
+                }
+                let shiftedx = shiftedx + shiftedx ;
+
+                let ind = ind +1;
+            }
+            return sum;
+        }
+
+        function boolean bit(int x, int i) {
+
+            if (i < 0) | (i > 15)
+            {
+                call Sys.error(1) //TODO FIND ERROR errorCode
+            }
+
+            let temp = x;
+            let j = 16;
+
+            while (j > i)
+            {
+                if ~(Math.bitArr[j] > temp)
+                {
+                    let temp = temp - Math.bitArr[j];
+                }
+                let j = j-1;
+            }
+            //now i = j
+            if (Math.bitArr[i] > temp)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+            return;
         }
 
         /** 
@@ -51,6 +126,20 @@ class Math {
             // 4.   return 2*q
             // 5. else
             // 6.   return 2*q + 1
+
+            if (y > x) | (y < 0)
+            {return 0;}
+
+            let q = divide(x, y+y);
+            if ((x - 2*q*y) < y)
+            {
+                return q+q;
+            }
+            else
+            {
+                return q+q; + 1
+            } 
+            return;
         }
 
         /** Returns the integer part of the square root of x. */
@@ -61,13 +150,55 @@ class Math {
             // 2. for j = (n/2 - 1) ... 0 do
             // 3.   if ((y + 2**j)**2 <= x) then let y = y + 2**j
             // 4. return y
+
+            let y = 0
+            let yMult2 = 0;
+            let j = 7; // 16/2 -1
+            while (j > -1)
+            {
+                if (y + Math.bitArr[j])**2 <= x) & (y + Math.bitArr[j])**2 > 0 )
+                {
+                    let y = y + Math.bitArr[j];
+                    let yMult2 = yMult2 + Math.bitArr[j];
+                }
+                let j = j-1;
+            }
+            return y;
         }
+
 
         /** Returns the greater number. */
         function int max(int a, int b) {
+            if (a = b)
+            {
+                return a;
+            }
+            if (a > b)
+            {
+                return a;
+            }
+            if (b > a)
+            {
+                return b;
+            }
+            return;
         }
 
         /** Returns the smaller number. */
         function int min(int a, int b) {
+            if (a = b)
+            {
+                return a;
+            }
+
+            if (a < b)
+            {
+                return a;
+            }
+            if (b < a)
+            {
+                return b;
+            }
+            return;
         }
 }
