@@ -8,6 +8,9 @@ __pycache__/
 *.asm
 *.out
 *.xml
+*.vm
+*.out
+
 
 # C extensions
 *.so
