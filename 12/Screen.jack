@@ -10,18 +10,39 @@
  * of 512 pixels each (indexed 0..511, left to right). The top left pixel on 
  * the screen is indexed (0,0).
  */
+
 class Screen {
+
+    static boolean color;
+    static Array screen;
+    static int screenEnd;
+    static int maxRow; 
+    static int maxCol; 
+
         /** Initializes the Screen. */
         function void init() {
+            let color = false;
+            let screen = 16384;
+            let screenEnd = 24576;
+            let maxRow = 256;
+            let maxCol = 512;
+            
+
+            return;
         }
 
         /** Erases the entire screen. */
         function void clearScreen() {
+            do Screen.setColor(false);
+            do Screen.drawRectangle(0, 0, maxRow, maxCol);
+            return;
         }
 
         /** Sets the current color, to be used for all subsequent drawXXX commands.
          *    Black is represented by true, white by false. */
         function void setColor(boolean b) {
+            let color = b;
+            return;
         }
 
         /** Draws the (x,y) pixel, using the current color. */
@@ -39,6 +60,28 @@ class Screen {
             //    to the pixel to the current color.
             // 4. Use Memory.poke to write the modified 16-bit value to the RAM
             // address.
+
+            var int address, xMod16, val;
+
+            if ( (x < 0) | (x > maxRow) | (y < 0) | (y > maxCol) )
+            {
+                do Sys.error(7);
+                return;
+            }
+
+            // Compute the RAM address where the (x,y) pixel is represented: 16384 + (32*y) + (x/16).
+            let xMod16 = (x & 15);
+            let address = screen + Screen.Mult32(y) + xMod16;
+
+            // Use Memory.peek to get the 16-bit value of this address
+            let val = Memory.peek(address);
+
+            //Use some bitwise operation to set (only) the bit that corresponds to the pixel to the current color.
+            
+            // 4. Use Memory.poke to write the modified 16-bit value to the RAM
+            // address.
+
+
         }
 
         /** Draws a line from pixel (x1,y1) to pixel (x2,y2), using the current color. */
@@ -71,5 +114,20 @@ class Screen {
             // 1. for (dy = -r ... r)
             // 2.   let halfWidth = sqrt(r*r - dy*dy)
             // 3.   do drawLine(x-halfWidth, y+dy, x+halfWidth, y+dy)
+        }
+
+        function int Mult32(int y)
+        {
+            var int sum, i;
+            let sum = y;
+            let i = 0;
+
+            while(i < 5)
+            {
+                let sum = sum + sum;
+                let i = i+1;
+            }
+
+            return sum;
         }
 }
