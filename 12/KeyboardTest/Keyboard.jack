@@ -9,8 +9,11 @@
  */
 class Keyboard {
 
+    static int keyboardAddress;
+
         /** Initializes the keyboard. */
         function void init() {
+            let keyboardAddress = 24576;
             return;
         } 
 
@@ -37,7 +40,7 @@ class Keyboard {
 
         function char keyPressed() {
             // Uses Memory.peek
-            return Memory.peek(24576);
+            return Memory.peek(keyboardAddress);
         }
 
         /**								
@@ -57,16 +60,16 @@ class Keyboard {
             // 6. advance the cursor
             // 7. return c
             
-            var char c;
-            var char key;
+            var char c, key;
             let key = Keyboard.keyPressed();
 
             while ( key = 0) {
-                key = Keyboard.keyPressed();
+                let key = Keyboard.keyPressed();
             }
-            let c, key = Keyboard.keyPressed();
+            let c = key;
+            let key = Keyboard.keyPressed();
             while (~( key = 0)) {
-                key = Keyboard.keyPressed();
+                let key = Keyboard.keyPressed();
             }
             
             do Output.printChar(c);
@@ -101,30 +104,26 @@ class Keyboard {
             var char c;
 
             do Output.printString(message);
-            let str = String.new(70); //TODO check bounds
+            let str = String.new(64); //TODO check bounds
 
             while(true)
             {
                 let c = Keyboard.readChar();
-                if (c = newLine)
-                {
+                if (c = String.newLine()) {
                     //display newLine (if not displayed already by readChar())
                     return str;
                 }
-                else if (c = backSpace)
-                {
-                    //remove the last character from str, if possible
-                    //move the cursor accordingly
-
-                    let str = str.eraseLastChar();
-                    do Output.backSpace();
-                }
-                else
-                {
-                    let str = str.appendChar(c);
+                else {
+                    if (c = String.backSpace()) {
+                        let str = str.eraseLastChar();
+                        do Output.backSpace();
+                    }
+                    else {
+                        let str = str.appendChar(c);
+                    }
                 }    
             }
-            return null;
+            return str;
         }     
 
         /**								
@@ -139,4 +138,5 @@ class Keyboard {
             var String str;
             let str = Keyboard.readLine(message);
             return str.intValue();
+        }
 }

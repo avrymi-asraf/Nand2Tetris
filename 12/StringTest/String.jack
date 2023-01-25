@@ -16,7 +16,7 @@ class String {
     /** private variables*/
     field int len;
     field int size;
-    field char str;
+    field Array str;
     
 
     /** constructs a new empty string with a maximum length of maxLength
@@ -69,11 +69,11 @@ class String {
 
     /** Appends c to this string's end and returns this string. */
     method String appendChar(char c) {
-        if (len >= size)
-        {
+        if (~(len < size)) {
             do Sys.error(17);
             return this;
         }
+
         let str[len] = c;
         let len = len +1;
         return this;
@@ -81,8 +81,7 @@ class String {
 
     /** Erases the last character from this string. */
     method void eraseLastChar() {
-        if (len <= 0)
-        {
+        if (~(len > 0)) {
             do Sys.error(18);
             return;
         }
@@ -92,9 +91,8 @@ class String {
 
     /** Erases the last character from this string. */
     method void clear() {
-        while(len > 0)
-        {
-            String.eraseLastChar();
+        while (len > 0) {
+            do eraseLastChar();
         }
         return;
     }
@@ -110,14 +108,18 @@ class String {
         // 4.   let val = (val*10) + d
         // 5. return val
 
+        var int val;
+        var int i;
+        var int d;
+
         let val = 0;
         let i = 0;
         while (i < len)
         {
-            if (~(String.isDigit(str[i])))
-            {
-                return null;
-            }
+            //if (~(String.isDigit(str[i])))
+            //{
+                //return null;
+            //}
             let d = String.intValOfChar(str[i]);    //TODO
             let val = (val*10) + d;
         }
@@ -134,27 +136,29 @@ class String {
         // 5. else
         // 6.   return int2String(val / 10).appendChar(c)
 
-        let str = String.clear();
-        do int2String(this, val); //TODO deep copy
+        do clear();
+        do String.int2String(this, val);
+        return;
     }
 
     /** Helper : Returns string represent int. */
     function String int2String(String s, int val) {
+
+        var int lastDigit;
+        var char c;
 
         let lastDigit = val - ((val / 10)*10); //val % 10
 
         let c = String.charValOfInt(lastDigit);
         let s = s.appendChar(c);
 
-        if (val < 10)
-        {
+        if (val < 10) {
             return s;
         }
 
-        else{
-            return int2String(s, (val / 10));
+        else {
+            return String.int2String(s, (val / 10));
         }
-        return null;
     }
 
     /** Returns the new line character. */
@@ -181,4 +185,9 @@ class String {
     function char charValOfInt(int c) {
         return c + 48;
     }
+
+    /**Helper Function : Returns the char val of int. */
+    //function boolean isDigit (int c) {
+      //  return ((c < ))&());
+    //} 
 }
