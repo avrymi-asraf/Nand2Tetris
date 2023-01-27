@@ -349,3 +349,10 @@ pop pointer 1
 push that 0
 and
 return
+function Math.PowerOf2 0
+push argument 0
+push static 0
+add
+pop pointer 1
+push that 0
+return

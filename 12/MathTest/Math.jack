@@ -216,8 +216,14 @@ class Math {
             return;
         }
 
+        /** Helper function*/
         function boolean bit(int x, int i) {
             return ( x & power_of_n[i]);
+        }
+
+        /** Helper function*/
+        function int PowerOf2(int i) {
+            return power_of_n[i];
         }
 }
 

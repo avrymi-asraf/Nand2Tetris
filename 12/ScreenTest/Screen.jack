@@ -92,7 +92,7 @@ class Screen {
             }
             
             //Use Memory.poke to write the modified 16-bit value to the RAM address.
-            do Memory.poke(address, val);
+            // do Memory.poke(address, val);
 
             return;
         }

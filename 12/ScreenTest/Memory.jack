@@ -70,7 +70,7 @@ class Memory {
         let cuurBlock = ram[cuurBlock-2];
         }
             if (cuurBlock > MAXADD){
-               do Sys.error(1);
+               do sys.error(1);
         }
         else{ 
             // 1. allocate the runPointer + size - Nothing
