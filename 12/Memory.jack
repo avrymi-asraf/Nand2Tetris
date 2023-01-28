@@ -85,7 +85,6 @@ class Memory {
 
             let freeList = newBlock;
         
-
         }
         return newBlock;
 
