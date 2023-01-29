@@ -13,22 +13,13 @@
  */
 class Array {
 
-    /** private variable. */
-    field int arr;
-    field int arrLenght;
-    field int arrSize;
-
     /** Constructs a new Array of the given size. */
     function Array new(int size) {
-        if (size < 0) | (size = 0)
+        if (~(size > 0))
         {
-            call Sys.error(2);
+            do Sys.error(2);
         }
-        
-        let arr = Memory.alloc(size);
-        let arrLenght = 0;
-        let arrSize = size;
-        return arr;
+        return Memory.alloc(size);
     }
 
     /** Disposes this array. */

@@ -1,0 +1,120 @@
+// This file is part of nand2tetris, as taught in The Hebrew University, and
+// was written by Aviv Yaish. It is an extension to the specifications given
+// [here](https://www.nand2tetris.org) (Shimon Schocken and Noam Nisan, 2017),
+// as allowed by the Creative Common Attribution-NonCommercial-ShareAlike 3.0
+// Unported [License](https://creativecommons.org/licenses/by-nc-sa/3.0/).
+// File name: projects/12/Memory.jack
+
+/**
+ * This library provides two services: direct access to the computer's main
+ * memory (RAM), and allocation and recycling of memory blocks. The Hack RAM
+ * consists of 32,768 words, each holding a 16-bit binary number.
+ */ 
+class Memory {
+
+    
+    static Array ram;
+    static int MAXADD; 
+    static int freeList;
+
+
+
+    /** Initializes the class. */
+    function void init() {
+        let ram = 0;
+        let MAXADD = 16383;
+        let freeList = 2048 + 2;
+        
+        //freeList-1 is size, freeList-2 is next
+        let ram[freeList - 1] = MAXADD - (2048 + 2);
+        let ram[freeList - 2] = 0;
+        // Pseudocode:
+        // 1. freeList = heapBase
+        // 2. freeList.length = heapLength
+        // 3. freeList.next = null
+        return;
+    }
+
+    /** Returns the RAM value at the given address. */
+    function int peek(int address) {
+        if ((address < 0) | (address > MAXADD))
+        {
+           do Sys.error(1);//TODO FIND errorCode
+        }
+        return ram[address];
+    }
+
+    /** Sets the RAM value at the given address to the given value. */
+    function void poke(int address, int value) {
+        if ((address < 0) | (address > MAXADD))
+        {
+           do Sys.error(1); //TODO FIND errorCode
+        }
+
+        let ram[address] = value;
+        return;
+    }
+
+    /** Finds an available RAM block of the given size and returns
+     *  a reference to its base address. Assume size > 0. */
+    function int alloc(int size) {
+
+        var int cuurBlock, prevBlock, newBlock;
+        let cuurBlock = freeList;
+        let prevBlock = freeList;
+        let newBlock =0;
+        while (
+            (ram[cuurBlock-1] - (size+2)) < 0
+        ) {
+        let prevBlock = cuurBlock;
+        let cuurBlock = ram[cuurBlock-2];
+        }
+            if (cuurBlock > MAXADD){
+               do Sys.error(1);
+        }
+        else{ 
+            // 1. allocate the runPointer + size - Nothing
+          
+            // 2. create new_block in cuurBlock + size +2 
+            let newBlock = cuurBlock + size + 2;
+            // 3. new_block.next is old_block.next
+            let ram[newBlock-2] = ram[cuurBlock -2];
+            // 4. new_block.size = old_block.size - (size + 2)
+            let ram[newBlock-1] = (ram[cuurBlock -1] - (size +2));
+            let ram[cuurBlock-1] = size;
+
+            let freeList = newBlock;
+        
+        }
+        return newBlock;
+
+        // Pseudocode:
+        // 1. Search freeList using best-fit or first-fit heuristics to obtain
+        //    a segment with segment.length > size.
+        //    If no such segment is found, return -1.
+        // 2. block = needed part of the found segment (or all of it, if the 
+        //            segment remainder is too small).
+        // 3. block[-1] = size + 1 // Remember block size, for de-allocation
+        // 4. Update freeList to reflect the allocation
+        // 5. Return block
+        // The figure MemoryTest/MemoryFreeListExample.png illustrates how
+        // the freeList should look like.
+    }
+
+    /** De-allocates the given object (cast as an array) by making
+     *  it available for future allocations. */
+    function void deAlloc(Array o) {
+        let ram[o-2] = freeList;
+        let freeList = o;
+        return;
+    }    
+
+    /** Returns the maximal element contained in the given Array/object. 
+     *  Assume inputs are initialized and contain at least one element. */
+    function int max(Array o) {
+        return ram[o-1];
+        // Hint: the algorithm you need to implement in Memory.alloc saves the
+        // size of the allocated block in the memory cell right before the 
+        // start of the block, and this can be used to implement Memory.max.
+    }
+}
