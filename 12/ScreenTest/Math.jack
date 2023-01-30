@@ -11,23 +11,12 @@
  
 class Math {
 
-    static Array powersArr;
+    static Array power_of_n;
     static int divHelp;
 
         /** Initializes the library. */
         function void init() {
-            var int i, sum;
-            
-            let powersArr = Array.new(16);
-            let i = 0;
-            let sum = 1;
-
-            while (i < 16) {
-                let powersArr[i] = sum;
-                let i = i+1;
-                let sum = sum + sum; 
-            }
-            
+            do Math.init_power_of_n();
             return;
         }
 
@@ -73,7 +62,8 @@ class Math {
             let shiftedx = x;
             let i = 0;
 
-            while (i < 16) {
+            while (i < 16)
+            {
                 if (Math.bit(y, i)) {
                     let sum = sum + shiftedx;
                 }
@@ -166,12 +156,13 @@ class Math {
             let yMultPowerOf2 = 0; // y * 2^j 
             let j = 7; // 8/2 -1 
 
-            while (j > -1) {
+            while (j > -1) 
+            {
                 // yMultPowerOf2 = 2* yMultPowerOf2
                 let yMultPowerOf2 = yMultPowerOf2 + yMultPowerOf2; 
 
-                let newVal = y + powersArr[j];
-                let newValPower2 = yPower2 + (yMultPowerOf2 + yMultPowerOf2) + powersArr[j+j];
+                let newVal = y + power_of_n[j];
+                let newValPower2 = yPower2 + (yMultPowerOf2 + yMultPowerOf2) + power_of_n[j+j];
 
                 //  if ((y + 2**j)**2 <= x)
                 // y^2 + 2 * 2^j * y + (2^j) ^2
@@ -180,7 +171,7 @@ class Math {
                     //then let y = y + 2**j
                     let y = newVal;
 
-                    // y ^ 2 = (y + powersArr[j])^2 
+                    // y ^ 2 = (y + power_of_n[j])^2 
                     let yPower2 = newValPower2;
                     let j = j-1;
                 }
@@ -207,14 +198,37 @@ class Math {
             return b;
         }
 
+        /** Helper functions*/
+        function void init_power_of_n() {
+
+            var int i, sum;
+            
+            let power_of_n = Array.new(16);
+
+            let i = 0;
+            let sum = 1;
+
+            while (i < 16) {
+                let power_of_n[i] = sum;
+                let i = i+1;
+                let sum = sum + sum; 
+            }
+            return;
+        }
+
         /** Helper function*/
         function boolean bit(int x, int i) {
-            return ( x & powersArr[i]);
+            return ( x & power_of_n[i]);
         }
 
         /** Helper function*/
         function int PowerOf2(int i) {
-            return powersArr[i];
+            return power_of_n[i];
         }
 }
+
+
+
+
+
 
