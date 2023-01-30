@@ -57,6 +57,7 @@ class Math {
 
             var boolean isNeg;
             var int sum, shiftedx, i;
+            let isNeg = false;
 
             if ( (x = 0) | (y = 0) ) {
                 return 0;
@@ -68,6 +69,7 @@ class Math {
 
             let x = Math.abs(x);
             let y = Math.abs(y);
+            
 
             let sum = 0;
             let shiftedx = x;
@@ -108,6 +110,8 @@ class Math {
 
             var boolean isNeg;
             var int d;
+            
+            let isNeg = false;
 
             if (y = 0) {
                 do Sys.error(3);
