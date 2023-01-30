@@ -242,8 +242,8 @@ class Screen {
                 if (Math.bit(x, i))
                 {
                     let sum = sum + Math.PowerOf2(i-4);
-                    let i = i+1;
                 }
+                let i = i+1;
             }
             return sum;
         }
