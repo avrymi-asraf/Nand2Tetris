@@ -19,10 +19,14 @@ class Screen {
     static int maxRow; 
     static int maxCol; 
 
+    static Array powersArr;
+    
         /** Initializes the Screen. */
         function void init() {
+            
+            do Screen.initArr();
 
-            let color = false;
+            let color = true;
             let screen = 16384;
             let screenEnd = 24576;
 
@@ -32,10 +36,31 @@ class Screen {
             return;
         }
 
+        /** Initializes the library. */
+        function void initArr() {
+            var int i, sum;
+            
+            let powersArr = Array.new(16);
+            let i = 0;
+            let sum = 1;
+
+            while (i < 16) {
+                let powersArr[i] = sum;
+                let i = i+1;
+                let sum = sum + sum; 
+            }
+            return;
+        }
+
         /** Erases the entire screen. */
         function void clearScreen() {
+            var boolean b;
+             
+            let b = color;
             do Screen.setColor(false);
             do Screen.drawRectangle(0, 0, maxCol-1, maxRow-1);
+            do Screen.setColor(b);
+
             return;
         }
 
@@ -79,14 +104,14 @@ class Screen {
             let j = (x & 15); // x mod 16 = (x & 15)
 
             if (color) {
-                if (~(Math.bit(x, j))) {
-                    let val = val + Math.PowerOf2(j);
+                if (~(Screen.bit(x, j))) {
+                    let val = val + Screen.PowerOf2(j);
                 }
             }
             // if (Screen.color = false)
             else {
-                if (Math.bit(x, j)) {
-                    let val = val - Math.PowerOf2(j);
+                if (Screen.bit(x, j)) {
+                    let val = val - Screen.PowerOf2(j);
                 }
             }
             
@@ -134,6 +159,7 @@ class Screen {
             if (dx = 0) {
                 while (i < dy) {
                     do Screen.drawPixel(x1, y1+i);
+                    let i = i+1;
                     return;
                 }
             }
@@ -141,6 +167,7 @@ class Screen {
             if (dy = 0) {
                 while (i < dx) {
                     do Screen.drawPixel(x1+i, y1);
+                    let i = i+1;
                     return;
                 }
             }
@@ -165,11 +192,9 @@ class Screen {
         /** Draws a filled rectangle whose top left corner is (x1, y1)
          * and bottom right corner is (x2,y2), using the current color. */
         function void drawRectangle(int x1, int y1, int x2, int y2) {
-
             var int i;
 
-            if ((x1 < 0)|(~(x1 < maxCol))|(x2 < 0)|(~(x2 < maxCol))|(y1 < 0)|(~(y1 < maxRow))|(y2 < 0)|(~(y2 < maxRow)))
-            {
+            if ((x1 < 0)|(~(x1 < maxCol))|(x2 < 0)|(~(x2 < maxCol))|(y1 < 0)|(~(y1 < maxRow))|(y2 < 0)|(~(y2 < maxRow))) {
                 do Sys.error(9);
                 return;
             }
@@ -217,28 +242,40 @@ class Screen {
 
 
         function int Mult32(int x) {
-            var int i;
-            let i = 0;
+            // var int i;
+            // let i = 0;
 
-            while (i < 5)
-            {
-                let x = x+x;
-                let i = i+1;
-            }
-            return x;
+            // while (i < 5)
+            // {
+            //     let x = x+x;
+            //     let i = i+1;
+            // }
+            // return x;
+            return Math.multiply(x, 32);
         }
 
         function int Div16(int x) {
-            var int i, sum;
-            let sum = 0;
+            // var int i, sum;
+            // let sum = 0;
 
-            let i = 4;
-            while(i < 16) {
-                if (Math.bit(x, i)) {
-                    let sum = sum + Math.PowerOf2(i-4);
-                    let i = i+1;
-                }
-            }
-            return sum;
+            // let i = 4;
+            // while(i < 16) {
+            //     if (Screen.bit(x, i)) {
+            //         let sum = sum + Screen.PowerOf2(i-4);
+            //     }
+            //     let i = i+1;
+            // }
+            // return sum;
+            return Math.divide(x, 16);
+        }
+
+        /** Helper function*/
+        function int PowerOf2(int i) {
+            return powersArr[i];
+        }
+
+        /** Helper function*/
+        function boolean bit(int x, int i) {
+            return ( x & powersArr[i]);
         }
 }
