@@ -62,7 +62,7 @@ class Screen {
             // 4. Use Memory.poke to write the modified 16-bit value to the RAM
             // address.
 
-            var int address, val, j;
+            var int address, val, j,p;
 
             if ( (x < 0) | (~(x < maxCol)) | (y < 0) | (~(y < maxRow)) )
             {
@@ -78,17 +78,18 @@ class Screen {
 
             //Use some bitwise operation to set (only) the bit that corresponds to the pixel to the current color.
             let j = (x & 15); // x mod 16 = (x & 15)
-
+            let p = 1;
+            while(j>0){
+                let p = ^p;
+                let j = j-1;
+            }
             if (color) {
-                if (~(Math.bit(x, j))) {
-                    let val = val + Math.PowerOf2(j);
-                }
+                let val = val|p;
             }
             // if (Screen.color = false)
             else {
-                if (Math.bit(x, j)) {
-                    let val = val - Math.PowerOf2(j);
-                }
+                let p = ~p;
+                let val = val & p;
             }
             
             //Use Memory.poke to write the modified 16-bit value to the RAM address.
@@ -136,15 +137,17 @@ class Screen {
             if (dx = 0) {
                 while (i < dy) {
                     do Screen.drawPixel(x1, y1+i);
-                    return;
+                    let i = i + 1;
                 }
+                    return;
             }
 
             if (dy = 0) {
                 while (i < dx) {
                     do Screen.drawPixel(x1+i, y1);
-                    return;
+                    let i = i + 1;
                 }
+                    return;
             }
 
             // while ((a <= dx) and (b <= dy))
@@ -160,8 +163,8 @@ class Screen {
                     let b=b+1;
                     let diff = diff-dx;
                 }
-                    return;
             }
+                    return;
         }
 
         /** Draws a filled rectangle whose top left corner is (x1, y1)
@@ -220,31 +223,11 @@ class Screen {
 
         function int Mult32(int x)
         {
-            var int i;
-            let i = 0;
-
-            while (i < 5)
-            {
-                let x = x+x;
-                let i = i+1;
-            }
-            return x;
+            return ^(^(^(^(^x))));
         }
 
         function int Div16(int x)
         {
-            var int i, sum;
-            let sum = 0;
-
-            let i = 4;
-            while(i < 16)
-            {
-                if (Math.bit(x, i))
-                {
-                    let sum = sum + Math.PowerOf2(i-4);
-                    let i = i+1;
-                }
-            }
-            return sum;
+            return #(#(#(#x)));
         }
 }
