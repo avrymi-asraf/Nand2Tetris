@@ -22,7 +22,7 @@ class Screen {
         /** Initializes the Screen. */
         function void init() {
 
-            let color = false;
+            let color = true;
             let screen = 16384;
             let screenEnd = 24576;
 
@@ -114,7 +114,7 @@ class Screen {
             // trying to draw as many pixels as possible in a single assignment,
             // similarly to Fill in project 4.
 
-            var int x, y, diff, a, b, dx, dy, i;
+            var int x, y, diff, a, b, dx, dy, i, dyNeg, dxNeg; 
 
             if ((x1 < 0)|(~(x1 < maxCol))|(x2 < 0)|(~(x2 < maxCol))|(y1 < 0)|(~(y1 < maxRow))|(y2 < 0)|(~(y2 < maxRow)))
             {
@@ -128,23 +128,34 @@ class Screen {
             let a = 0;
             let b = 0;
             let diff = 0;
-
-            //Compute dx and dy
-            let dx = x2-x1;
-            let dy = y2-y1;
+            let dxNeg = 1;
+            let dyNeg = 1;
             let i = 0;
 
+            if ((x2-x1) < 0) {
+                let dxNeg = (-1);
+            }
+            if ((y2-y1) < 0) {
+                let dyNeg = (-1);
+            }
+
+            //Compute dx and dy
+            let dx = Math.abs(x2-x1);
+            let dy = Math.abs(y2-y1);
+            
             if (dx = 0) {
+                let y = Math.min(y1, y2);
                 while (i < dy) {
-                    do Screen.drawPixel(x1, y1+i);
+                    do Screen.drawPixel(x1, y +i);
                     let i = i + 1;
                 }
                     return;
             }
 
             if (dy = 0) {
+                let x = Math.min(x1, x2);
                 while (i < dx) {
-                    do Screen.drawPixel(x1+i, y1);
+                    do Screen.drawPixel(x + i, y1);
                     let i = i + 1;
                 }
                     return;
@@ -153,7 +164,7 @@ class Screen {
             // while ((a <= dx) and (b <= dy))
             while ((~(a > dx)) & ( ~(b > dy)))
             {
-                do Screen.drawPixel(x+a, y+b);
+                do Screen.drawPixel(x+(a*dxNeg), y+(b*dyNeg));
 
                 if (diff < 0) {
                     let a=a+1;
@@ -198,13 +209,19 @@ class Screen {
             // 3.   do drawLine(x-halfWidth, y+dy, x+halfWidth, y+dy)
 
             var int dy, halfWidth;
-            
-            if ((x-r < 0) | (x+r > maxCol) |  (y-r < 0) | (y+r > maxRow)) {
+
+            // if ((x-r < 0) | (x+r > maxCol) |  (y-r < 0) | (y+r > maxRow)) {
+            //     do Sys.error(12);
+            //     return;
+            // }
+
+            //illegal center coordinates
+            if ((x < 0) | (x > (maxCol-1)) |  (y < 0) | (y > (maxRow-1))) {
                 do Sys.error(12);
                 return;
             }
-            //TODO who is elligal?
-
+            
+            //illegal radius
             if (r > 181) {
                 do Sys.error(13);
                 return;
