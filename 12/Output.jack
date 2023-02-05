@@ -206,11 +206,16 @@ class Output {
     /** Moves the cursor to the j-th column of the i-th row,
      *  and erases the character displayed there. */
     function void moveCursor(int i, int j) {
-        if ((i < 0) | ~(i < rowsNum) | (j < 0) | ~(j < colsNum)) {
+        if ((i < 0) | (~(i < rowsNum)) | (j < 0) | (~(j < colsNum) ) ) {
             do Sys.error(20);
             return;
         }
 
+        let cursorRow = i;
+        let cursorCol = j;
+        //print space
+        do Output.printChar(32);
+        //return the cursor one step back
         let cursorRow = i;
         let cursorCol = j;
         return;
@@ -237,22 +242,20 @@ class Output {
 
         let c_arr = Output.getMap(c);
 
-        let i = 1;
+        let i = 0;
 
         while(i < charHight) {
-
             let j = 0;
             let k = 1;
             while(j < charWidth) {
                 do Screen.setColor(k & c_arr[i]);
-                do  Screen.drawPixel(cursorRow*i, cursorCol+j);
+                do  Screen.drawPixel((cursorCol*charWidth)+j, (cursorRow*charHight)+i);
                 let j = j+1;
                 let k = k+k;
             }
 
             let i = i+1;
         }
-
         do Output.advanceCursor();
         do Output.printCursor();
         return;
@@ -288,7 +291,7 @@ class Output {
     /** Advances the cursor to the beginning of the next line. */
     function void println() {
         let cursorCol = 0;
-        let cursorRow = cursorRow +1*charHight;
+        let cursorRow = cursorRow +1;
         do Output.printCursor();
         return;
     }
@@ -316,22 +319,28 @@ class Output {
 
     /** Helper function - advance the cursor location */
     function void advanceCursor() {
-        let cursorCol = cursorCol + charWidth;
+        let cursorCol = cursorCol + 1;
         if (cursorCol > colsNum) {
             let cursorCol = 0;
-            let cursorRow = cursorRow +charHight;
+            let cursorRow = cursorRow + 1;
+        }
+        if (cursorRow = (rowsNum -1)) {
+            let cursorCol = 0;
+            let cursorRow = 0;
         }
         return;
     }
 
     /** Helper function - print the cursor on the screen */
     function void printCursor() {
+
         do Screen.setColor(false);
-        do Screen.drawRectangle(cursorRow, cursorCol,
-         cursorRow+charHight, cursorCol+charWidth);
+
+        do Screen.drawRectangle(cursorCol, cursorRow,
+         cursorCol+charWidth, cursorRow+charHight);
 
         do Screen.setColor(true);
-        do Screen.drawPixel(cursorRow+charHight, cursorCol);
+        do Screen.drawPixel(cursorCol, cursorRow+charHight -1);
 
         return;
     }
