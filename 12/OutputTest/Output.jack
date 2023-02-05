@@ -42,8 +42,8 @@ class Output {
         let cursorRow = 0;
         let cursorCol = 0;
 
-        let rowsNum = 23;
-        let colsNum = 64;
+        let rowsNum = 64;
+        let colsNum = 23;
 
         let charWidth = 8;
         let charHight = 11;
@@ -206,11 +206,16 @@ class Output {
     /** Moves the cursor to the j-th column of the i-th row,
      *  and erases the character displayed there. */
     function void moveCursor(int i, int j) {
-        if ((i < 0) | ~(i < rowsNum) | (j < 0) | ~(j < colsNum)) {
+        if ((i < 0) | (~(i < rowsNum)) | (j < 0) | (~(j < colsNum) ) ) {
             do Sys.error(20);
             return;
         }
 
+        let cursorRow = i;
+        let cursorCol = j;
+        //print space
+        do Output.printChar(32);
+        //return the cursor one step back
         let cursorRow = i;
         let cursorCol = j;
         return;
@@ -237,15 +242,14 @@ class Output {
 
         let c_arr = Output.getMap(c);
 
-        let i = 1;
+        let i = 0;
 
         while(i < charHight) {
-
             let j = 0;
             let k = 1;
             while(j < charWidth) {
                 do Screen.setColor(k & c_arr[i]);
-                do  Screen.drawPixel(cursorRow*i, cursorCol+j);
+                do  Screen.drawPixel((cursorCol*charWidth)+j, (cursorRow*charHight)+i);
                 let j = j+1;
                 let k = k+k;
             }
