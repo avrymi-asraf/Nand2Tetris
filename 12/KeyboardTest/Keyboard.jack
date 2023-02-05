@@ -71,6 +71,16 @@ class Keyboard {
             while (~( key = 0)) {
                 let key = Keyboard.keyPressed();
             }
+
+            if (c = String.backSpace()) {
+                do Output.backSpace();
+                return c;
+            }
+
+            if (c = String.newLine()) {
+                do Output.println();
+                return c;
+            }
             
             do Output.printChar(c);
             return c;
@@ -104,7 +114,7 @@ class Keyboard {
             var char c;
 
             do Output.printString(message);
-            let str = String.new(64); //TODO check bounds
+            let str = String.new(64); 
 
             while(true)
             {
@@ -115,11 +125,11 @@ class Keyboard {
                 }
                 else {
                     if (c = String.backSpace()) {
-                        let str = str.eraseLastChar();
-                        do Output.backSpace();
+                        do str.eraseLastChar();
+                        // do Output.backSpace(); //readchar already does
                     }
                     else {
-                        let str = str.appendChar(c);
+                        do str.appendChar(c);
                     }
                 }    
             }

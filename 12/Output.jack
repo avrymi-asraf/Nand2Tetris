@@ -230,6 +230,12 @@ class Output {
         var int i;
         var int j;
 
+        if (c = String.newLine()) {
+            //display newLine (if not displayed already by readChar())
+            do Output.println();
+            return;
+        }
+
         let c_arr = Output.getMap(c);
         let i = 1;
         let j = 0;
