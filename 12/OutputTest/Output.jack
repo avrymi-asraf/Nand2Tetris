@@ -32,8 +32,6 @@ class Output {
     static int charWidth;
     static int charHight;
 
-    static Array bitArr;
-
     /** Initializes the screen, and locates the cursor at the screen's top-left. */
     function void init() {
 
@@ -51,14 +49,12 @@ class Output {
         let charHight = 11;
 
         do Output.initMap();
-        do Output.initBitArray();
 
         return;
     }
 
     // Initializes the character map array
     function void initMap() {
-        var int i;
     
         let charMaps = Array.new(127);
         
@@ -177,9 +173,9 @@ class Output {
     // Creates the character map array of the given character index, using the given values.
     function void create(int index, int a, int b, int c, int d, int e,
                          int f, int g, int h, int i, int j, int k) {
-	var Array map;
+	    var Array map;
 
-	let map = Array.new(11);
+	    let map = Array.new(11);
         let charMaps[index] = map;
 
         let map[0] = a;
@@ -227,21 +223,36 @@ class Output {
         // For example, you can draw multiple pixels at once, for each row.
 
         var Array c_arr;
-        var int i;
-        var int j;
+        var int i, j, k;
+
+        if (c = String.newLine()) {
+            do Output.println();
+            return;
+        }
+
+        if (c = String.backSpace()) {
+            do Output.backSpace();
+            return;
+        }
 
         let c_arr = Output.getMap(c);
+
         let i = 1;
-        let j = 0;
 
         while(i < charHight) {
+
+            let j = 0;
+            let k = 1;
             while(j < charWidth) {
-                do Screen.setColor((bitArr[j] & c_arr[i]));
+                do Screen.setColor(k & c_arr[i]);
                 do  Screen.drawPixel(cursorRow*i, cursorCol+j);
                 let j = j+1;
+                let k = k+k;
             }
+
             let i = i+1;
         }
+
         do Output.advanceCursor();
         do Output.printCursor();
         return;
@@ -305,10 +316,10 @@ class Output {
 
     /** Helper function - advance the cursor location */
     function void advanceCursor() {
-        let cursorCol = cursorCol + 1*charWidth;
+        let cursorCol = cursorCol + charWidth;
         if (cursorCol > colsNum) {
             let cursorCol = 0;
-            let cursorRow = cursorRow +1*charHight;
+            let cursorRow = cursorRow +charHight;
         }
         return;
     }
@@ -322,22 +333,6 @@ class Output {
         do Screen.setColor(true);
         do Screen.drawPixel(cursorRow+charHight, cursorCol);
 
-        return;
-    }
-
-    /** Helper function */
-    function void initBitArray()
-    {
-        var int i;
-        let bitArr = Array.new(16);
-
-        let bitArr[0] = 1;
-        let i = 1;
-
-        while (i < 16)
-        {
-            let bitArr[i] = bitArr[i-1]*2;
-        }
         return;
     }
 

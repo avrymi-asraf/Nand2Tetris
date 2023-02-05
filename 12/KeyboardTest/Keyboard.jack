@@ -126,7 +126,7 @@ class Keyboard {
                 else {
                     if (c = String.backSpace()) {
                         do str.eraseLastChar();
-                        // do Output.backSpace(); //readchar already does
+                        // do Output.backSpace(); readchar already does
                     }
                     else {
                         do str.appendChar(c);
